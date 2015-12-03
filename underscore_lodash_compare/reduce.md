@@ -49,7 +49,7 @@ iterateeには4つの値が渡される（//たぶんいつもわたしている
 こうすると
 
 ```javascript
-use strict';
+'use strict';
 var _ = require( "underscore" );
 var arr = [ 1, 3, 5 ];
 
