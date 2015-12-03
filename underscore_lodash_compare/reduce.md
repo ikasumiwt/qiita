@@ -91,3 +91,76 @@ num:5
 14
 ```
 
+###[underscore.reduce](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L205)
+コード的にはこのあたり。
+
+```javascript
+_.reduce = _.foldl = _.inject = createReduce(1);
+```
+
+そのまますぐ上の[ここ](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L178)
+
+```javascript
+  // Create a reducing function iterating left or right.
+  function createReduce(dir) {
+    // Optimized iterator function as using arguments.length
+    // in the main function will deoptimize the, see #1991.
+    function iterator(obj, iteratee, memo, keys, index, length) {
+      for (; index >= 0 && index < length; index += dir) {
+        var currentKey = keys ? keys[index] : index;
+        memo = iteratee(memo, obj[currentKey], currentKey, obj);
+      }
+      return memo;
+    }
+
+    return function(obj, iteratee, memo, context) {
+      iteratee = optimizeCb(iteratee, context, 4);
+      var keys = !isArrayLike(obj) && _.keys(obj),
+          length = (keys || obj).length,
+          index = dir > 0 ? 0 : length - 1;
+      // Determine the initial value if none is provided.
+      if (arguments.length < 3) {
+        memo = obj[keys ? keys[index] : index];
+        index += dir;
+      }
+      return iterator(obj, iteratee, memo, keys, index, length);
+    };
+  }
+```
+
+1与えているのは、reduceRightとの使い分けのため
+
+reduceRightでは
+
+```
+_.reduceRight = _.foldr = createReduce(-1);
+```
+と与えている。
+
+```
+var keys = !isArrayLike(obj) && _.keys(obj),
+          length = (keys || obj).length,
+          index = dir > 0 ? 0 : length - 1;
+```
+
+
+のあたりは他のcollection系の関数と同様に、arrayだったらfalse,objectだったらkeyの配列を返し、その配列の長さを代入、
+indexは0 //引数のdirが1なため reduceRightの場合は length -1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
