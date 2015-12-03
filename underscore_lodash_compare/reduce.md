@@ -147,20 +147,18 @@ var keys = !isArrayLike(obj) && _.keys(obj),
 のあたりは他のcollection系の関数と同様に、arrayだったらfalse,objectだったらkeyの配列を返し、その配列の長さを代入、
 indexは0 //引数のdirが1なため reduceRightの場合は length -1 
 
+```
+if (arguments.length < 3) {
+    memo = obj[keys ? keys[index] : index];
+    index += dir;
+}
+```
 
+この部分は、配列の引数が2以下だった場合(つまりmemo = undefinedだった場合)、初期値のもととなるmemoが存在しないため、これを決定する。
 
+配列だった場合はindexを、配列じゃなかった場合はindex[0]を初期値にする
+初期値決定後はindex += dirする（reduceの場合はindex++）
 
-
-
-
-
-
-
-
-
-
-
-
-
+その後、iteratorに引き継いで回す
 
 
