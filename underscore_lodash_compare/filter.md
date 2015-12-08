@@ -8,10 +8,10 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##findとは
+##filterとは
 
 
-###[underscorejs.orgのreduce](http://underscorejs.org/#filter)
+###[underscorejs.orgのfilter](http://underscorejs.org/#filter)
 
 こんな説明。
 >####_.filter(list, predicate, [context]) Alias: select 
