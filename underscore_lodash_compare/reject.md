@@ -74,3 +74,63 @@ _.find([-2, -1, 0, 1, 2], isFalsy);
 
 ```
 
+
+つまり
+
+```javascript
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, function( cb(predicate) ) {
+      return function() {
+        return !predicate.apply(this, arguments);
+    }, context);
+  };
+```
+
+な感じでさらにcbは
+
+```javascript
+
+  // A mostly-internal function to generate callbacks that can be applied
+  // to each element in a collection, returning the desired result — either
+  // identity, an arbitrary callback, a property matcher, or a property accessor.
+  var cb = function(value, context, argCount) {
+    if (value == null) return _.identity;
+    if (_.isFunction(value)) return optimizeCb(value, context, argCount);
+    if (_.isObject(value)) return _.matcher(value);
+    return _.property(value);
+  };
+
+```
+
+
+となっている。
+[_.identity](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1282)はvalueを引数にvalueを返してくれる関数
+
+```javascript
+  _.identity = function(value) {
+    return value;
+  };
+```
+
+（->つまりnullの場合はnullを返されるということ）
+
+---------------------
+
+[_.isFunction](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1234)はFunctionかどうかを判定してくれる
+(Safari8とかIE11とかだと動かない・・・？[Int8Array](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Int8Array)がobjectとして存在しなかった場合などのif文の中にある)
+
+(->functionだった場合はoptimizeCb(value, context, argCount);が返される)
+
+------------------------------
+
+[_.isObject]https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1212)で判定して、Objectだった場合は _.matcher(value)が返される。_.matcherは前述のとおり。
+
+------------------------------
+
+どれにも合致しなかったらreturn _.property(value);される
+[_.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1295)はふつうのpropertyのエイリアスみたいなもの
+
+
+
+
+
