@@ -29,6 +29,10 @@ _.findWhere(publicServicePulitzers, {newsroom: "The New York Times"});
 ------------- 
 エイリアスは特になし。
 
+listのなかで最初に、propertiesの中のすべてのkey-valueペアにマッチするものを返してくれる。
+もし、マッチするものが見つからなかった、もしくはリストが空だった場合にはundefinedを返却する。
+
+
 
 ###[underscore.findWhere](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L294)
 
