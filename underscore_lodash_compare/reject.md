@@ -86,7 +86,8 @@ _.find([-2, -1, 0, 1, 2], isFalsy);
   };
 ```
 
-な感じでさらにcbは
+な感じで（もはやわからない）
+cbは
 
 ```javascript
 
@@ -121,6 +122,7 @@ _.find([-2, -1, 0, 1, 2], isFalsy);
 
 (->functionだった場合はoptimizeCb(value, context, argCount);が返される)
 
+
 ------------------------------
 
 [_.isObject]https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1212)で判定して、Objectだった場合は _.matcher(value)が返される。_.matcherは前述のとおり。
@@ -128,9 +130,54 @@ _.find([-2, -1, 0, 1, 2], isFalsy);
 ------------------------------
 
 どれにも合致しなかったらreturn _.property(value);される
-[_.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1295)はふつうのpropertyのエイリアスみたいなもの
+[_.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1295)は[property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L125)で、nullでなければobj[key]を返す（nullチェックは先にされているので確実にobj[key]が返される）
 
 
 
 
+基本的にvalueはfunctionが入ってくるはずなので、optimizeCb(value, context, argCount);が返却される。
+
+
+```javascript
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, function( optimizeCb(value, context, argCount) ) {
+      return function() {
+        return !predicate.apply(this, arguments);
+    }, context);
+  };
+```
+
+こうなって
+
+```javascript
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, function( optimizeCb(value, context, argCount) ) {
+      return function() {
+        return !predicate.apply(this, arguments);
+    }, context);
+  };
+```
+
+[optimizeCb](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L63)はcb(value)で渡されている(value=function(num){ return num % 2 == 0; }的な形)ので、引数が一つ引数がつなので
+
+```javascript
+ if (context === void 0) return func;
+```
+に引っかかりそのままfunctionが返される。
+
+つまり
+
+```javascript
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, function( predicate ) {
+      return function() {
+        return !predicate.apply(this, arguments);
+    }, context);
+  };
+```
+
+となって
+
+
+predicateが実行されて引っかかったもの**以外**が返されていることがわかる。（たぶん）
 
