@@ -34,6 +34,17 @@ listのelementにtrueが見つかった時点でlistの中を走査するのを�
 つまり
 
 
+```javascript
+_.some( [1, 2, 3, 4, 5], function( num ){
+  console.log( num );
+  return num > 3 ? true : false;
+});
+=> 1 2 3 4
+```
+
+となる
+
+
 ###[underscore.some](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L250)
 
 コード的にはこのあたり。
@@ -55,3 +66,8 @@ listのelementにtrueが見つかった時点でlistの中を走査するのを�
 ```
 
 
+
+contextがない場合、cb(predicate)ではそのままpredicateが返ってくる
+keysにはobjがArrayならfalse,objがobjectの場合にはkeysが入り、lengthはkeysかobj.lengthが入る。
+それらを元にfor文で回して、predicateでtrueがreturnされた場合にはtrueが返され、そこで終了する。
+for文内で条件が一致しなかった場合にはfalseが返される。
