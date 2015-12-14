@@ -77,5 +77,5 @@ sliceはArray.prototype.slice。
 argumentsには{ obj, method, hoge, fuga, piyo }とくるため、
 slice(arguments,2)で[ hoge, fuga, piyo ]をargsに格納する。
 
-_.isFunctionでmethodがfunctionかどうかを確認する
-
+_.isFunctionでmethodがfunctionかどうかを確認し、trueだった場合はmethodを、そうではない場合はvalue[method]をfuncに代入する。
+（value[method]がありえるのかよくわからないけど）nullではない場合は、func.apply(value,args)を行う。
