@@ -44,3 +44,6 @@ mapを用いてlistの値を抽出する
   };
 
 ```
+
+_.mapの中で_.property(key)に合致する値のみをreturnする。
+そのため、keyにnameが入ってきた場合はnameの値のみで形成されたArrayが返却される。
