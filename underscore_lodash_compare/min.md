@@ -27,8 +27,9 @@ _.min(numbers);
 
 ------------- 
 
-
-
+listの中の最低値を返す。
+もしiteratee関数が渡された場合、それを用いてそれぞれの値の判定に用います。
+Infinityが返されるのは、listが空なためです。そのため、isEmptyで事前に防ぐことが必要です。
 
 ###[underscore.min](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L323)
 
@@ -60,3 +61,12 @@ _.min(numbers);
     return result;
   };
 ```
+
+基本的にはmaxと同じ。
+result,lastComputedにInfinityを初期値として与える
+iterateeが存在しないかつobjがnull以外の場合、objがArrayか連想配列かの判定後にfor文で配列の中を走査する。
+その中の値の中で最低値をresultに格納し、resultを返却する。
+
+それ以外の場合、iterateeが関数かどうかを判定し、_.eachを用いて、objを走査する。
+objの値ごとに、iterateeを実行し、iterateeで返却された値が今までのobjのiterateeの実行値よりも地裁場合はresultにobjの値(value)を格納する。
+その後、最低値をresultとして返却する
