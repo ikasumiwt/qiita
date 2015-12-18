@@ -11,7 +11,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 ##sortByとは
 
 
-###[underscorejs.orgのmax](http://underscorejs.org/#sortBy)
+###[underscorejs.orgのsoryBy](http://underscorejs.org/#sortBy)
 
 こんな説明。
 >####_.sortBy(list, iteratee, [context]) 
@@ -29,6 +29,9 @@ _.sortBy(stooges, 'name');
 ```
 
 ------------- 
+
+ソート済みのlistをコピーを返す関数。ソートのランク付けには、各valueに対してiterateeを回したものを照準に並べ替えたものをresultとする。
+iterateeはlengthのように、sortのプロパティ名でも問題無いです。
 
 ###[underscore.sortBy](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L374)
 
