@@ -59,4 +59,9 @@ iterateeはlengthのように、sortのプロパティ名でも問題無いで�
   };
 ```
 
+_.pluckをもちいた値を返却する。
+_.pluckに渡す引数は_.mapを用いてobjを{ value:value, index:index, criteria: iteratee}の形にしたもの。
+_.mapの結果は配列で返ってくるので、[ {}, {}, {}...]となっており、その配列に対して[Array.prototype.sort](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)を用いてsortする。
+sortしたものは[value,value,value...]の形になっているので、これに対して、_.pluckを用いる。sortする値はvalueなので、結果valueの順にsortされたArrayが返ってくる。
+
 
