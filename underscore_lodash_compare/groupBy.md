@@ -29,6 +29,9 @@ _.groupBy(['one', 'two', 'three'], 'length');
 ```
 
 ------------- 
+iterateeをそれぞれの値に対して回した結果を元に、collectionを分割します。
+もしiterateeが関数名だった場合、それぞれの値に対してその関数名を実行します。（例ででているlengthのように）
+
 
 ###[underscore.groupBy](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L408)
 
@@ -42,8 +45,12 @@ _.groupBy(['one', 'two', 'three'], 'length');
   });
 ```
 
+group関数に関数を渡している。
+resultにkeyが存在した場合result[key]にvalueを、そうでない場合にはresult[key]を[value]に置き換える。
 
-groupは以下
+
+
+group関数は以下
 
 ```javascript
 // An internal function used for aggregate "group by" operations.
@@ -59,3 +66,9 @@ groupは以下
     };
   };
 ```
+
+結果用のobjectを生成する。
+iterateが関数かどうかを判定し、
+_.eachを用いて、引数に対してiterateeを回した結果をkeyに保存する。
+それらをgroupByから受け取ったbehaviorに渡して実行する。
+behaviorでは、resultにkey:valueで格納し、それをresultとして返却する。
