@@ -11,7 +11,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 ##groupByとは
 
 
-###[underscorejs.orgのmax](http://underscorejs.org/#groupBy)
+###[underscorejs.orgのgroupBy](http://underscorejs.org/#groupBy)
 
 こんな説明。
 >####_.groupBy(list, iteratee, [context]) 
