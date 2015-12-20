@@ -15,7 +15,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 こんな説明。
 >####_.countBy(list, iteratee, [context]) 
-Sorts a list into groups and returns a count for the number of objects in each group.
+>Sorts a list into groups and returns a count for the number of objects in each group.
 >Similar to groupBy, but instead of returning a list of values, returns a count for the number of values in that group.
 
 
@@ -29,7 +29,8 @@ _.countBy([1, 2, 3, 4, 5], function(num) {
 ```
 
 ------------- 
-
+listをソートし、listの中にobjectがいくつあるのかをカウントし、それを返す。
+groupByとにているが、groupByはlistの値を返すのに対して、countByはそれらの値がいくつあるのかを返す
 
 ###[underscore.countBy](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L418)
 
