@@ -34,6 +34,9 @@ _.indexBy(stooges, 'age');
 
 ------------- 
 
+listと、keyかproperty名が返されるiteratee関数を引数に、それぞれのアイテムがindexされた状態のオブジェクトが返される
+groupByに似ているけれど、groupByとちがってそれぞれのkeyはユニークじゃなければならない
+
 
 ###[underscore.indexBy](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L414)
 
