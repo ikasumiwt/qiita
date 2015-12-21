@@ -65,6 +65,7 @@ randがindexと同値ではない場合、shuffled[index]にshuffled[rand]を代
 
 
 ちなみに_.randomは以下。minとmaxの間の値をランダムに返される。
+最速のシャッフルといわれるのは、アルゴリズムが配列の個数N-1しか試行回数(オーダー)が　ないことからである
 
 (_.random)[https://github.com/jashkena
 s/underscore/blob/1.8.3/underscore.js#L1322]
