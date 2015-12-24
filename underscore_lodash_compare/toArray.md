@@ -27,6 +27,10 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 ------------- 
 
+listから配列を作成する（iterateできるものであれば）
+objectを配列にするのに便利な関数です
+
+
 ###[underscore.toArray](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L425)
 
 コード的にはこのあたり。
@@ -43,3 +47,9 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 
 ```
+
+objがない場合はからの配列を返す。
+objが配列の場合は、sliceを用いて配列を生成して返す（copyではない）
+objが連想配列(object)の場合は_.mapを用いてvalueの配列を生成して返す。
+それ以外の場合は_.valuesを用いて、その結果を返す。
+
