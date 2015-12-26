@@ -11,7 +11,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 ##partitionとは
 
 
-###[underscorejs.orgのsize](http://underscorejs.org/#partition)
+###[underscorejs.orgのpartition](http://underscorejs.org/#partition)
 
 こんな説明。
 >####_.partition(array, predicate) 
@@ -49,7 +49,10 @@ _.partition([0, 1, 2, 3, 4, 5], isOdd);
     return [pass, fail];
   };
 
-
-
 ```
+
+2つめの引数をcbに渡す。functionだった場合はそのまま利用する。
+分割する配列のpassとfailを宣言する。
+objに対して_.eachを利用し、objの値をpredicateに渡し、passとfailの配列に振り分ける。
+その後、passをfailをひとつの配列にまとめ、返す。
 
