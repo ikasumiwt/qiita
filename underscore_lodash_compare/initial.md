@@ -30,7 +30,9 @@ _.initial([5, 4, 3, 2, 1]);
 ```
 
 ------------- 
-
+配列に最後に入れられた値以外のすべてを返す。
+argumentsのobjectに対して特に有用です。
+nを渡すことによってうしろからn番目の要素までをreturnする要素から除外することができます。
 
 
 ###[underscore.initial](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L462)
@@ -48,3 +50,4 @@ _.initial([5, 4, 3, 2, 1]);
 
 ```
 
+(Array.prototype.slice)[https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/slice]を用いて、引数のarrayに対して、0番目から1 or n番目までの値をsliceして返す。
