@@ -28,7 +28,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 *valuesを除いたarrayのコピーを返す。
 
 
-###[underscore.where](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L514)
+###[underscore.without](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L514)
 コード的にはこのあたり。
 
 ```javascript
