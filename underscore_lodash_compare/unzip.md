@@ -8,14 +8,15 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##withoutとは
+##unzipとは
 
 
 ###[underscorejs.orgのunzip](http://underscorejs.org/#unzip)
 
 こんな説明。
 >####_.unzip(*arrays) 
-The opposite of zip. Given a number of arrays, returns a series of new arrays, the first of which contains all of the first elements in the input arrays, the second of which contains all of the second elements, and so on.
+>The opposite of zip.
+>Given a number of arrays, returns a series of new arrays, the first of which contains all of the first elements in the input arrays, the second of which contains all of the second elements, and so on.
 >Use with apply to pass in an array of arrays.
 
 ```javascript
@@ -25,6 +26,11 @@ _.unzip([['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]])
 
 ```
 ------------- 
+zipの反対。
+arrayの数を与える
+新しい配列のシリーズを返す
+最初の配列はarraysの
+
 
 ###[underscore.unzip](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L586)
 コード的にはこのあたり。
