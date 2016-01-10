@@ -27,9 +27,12 @@ _.unzip([['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]])
 ```
 ------------- 
 zipの反対。
-arrayの数を与える
-新しい配列のシリーズを返す
-最初の配列はarraysの
+
+arraysを与えると新しい配列のシリーズを返します。
+返される配列は、１つ目の配列はarraysで渡されたすべての配列の1つ目の要素で構成された配列になっていて、2つ目以降も同様です。
+
+
+配列のまとまった配列を渡して使います。
 
 
 ###[underscore.unzip](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L586)
