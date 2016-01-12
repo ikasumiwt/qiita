@@ -8,7 +8,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##withoutとは
+##zipとは
 
 
 ###[underscorejs.orgのzip](http://underscorejs.org/#zip)
