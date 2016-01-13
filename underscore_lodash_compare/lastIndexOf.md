@@ -71,6 +71,7 @@ _.lastIndexOf自体はcreateIndexFinderに値を渡しているのみ。(indexOf
   }
 ```
 _.lastIndexOfの場合はdirに-11、predocateFindに_.findLastIndexが入る。
+var dir=-1, predicateFind = _.lastIndexOf, sortedIndex = undefined;な状態で入る
 
 返されるのは関数で、array,item,idxの3つの引数を持つ関数を返す。
 
@@ -78,44 +79,40 @@ _.lastIndexOfの場合はdirに-11、predocateFindに_.findLastIndexが入る。
 
 
 ```javascript
-function(array, item, idx) {
-      var predicateFind = _.findIndex;
-      var sortedIndex = undefined;
+
+    return function(array, item, idx) {
+
       var i = 0, length = getLength(array);
       if (typeof idx == 'number') {
-            i = idx >= 0 ? idx : Math.max(idx + length, i);
-      } else if (sortedIndex && idx && length) {
-        idx = sortedIndex(array, item);
-        return array[idx] === item ? idx : -1;
+        length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
       }
       
       if (item !== item) {
-        idx = predicateFind(slice.call(array, i, length), _.isNaN);
+        idx = _.lastIndexOf(slice.call(array, i, length), _.isNaN);
         return idx >= 0 ? idx + i : -1;
       }
-      for (idx = i ; idx >= 0 && idx < length; idx += 1) {
+      for (idx = length - 1; idx >= 0 && idx < length; idx += -1) {
         if (array[idx] === item) return idx;
       }
       return -1;
     };
 ```
+
 for文用のiとarrayのlengthを格納した変数lengthを定義する。
+idxがnumberだった場合、dirは-1なので、
+length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
+に入る。
 
-idxがnumberだった場合、dirは1なので、
-i = idx >= 0 ? idx : Math.max(idx + length, i);
-のほうに入る。
-idxが存在し、1以上の場合はidxを、そうでない場合はidx+lengthとiの大きい方をiに代入する。
-
-idxがnumberではなく、sortedIndexが存在するかつidxが存在するかつlengthが存在する場合（ソート済みの場合）は
-array,itemを_.sortedIndexにかけた結果をidxに格納する。
-sortedIndexはarrayの中でitemの要素が来る最初の箇所を返すため、arrayのidx番目がitemと合致した場合はidxを返すとindexの箇所にあたる。
-
+idxが0以上の場合はMath.min(idx + 1, length) 
+そうでない場合はidx + length + 1;
+がlengthに代入される。(ここまでfor文で探査されることとなる)
 
 itemがitemじゃない場合（？）は
-arrayをi番目からlength番目までsliceし、それをisNaNがマッチするまで_.findIndexにかけ、マッチした箇所をidxに代入する。
+arrayをi番目からlength番目までsliceし、それをisNaNがマッチするまで_.findLastIndexにかけ、マッチした箇所をidxに代入する。
 idxが0以上だったら（マッチしてる箇所があったら）idx+iを、そうでない場合は-1を返す。
 
-それら全てに当てはまらなかった場合は、dir=1なので、idxにiを代入し、idxが0以上かつidxがlengthに達するまで、i++する。
+
+それら全てに当てはまらなかった場合は、dir=-1なので、idxにlength -1 を代入し、idxが0以上かつidxがlengthに達するまで、i--する。
 その中で、array[idx]がitemとマッチした場合はそのidxを返す。
 
 これらに全て合致しなかった場合は-1を返す。
