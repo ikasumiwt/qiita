@@ -31,10 +31,9 @@ _.sortedIndex(stooges, {name: 'larry', age: 50}, 'age');
 
 ```
 ------------- 
-arrayの中でvalueの値がある最初のindexの値を返します。
-もしvalueがarrayの中に存在しなかった場合は-1を返します。
-もし、indexOfを大きな配列で動かそうとした場合、事前にソート済みであればisSortedにtrueを与えいることによってより高速なバイナリサーチを利用できます。
-もしくはindexを与えたあとに、配列内で最初にマッチした値を見つけるために第三引数に数字を渡します（？）
+ソート済みのリストに対してvalueを挿入する際に、listに対してvalueが挿入されるべきindexの位置を決定するためにバイナリサーチを使います。
+もし、iteratee関数が渡されていたら、各valueの値のソートする際のランク付けに利用されます。（渡したvalueに対しても）
+iterateeはlengthのようなソートに使えるプロパティ名でも大丈夫です。
 
 
 ###[underscore.sortedIndex](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L632)
