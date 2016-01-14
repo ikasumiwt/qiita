@@ -54,3 +54,14 @@ iterateeはlengthのようなソートに使えるプロパティ名でも大丈
   };
 
 ```
+
+iterateeをcbを利用してiterateeに上書きする。
+第三引数が1なので、func.call(context, value);に入るため、iteratee(context,value)の形になる
+
+while文で回すためにlowとhighを宣言する。highはarrayのlength。
+low<highの間、
+バイナリサーチをする。変数midにlowとhighの中間お値を入れ、iterateeにarray[mid](中間の値)よりもvalueのほうが大きいかどうかを比較する。valueのほうが大きかった場合はlowにmid+1を、そうでない場合はhighをmidで上書きする。
+これをつづけ、low<highで亡くなったら、low（array[low]<value<array[high]となるindex）を返す。
+
+
+
