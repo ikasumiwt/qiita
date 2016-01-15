@@ -27,6 +27,8 @@ _.findIndex([4, 6, 7, 12], isPrime);
 
 ```
 ------------- 
+_.indexOfと似ている。predicateと一致する最初の箇所のindexを返却する。
+もしない場合は-1を返す。
 
 
 ###[underscore.findIndex](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L626)
@@ -59,3 +61,23 @@ createPredicateIndexFinderに1を渡しているのみ
   }
 ```
 
+
+dir=1なのでこうなる
+
+```javascript
+
+function(array, predicate, context) {
+  predicate = cb(predicate, context);
+  var length = getLength(array);
+  var index =  0 ;
+  for (; 0 < length; index++) {
+    if (predicate(array[index], index, array)) return index;
+  }
+  return -1;
+};
+
+```
+
+arrayのlength分だけforぶんを回す。
+predicateに合致した場合はindexを返す。
+for分を回しても返り値がなかった場合、-1を返す。
