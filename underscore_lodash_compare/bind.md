@@ -31,6 +31,7 @@ func();
 
 
 
+
 ###[underscore.bind](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L708)
 コード的にはこのあたり。
 
@@ -48,3 +49,9 @@ func();
     return bound;
   };
 ```
+
+[nativeBind(function.prototype.bind)](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)があるかつfunc.bindがそれだった場合、function.prototype.bindを利用する
+funcがfunctionじゃなかった場合、[TypeError](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/TypeError)を返す。
+そうでない場合、argsに第三引数以降を格納する。
+boundsに変え率に引数func,bound,contextとthis自体とargs.concatのargumentsをsliceしたものを返す新しい関数を格納しておく。
+その後、boundを返す。
