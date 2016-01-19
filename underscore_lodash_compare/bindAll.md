@@ -8,7 +8,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##とは
+##bindAllとは
 
 
 ###[underscorejs.orgのbindAll](http://underscorejs.org/#bindAll)
@@ -31,9 +31,12 @@ _.bindAll(buttonView, 'onClick', 'onHover');
 jQuery('#underscore_button').bind('click', buttonView.onClick);
 ```
 ------------- 
+methodNamesに指定されたいくつかのメソッドを、objectが呼び出された時にそのコンテキストで実行されるように、objectに対して紐付けます。
+イベントハンドラとして利用する際に、関数を紐付けるのにとても扱いやすいです。
+イベントハンドラとして利用しようとするには、バインドするのにとても使いやすいですが、それ以外の場合は無用に呼び出されるだけなので全然使い勝手が良くないです。
 methodNamesは必須です。
 
-###[underscore.](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L738)
+###[underscore.bindAll](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L738)
 コード的にはこのあたり。
 
 ```javascript
@@ -51,3 +54,7 @@ methodNamesは必須です。
   };
 
 ```
+
+第一引数のobj以外のargumentsの長さを求めてlengthに入れておく。
+lengthが1以下だった場合エラーを返す（methodNameがないことになるので）
+1以上の場合、_.bindを用いてobjにバインドしていく。その後、バインドされたobjを返却する。
