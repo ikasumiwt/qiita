@@ -90,6 +90,7 @@ callingContextがboundFuncのインスタンスじゃない場合はsourceFunc�
 インスタンスの場合は変数selfにbaseCreateしたものを代入する。
 resultにsourceFuncをapplyしたものを作り、resultがobjectだったらそれを返し、そうじゃない場合はself自体を返す。
 
+
 [baseCreate](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L116)は以下
 
 ```javascript
@@ -104,5 +105,7 @@ resultにsourceFuncをapplyしたものを作り、resultがobjectだったら�
   };
 ```
 
+
 baseCreateはprototypeがObjectでなかったら{}を返却し、nativeCreateが存在する場合はnativeCreateで返す（nativeCreate = Object.create;）
+
 それらもない場合はCtor.protoprtpeに代入し、Ctorをnewし、Ctor.prototypeをnullにしたあとにresultを返す
