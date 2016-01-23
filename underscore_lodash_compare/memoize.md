@@ -1,4 +1,4 @@
-underscoreコードリーディング（memorize）
+underscoreコードリーディング（memoize）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
