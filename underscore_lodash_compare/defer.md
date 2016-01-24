@@ -8,7 +8,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##とは
+##deferとは
 
 
 ###[underscorejs.orgのdefer](http://underscorejs.org/#defer)
@@ -26,6 +26,10 @@ _.defer(function(){ alert('deferred'); });
 
 ```
 ------------- 
+
+0の遅延でsetTimeoutを利用するのと同様で、現在のコールスタックがクリアされるまで関数の呼び出しを遅延させます。
+高等な計算をする場合や、大量のhtmlレンダリングをUIスレッドのupdateをブロックせずに行う場合に使いやすいです。
+もしargumentsを渡した場合、functionが呼び出される際に受け渡されます
 
 
 ###[underscore.](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L772)
