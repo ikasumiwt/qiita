@@ -8,7 +8,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##とは
+##throttleとは
 
 
 ###[underscorejs.orgのthrottle](http://underscorejs.org/#throttle)
@@ -19,8 +19,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 >Useful for rate-limiting events that occur faster than you can keep up with.
 
 >By default, throttle will execute the function as soon as you call it for the first time, and, if you call it again any number of times during the wait period, as soon as that period is over. 
->If you'd like to disable the leading-edge call, pass {leading: false}, and if you'd like to disable the execution on the trailing-edge, pass 
-{trailing: false}.
+>If you'd like to disable the leading-edge call, pass {leading: false}, and if you'd like to disable the execution on the trailing-edge, pass {trailing: false}.
 
 ```javascript
 
@@ -29,7 +28,10 @@ $(window).scroll(throttled);
 
 ```
 ------------- 
-
+繰り返し関数が呼び出された時、生成されるときやnewが返されるとき、渡された関数のバージョンを絞り、毎回waitミリ秒ごとに一度だけ元の関数をコールするようにします。
+ついていくよりも発生するほうが早い？イベントのレートを制限するときに便利です
+デフォルトでは、throttleは最初の時は関数を渡された瞬間に実行しますが、もし2回以上waitミリセカンド以内に呼び出されたときには、その時間を待ってからすぐに実行します。
+もしleading-edgeを呼ぶのをやめたいときは{leading: false}を、trailing-edgeを呼ぶのをやめたいときは{trailing: false}.をオプションで渡してください
 
 ###[underscore.throttle](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L776)
 コード的にはこのあたり。
