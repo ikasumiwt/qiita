@@ -73,4 +73,22 @@ $(window).scroll(throttled);
       return result;
     };
 ```
+func, wait, optionsを引数に持つ。
+context, args, resultをundefinedで、timeout = nullでpreviousに0を格納して宣言する。optionsが存在しない場合は{}とする
+laterに関数を代入する。内容は以下。
+options.leadingがfalseだった場合は0,そうでない場合は_.now()をpreviousに格納し、timeoutにnullを格納する、
+resultにfunc.applyをする。
+timeoutがfalseだった場合、contextとargsをnullにする。
+返り値にfunctionを用意する。
+nowに_.nowの結果を代入する。
+previousが存在せず、options.leadingがfalseだった場合、previousにnowを代入する。
 
+remainingにwaitから(now - previos)を引いたものを代入する。
+contextにthisを、argsにargumentsを代入する。
+remainingが負の数で、かつremainingがwaitを超えている場合、timeoutが存在しなければ[clearTimeout](https://developer.mozilla.org/ja/docs/Web/API/WindowTimers/clearTimeout)で遅延を解除し、timeoutをnullにする。
+previousにnowを代入する。
+resultにfunc.applyした結果を格納する。
+timeoutが存在しない場合、contextとargsをnullにする。
+もし、timeoutが存在せず、options.trailingがfalseじゃなかったバア愛、timeoutにsetTimeout(later,remaining)を代入する。
+
+resultを返却する。
