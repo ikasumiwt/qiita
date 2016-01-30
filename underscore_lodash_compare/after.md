@@ -26,6 +26,8 @@ _.each(notes, function(note) {
 // renderNotes is run once, after all notes have saved
 ```
 ------------- 
+count回数呼ばれたあとに初めて実行されるような関数を生成します。
+非同期実行をいくつか行った際に、すべてが同期されたことが確実になってから行いたい場合に使いやすいです。
 
 
 ###[underscore.](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L877)
@@ -43,3 +45,4 @@ _.each(notes, function(note) {
 
 ```
 
+timesを前置デクリメントし、1未満になったらfuncを実行する
