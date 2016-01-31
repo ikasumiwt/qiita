@@ -26,7 +26,8 @@ monthlyMeeting();
 // the result of any subsequent calls is the same as the second call
 ```
 ------------- 
-
+count回数より多く呼ぶことができない関数を生成します。
+最後に呼ばれた関数の結果を覚えておき、count回数になるまでその関数の結果がが返されます。
 
 ###[underscore.](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L885)
 コード的にはこのあたり。
@@ -44,3 +45,7 @@ monthlyMeeting();
     };
   };
 ```
+
+timesを前置デクリメントし、0以上であればmemoにfuncを実行した結果を入れ返り値にする。
+もしtimesが1以下になった場合にはfuncにnullを代入し、次回以降よばれても利用できないようにする。
+
