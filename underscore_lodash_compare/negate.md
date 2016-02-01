@@ -38,3 +38,5 @@ predicate関数の否定されたバージョンを新しく生成して返す�
     };
   };
 ```
+
+返り値は関数で、predicateにthisとargumentsを私、その否定として返す
