@@ -8,22 +8,33 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##とは
+##negateとは
 
 
-###[underscorejs.orgの](http://underscorejs.org/#)
+###[underscorejs.orgのnegate](http://underscorejs.org/#nengate)
 
 こんな説明。
->####_
+>####_.negate(predicate) 
+Returns a new negated version of the predicate function.
+
 
 ```javascript
+var isFalsy = _.negate(Boolean);
+_.find([-2, -1, 0, 1, 2], isFalsy);
+=> 0
 
 ```
 ------------- 
 
 
-###[underscore.](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L675)
+###[underscore.negate](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L856)
 コード的にはこのあたり。
 
 ```javascript
+  // Returns a negated version of the passed-in predicate.
+  _.negate = function(predicate) {
+    return function() {
+      return !predicate.apply(this, arguments);
+    };
+  };
 ```
