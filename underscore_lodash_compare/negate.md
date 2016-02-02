@@ -25,7 +25,7 @@ _.find([-2, -1, 0, 1, 2], isFalsy);
 
 ```
 ------------- 
-predicate関数の否定されたバージョンを新しく生成して返す。
+predicate関数の否定されたバージョンを新しく生成して返します。
 
 ###[underscore.negate](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L856)
 コード的にはこのあたり。
