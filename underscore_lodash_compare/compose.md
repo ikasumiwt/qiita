@@ -28,6 +28,8 @@ welcome('moe');
 
 ```
 ------------- 
+それぞれの関数*functionsに書かれたそれぞれの関数の値を返し続けた結果の、関数のリストで構成された値を返す
+数学的に言うとf,g,hの関数が合った場合にf(g(h()))の形で表します
 
 
 ###[underscore.compose](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L863)
@@ -47,3 +49,10 @@ welcome('moe');
     };
   };
 ```
+
+argumentsを変数argsに格納する。
+startにargsの長さ-1をいれる。
+関数を返す。返す関数は以下の関数。
+resultにargsの一番最後に格納されている関数をapplyした結果を入れる。引数はないので、composeされた関数が実行されたときの引数はargumentsにある。
+iをデクリメントしながら、resultにargs[i]にresultを与えた結果を代入し続ける。iが-1になったら終わる。
+実行後、resultを返す。
