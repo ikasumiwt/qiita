@@ -8,7 +8,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##keysとは
+##allKeysとは
 
 
 ###[underscorejs.orgのallKeys](http://underscorejs.org/#allKeys)
@@ -30,7 +30,7 @@ _.allKeys(new Stooge("Moe"));
 
 ```
 ------------- 
-
+すべてのプロパティの名前を返します
 
 ###[underscore.allKeys](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L938)
 コード的にはこのあたり。
