@@ -44,7 +44,7 @@ objectをkey,valueのペアのリストに変換します。
 keysにobjを_.keysに入れた結果を格納する。
 keysの長さをlengthに格納する。
 lengthの長さ分だけarrayを生成し、pairsに入れる。
-index=0からlengthの長さだけfor文を回す
+index=0からlengthの長さだけfor文を回す。
 pairsのi番目に [keys[i], obj[keys[i]]]を入れる。
 その後、pairsを返す。
 
