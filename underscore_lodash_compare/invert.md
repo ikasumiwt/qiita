@@ -1,4 +1,4 @@
-underscoreコードリーディング（keys）
+underscoreコードリーディング（invert）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
@@ -25,9 +25,10 @@ _.invert({Moe: "Moses", Larry: "Louis", Curly: "Jerome"});
 
 ```
 ------------- 
+keyがvalueでvalueがkeyになった形のオブジェクトのコピーを返します。
+これを使うためには、objectのすべてのvalueがユニークでシリアライズされた文字列である必要があります。
 
-
-###[underscore.compose](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L863)
+###[underscore.invert](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L986)
 コード的にはこのあたり。
 
 ```javascript
@@ -41,3 +42,10 @@ _.invert({Moe: "Moses", Larry: "Louis", Curly: "Jerome"});
     return result;
   };
 ```
+
+引数はobj
+返り値用のresultをobjectとして宣言。
+変数keysに_.keysを用いてobjのkeyの配列を格納する。
+for文を用いてi=0からkeysのlengthまで回す。
+resultのobj[keys[i]]にkeys[i]を格納する。
+その後、resultを返す。
