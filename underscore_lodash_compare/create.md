@@ -41,8 +41,12 @@ propsに付け加えられたものを独自のプロパティとしてprototype
 
 ```
 
+resultにbaseCreateにprototypeを渡した結果を格納する。
+propsが存在する場合、_.extendOwnを用いてresultにpropsを追加する。
+resultを返す。
 
-[underscore.baseCreate](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L115)は以下
+
+利用している[underscore.baseCreate](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L115)は以下
 
 ```javascript
   // An internal function for creating a new object that inherits from another.
@@ -56,33 +60,11 @@ propsに付け加えられたものを独自のプロパティとしてprototype
   };
 ```
 
+prototypeが_.isObjectで合致しなかった場合、空のオブジェクトを返す。
+nativeCreateが存在する場合、nativeCreateを用いた結果を返す。
 
-[underscore.extendOwn](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1008)
+2つとも合致しなかった場合、Ctorのprototypeにprototypeを追加する。
+resultにCtorをnewしたものを格納する。
+Ctorのprototypeをnullにする。
+resultを返す。
 
-```javascript
-  // Assigns a given object with all the own properties in the passed-in object(s)
-  // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
-  _.extendOwn = _.assign = createAssigner(_.keys);
-```
-
-[createAssigner](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L97)は以下
-
-```javascript
-  // An internal function for creating assigner functions.
-  var createAssigner = function(keysFunc, undefinedOnly) {
-    return function(obj) {
-      var length = arguments.length;
-      if (length < 2 || obj == null) return obj;
-      for (var index = 1; index < length; index++) {
-        var source = arguments[index],
-            keys = keysFunc(source),
-            l = keys.length;
-        for (var i = 0; i < l; i++) {
-          var key = keys[i];
-          if (!undefinedOnly || obj[key] === void 0) obj[key] = source[key];
-        }
-      }
-      return obj;
-    };
-  };
-```
