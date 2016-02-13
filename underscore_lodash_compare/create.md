@@ -23,7 +23,8 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 var moe = _.create(Stooge.prototype, {name: "Moe"});
 ```
 ------------- 
-
+propsに付け加えられたものを独自のプロパティとしてprototypeに持つ、新しいオブジェクトを生成します
+基本的にObject.createだけれども、すべてのプロパティのディスクリプタのジャズ？は存在しません。
 
 ###[underscore.create](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1058)
 コード的にはこのあたり。
