@@ -37,6 +37,9 @@ _.extend({name: 'moe'}, {age: 50});
 
 ```
 
+createAssignerに_.allKeysを渡している。
+
+
 [createAssigner](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L98)は以下
 ```javascript
   // An internal function for creating assigner functions.
@@ -57,3 +60,8 @@ _.extend({name: 'moe'}, {age: 50});
     };
   };
 ```
+
+返り値は関数。引数はobj。
+lengthにargumentsのlengthを格納する。
+
+
