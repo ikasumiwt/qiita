@@ -27,7 +27,7 @@ _.functions(_);
 
 objectにあるすべてのメソッドの名前（言い換えると、これは、objectのプロパティのすべての関数の名前）をソート済みのリストにして返します。
 
-###[underscore.function](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L995)
+###[underscore.functions](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L995)
 コード的にはこのあたり。
 
 ```javascript
