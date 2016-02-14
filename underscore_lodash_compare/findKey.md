@@ -21,6 +21,8 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 ------------- 
 
+_.findIndexに似ているが、objectの中のkeyを探すためのものである。
+predicateのテストに当てはまるkeyもしくはundefinedを返す。
 
 
 ###[underscore.findKey](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1012)
@@ -38,3 +40,10 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
   };
 ```
 
+
+predicateにcbの結果を格納する。
+keysを_.keysを用いてkeyの配列を格納し、変数keyも宣言する。
+for分を用いてkeysの中を走査する。
+keyにkeysのi番目を入れる。
+predicateにobjのkeyに対応するvalueと、keyと、objを渡し、その返り値がtrueだった場合はkeyを返す。
+（合致しなければ何も返さない・・・）
