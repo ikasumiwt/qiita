@@ -26,6 +26,10 @@ _.extend({name: 'moe'}, {age: 50});
 
 ------------- 
 
+sourceのobjectsのプロパティををdestinationのオブジェクトと一緒に
+sourceのオブジェクトたち
+プロパティをすべてコピーします
+destinationのオブジェクトに
 
 
 ###[underscore.extend](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1005)
