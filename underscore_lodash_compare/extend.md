@@ -26,10 +26,8 @@ _.extend({name: 'moe'}, {age: 50});
 
 ------------- 
 
-sourceのobjectsのプロパティををdestinationのオブジェクトと一緒に
-sourceのオブジェクトたち
-プロパティをすべてコピーします
-destinationのオブジェクトに
+sourceのobjectsのプロパティをdestinationのオブジェクト（のプロパティ）に上書きコピーして、destinationのオブジェクトを返します。
+前にあったargumentsと同じ名前の場合、最後のsourceで上書きされる仕様です。
 
 
 ###[underscore.extend](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1005)
@@ -67,5 +65,15 @@ createAssignerに_.allKeysを渡している。
 
 返り値は関数。引数はobj。
 lengthにargumentsのlengthを格納する。
+lengthが2以下またはobjがnullだった場合、objを返す（追加するものがない/objがない）
+for文で1からlengthまで回す。
+index番目のargumentsをsourceに格納する。
+keysにkeysFunc(ここだとallKeys)にsourceを渡す（例だと{age: 50}）
+lにkeysのlengthを渡す
+for文でi=0からlまで回す
+keysのi番目をkeyに入れる。
+undefinedOnlyが存在しないかつobjのkey番目がvoid 0ではなければ、objのkey番目にsourceのkey番目（例だとage:50の50)を代入する
+
+for文の処理が全て終わったあとにobjを返す。
 
 
