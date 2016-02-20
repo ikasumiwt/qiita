@@ -38,4 +38,6 @@ defaults objectsに指定されている値で、オブジェクトのundefined�
   _.defaults = createAssigner(_.allKeys, true);
 ```
 
+
 createAssignerに_.allKeysとtrueを渡す。
+[createAssigner](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L856)は[_.extend](http://qiita.com/ikasumi_wt/items/7fda8945b8912e1405e6)で説明したとおり、objectを引数にとる関数で、_.allKeysの結果を用いて、obj[key] === void 0なところに値を埋める。
