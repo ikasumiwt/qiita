@@ -40,3 +40,6 @@ _.clone({name: 'moe'});
   };
 
 ```
+
+objが_.isObjectに引っかからなかった場合はobjを返す。
+objが_.isArrayに引っかった場合、sliceをしたものを返す。違う場合、_.extendを用いて空の配列に対してobjをextendすることによってコピーされたobjを返すことができる。
