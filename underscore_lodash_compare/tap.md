@@ -15,7 +15,8 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 こんな説明。
 >####_.tap(object, interceptor) 
-Invokes interceptor with the object, and then returns object. The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
+>Invokes interceptor with the object, and then returns object.
+>The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
 
 
@@ -30,7 +31,8 @@ _.chain([1,2,3,200])
 ```
 
 ------------- 
-
+interceptorをobjectとともに呼び出し、その後objectを返します。
+コレの主な利用手段としては、メソッドチェーン内に入り込み、チェーン内での間の結果の操作を行うことです。
 
 
 ###[underscore.tap](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1073)
@@ -46,3 +48,7 @@ _.chain([1,2,3,200])
   };
 
 ```
+
+
+interceptorにobjectを渡す。
+その後、objectを返す。
