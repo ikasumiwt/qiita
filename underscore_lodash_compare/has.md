@@ -15,7 +15,8 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 こんな説明。
 >####_.has(object, key) 
-Does the object contain the given key? Identical to object.hasOwnProperty(key), but uses a safe reference to the hasOwnProperty function, in case it's been overridden accidentally.
+>Does the object contain the given key? 
+>Identical to object.hasOwnProperty(key), but uses a safe reference to the hasOwnProperty function, in case it's been overridden accidentally.
 
 
 ```javascript
@@ -24,7 +25,8 @@ _.has({a: 1, b: 2, c: 3}, "b");
 ```
 
 ------------- 
-
+objectが与えられたkeyを持っているかどうかをhasOwnpropertyを用いて調べませんか？
+突発的にhasOwnPropertyがオーバーライドされてしまったりした場合でも使える安全な参照をした形で提供します。
 
 
 ###[underscore.has](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1265)
@@ -38,3 +40,5 @@ _.has({a: 1, b: 2, c: 3}, "b");
   };
 
 ```
+
+underscore内のhasOwnPropertyをcallして返す。
