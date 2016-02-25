@@ -14,9 +14,15 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 ###[underscorejs.orgのproperty](http://underscorejs.org/#property)
 
 こんな説明。
->####
+>####_.property(key) 
+>Returns a function that will itself return the key property of any passed-in object.
+
+
 
 ```javascript
+var stooge = {name: 'moe'};
+'moe' === _.property('name')(stooge);
+=> true
 ```
 
 ------------- 
@@ -26,6 +32,17 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 コード的にはこのあたり。
 
 ```javascript
+  _.property = property;
 
 ```
 
+[property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L125)はこちら
+
+```javascript
+  var property = function(key) {
+    return function(obj) {
+      return obj == null ? void 0 : obj[key];
+    };
+  };
+
+```
