@@ -27,6 +27,7 @@ var stooge = {name: 'moe'};
 
 ------------- 
 
+keyがobjectのpropertyかどうかのチェックを返却する関数を返します。
 
 ###[underscore.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1305)
 コード的にはこのあたり。
@@ -46,3 +47,5 @@ var stooge = {name: 'moe'};
   };
 
 ```
+
+返り値は関数。objを引数に、objが存在しなければnull,そうでなければ[key]を返す。
