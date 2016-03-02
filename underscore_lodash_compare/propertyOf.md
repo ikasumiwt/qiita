@@ -41,3 +41,4 @@ _.propertyOf(stooge)('name');
 
 ```
 
+objがnullの場合は空の関数を、nullではない場合はkeyを引数にobj.keyを返す関数を返す。
