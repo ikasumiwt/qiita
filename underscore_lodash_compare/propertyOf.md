@@ -26,7 +26,8 @@ _.propertyOf(stooge)('name');
 ```
 
 ------------- 
-
+_.propertyの逆。
+objectを渡すと、propertyを渡すとそのvalueを返す関数を返す。
 
 ###[underscore.propertyOf](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1297)
 コード的にはこのあたり。
