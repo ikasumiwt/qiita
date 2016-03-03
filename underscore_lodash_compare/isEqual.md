@@ -15,7 +15,7 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 こんな説明。
 >####_.isEqual(object, other) 
-Performs an optimized deep comparison between the two objects, to determine if they should be considered equal.
+>Performs an optimized deep comparison between the two objects, to determine if they should be considered equal.
 
 
 ```javascript
@@ -42,7 +42,9 @@ _.isEqual(stooge, clone);
 
 ```
 
-[eq](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1094)
+a,bを引数にeqを実行した結果を返す。
+
+[eq](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1094)は以下
 
 ```javascript
  // Internal recursive comparison function for `isEqual`.
