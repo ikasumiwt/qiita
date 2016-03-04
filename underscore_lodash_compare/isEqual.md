@@ -29,7 +29,7 @@ _.isEqual(stooge, clone);
 ```
 
 ------------- 
-
+2つのオブジェクトが等価であるかを決定するため、2つのobjectをdeepに比較します。
 
 ###[underscore.isEqual](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1187)
 コード的にはこのあたり。
@@ -140,3 +140,38 @@ a,bを引数にeqを実行した結果を返す。
     return true;
   };
 ```
+
+
+a===bだった場合、aが0ではない場合か(aが0だった場合は)1/a が1/bと一致した場合はtrueを返す。
+そうでない場合、aがnullまたはbがnullの場合はaとbを厳密等価演算子で比較する。
+そうでない場合、 aが_のinstanceだった場合はaにa._wrappedを、bが_のinstanceだった場合はbにb._wrappedを代入する
+    
+（[XXX._wrapped](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L38)は以下のようにunderscoreに渡されたobjが格納されている）
+```javascript
+  // Create a safe reference to the Underscore object for use below.
+  var _ = function(obj) {
+    if (obj instanceof _) return obj;
+    if (!(this instanceof _)) return new _(obj);
+    this._wrapped = obj;
+  };
+```
+
+classNameにaをtoStringした結果を入れる。
+classNameがbをtoStringした結果と一致しない場合はfalseを返す。
+classNameをswitch文で分岐させる。条件は以下。
+[object RegExp]か[object String]だった場合、aとbを文字列にしたものを厳密比較した結果を返す。
+[object Number]だった場合、 (NaN対策のため)+a !== +aだった場合は +b !== +bの結果を返す（aがNaNのため、bがNaNかどうかで判定する?）
+そうではない場合、 +aが0だった場合、 1/ +a が 1/bと一致した結果を返し、-出ない場合は+aと+bを厳密等価比較し返す
+[object Date]か[object Boolean]のとき、+a と +b で厳密等価比較して返す。
+
+それらに当てはまらない場合
+classNameが[object Array]と一致するかどうかをareArraysに代入する。
+areArrayがfalseだった場合
+typeof でaかbがobjectではなかった場合はfalseを返す。
+aCtorにa.contructor,bCtorにb.constructorを代入する。
+aCtorとbCtorが一致しないかつ 
+_.isFunctionにaCtorやbCtorを入れた結果がfalseかつaCtorやbCtorがそれぞれのインスタンスかどうかがfalseだった場合かつ
+aとbにconstructorが存在する場合
+は
+falseを返す。
+
