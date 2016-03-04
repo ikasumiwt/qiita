@@ -175,3 +175,28 @@ aとbにconstructorが存在する場合
 は
 falseを返す。
 
+areArrayがtrueだった場合
+aStackにaStackもしくは空の配列、bStackにbStackもしくは空の配列を代入する
+（今回isEqualでは引数に指定されていないので両方とも空の配列）
+aStackのlengthをlengthに代入し、lengthが0以下になる前でwhile分を回す。
+while分は以下
+aStackの[length]番目がaと一致した場合、bStackのlength番目がbに一致するかの結果を返り値にする。
+
+while文でも当てはまらない場合
+aStackにaを、bStackにbをPushする。
+areArraysがtrueの場合
+lengthにa.lengthを代入する。
+lengthとb.lengthが一致しない場合falseを返す。
+そうではない場合、lengthをデクリメントしながらwhile分を回す。
+その中でeqを再帰的に呼び、if (!eq(a[length], b[length], aStack, bStack))の結果がfalseの場合はfalseを返す。
+areArrayがtrueでない場合は
+keysに_.keys(a)を代入し、keyを宣言する。
+lengthにkeysのlengthを代入する。
+_.keys(b)のlengthとaのlengthが一致しない場合はfalseを返す。
+一致した場合はwhile文でlengthをデクリメントしながら回す。
+keyにkeysのlength番目を代入する。
+bがkeyを持っているかつ、eq(a[key], b[key], aStack, bStack)がfalseの場合はfalseを返す。
+
+これら全てに一致しない場合は
+aStackとbStackをpop()し、trueを返す。
+
