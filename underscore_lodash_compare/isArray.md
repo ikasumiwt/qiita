@@ -1,4 +1,4 @@
-underscoreコードリーディング（property）
+underscoreコードリーディング（isArray）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
@@ -8,24 +8,36 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##propertyとは
+##isArrayとは
 
 
-###[underscorejs.orgのproperty](http://underscorejs.org/#property)
+###[underscorejs.orgのisArray](http://underscorejs.org/#isArray)
 
 こんな説明。
->####
+>####_.isArray(object) 
+Returns true if object is an Array.
 
 ```javascript
+(function(){ return _.isArray(arguments); })();
+=> false
+_.isArray([1,2,3]);
+=> true
+
 ```
 
 ------------- 
 
 
-###[underscore.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1305)
+###[underscore.isArray](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1205)
 コード的にはこのあたり。
 
 ```javascript
+  // Is a given value an array?
+  // Delegates to ECMA5's native Array.isArray
+  _.isArray = nativeIsArray || function(obj) {
+    return toString.call(obj) === '[object Array]';
+  };
 
 ```
 
+Array.isArrayが存在する場合はそちらを、存在しない場合はobjを引数にtoString.call(obj)が[object Array]の文字列に一致するかどうかを返す。
