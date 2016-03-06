@@ -27,7 +27,7 @@ _.isElement(jQuery('body')[0]);
 ------------- 
 objectがDOMの要素だった場合trueを返します。
 
-###[underscore.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1200)
+###[underscore.isElement](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1200)
 コード的にはこのあたり。
 
 ```javascript
