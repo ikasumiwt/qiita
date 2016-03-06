@@ -26,6 +26,7 @@ _.isArray([1,2,3]);
 ```
 
 ------------- 
+objectがArrayならtrueを返します。
 
 
 ###[underscore.isArray](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1205)
