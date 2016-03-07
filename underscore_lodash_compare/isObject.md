@@ -27,7 +27,8 @@ _.isObject(1);
 ```
 
 ------------- 
-
+valueがobjectだった場合にtrueを返します。
+Javascriptの配列や関数もobjectとして扱われますが、stringやnumberは扱われません。
 
 ###[underscore.isObject](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1211)
 コード的にはこのあたり。
@@ -40,3 +41,4 @@ _.isObject(1);
   };
 ```
 
+type === functionもしくはtypeがobjectで、かつobjの2重否定がtrueの場合のみtrueを返す。
