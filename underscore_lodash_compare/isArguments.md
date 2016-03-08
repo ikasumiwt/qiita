@@ -29,7 +29,7 @@ _.isArguments([1,2,3]);
 ------------- 
 objectがArguments objectだった場合にtrueを返します。
 
-###[underscore.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1224)
+###[underscore.isArguments](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1224)
 コード的にはこのあたり。
 
 ```javascript
