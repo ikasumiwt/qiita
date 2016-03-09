@@ -38,4 +38,8 @@ objectがFunctionの場合trueを返します。
     };
   }
 ```
+/./がfunctionではないカツtypeof Int8Arrayがobjectではない場合（IE11とSafari8じゃない場合？）
+_.isFunctionを以下のように宣言する。
 
+引数はobj
+typeof objが'function'の文字列と一致した場合の結果またはfalseを返す。
