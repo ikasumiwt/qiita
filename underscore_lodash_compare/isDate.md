@@ -25,7 +25,7 @@ _.isDate(new Date());
 ------------- 
 objectがDateだった場合にtrueを返します
 
-###[underscore.isNumber](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1218)
+###[underscore.isDate](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1218)
 コード的にはこのあたり。
 
 ```javascript
