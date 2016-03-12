@@ -1,4 +1,4 @@
-underscoreコードリーディング（isNumber）
+underscoreコードリーディング（isDate）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
@@ -8,22 +8,22 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##isNumberとは
+##isDateとは
 
 
-###[underscorejs.orgのisNumber](http://underscorejs.org/#isNumber)
+###[underscorejs.orgのisDate](http://underscorejs.org/#isDate)
 
 こんな説明。
->####_.isNumber(object) 
-Returns true if object is a Number (including NaN).
+>####__.isDate(object) 
+Returns true if object is a Date.
 
 ```javascript
-_.isNumber(8.4 * 5);
+_.isDate(new Date());
 => true
 ```
 
 ------------- 
-objectがnumber(NaNを含む)だった場合にtrueを返します
+objectがDateだった場合にtrueを返します
 
 ###[underscore.isNumber](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1218)
 コード的にはこのあたり。
