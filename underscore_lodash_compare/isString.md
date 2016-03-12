@@ -1,4 +1,4 @@
-underscoreコードリーディング（property）
+underscoreコードリーディング（isString）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
