@@ -1,4 +1,4 @@
-underscoreコードリーディング（property）
+underscoreコードリーディング（constant）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
@@ -8,27 +8,36 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##propertyとは
+##constantとは
 
 
-###[underscorejs.orgのproperty](http://underscorejs.org/#property)
+###[underscorejs.orgのconstant](http://underscorejs.org/#constant)
 
 こんな説明。
->####
+>####_.constant(value) 
+>Creates a function that returns the same value that is used as the argument of _.constant.
+
 
 
 ```javascript
-
+var stooge = {name: 'moe'};
+stooge === _.constant(stooge)();
+=> true
 ```
 
 ------------- 
+_.constantのargumentに使われているvalueとおなじ値を返す関数を作成します。
 
-
-###[underscore.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1305)
+###[underscore.constant](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1286)
 コード的にはこのあたり。
 
 ```javascript
-
+  // Predicate-generating functions. Often useful outside of Underscore.
+  _.constant = function(value) {
+    return function() {
+      return value;
+    };
+  };
 
 ```
 
