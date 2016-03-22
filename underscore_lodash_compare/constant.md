@@ -41,3 +41,4 @@ _.constantのargumentに使われているvalueとおなじ値を返す関数を
 
 ```
 
+valueを返す関数を返り値として返す
