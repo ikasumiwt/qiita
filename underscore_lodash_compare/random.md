@@ -1,4 +1,4 @@
-underscoreコードリーディング（property）
+underscoreコードリーディング（random）
 
 underscoreに詳しくないので、勉強半分でソースコードを読む。
 
@@ -8,10 +8,10 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 [underscore.js(v1.8.3)](https://github.com/jashkenas/underscore/tree/1.8.3)
 
 
-##propertyとは
+##randomとは
 
 
-###[underscorejs.orgのproperty](http://underscorejs.org/#property)
+###[underscorejs.orgのrandom](http://underscorejs.org/#random)
 
 こんな説明。
 >####
@@ -24,11 +24,17 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 ------------- 
 
 
-###[underscore.property](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1305)
+###[underscore.random](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1321)
 コード的にはこのあたり。
 
 ```javascript
-
-
+  // Return a random integer between min and max (inclusive).
+  _.random = function(min, max) {
+    if (max == null) {
+      max = min;
+      min = 0;
+    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+  };
 ```
 
