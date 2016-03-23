@@ -46,3 +46,10 @@ _(3).times(function(n){ genie.grantWishNumber(n); });
 
 ```
 
+accumにnの個数分の空の配列を定義する。
+iterateeにoptimizeCbの結果を格納する。
+
+
+for文でi=0からnまで1ずつ回す。iterateeにiを代入し、結果をacuumのi番目に代入する。
+その後、accumを返す。
+
