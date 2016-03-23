@@ -27,7 +27,10 @@ _(3).times(function(n){ genie.grantWishNumber(n); });
 ```
 
 ------------- 
-
+与えられたiterateeをn回数繰り返し呼び出します。
+それぞれのiterateeは、indexのargumentと一緒に呼び出されます。
+返される値を元にarrayが作られます。
+注記：この例はメソッドチェーンを使っています。
 
 ###[underscore.times](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1313)
 コード的にはこのあたり。
