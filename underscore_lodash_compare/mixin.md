@@ -56,4 +56,22 @@ OOPのラッパーと同様に、{name:function}の形で定義されたハッ�
 _.eachを利用する。
 第一引数は_.functionsにobjを渡したもの、第二引数にnameを引数とした関数。
 この関数の中身は以下
+funcに_[name](obj[name])を代入する。
+_のprototype[name]に以下の関数を代入する。
+argsに[this._wrapped]を代入する。
+argsにargumentsをpushする。
+resultにthis,funcを渡した結果を返す。
+
+(resultは以下)[https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1484]
+
+```javascript
+  // Helper function to continue chaining intermediate results.
+  var result = function(instance, obj) {
+    return instance._chain ? _(obj).chain() : obj;
+  };
+```
+
+instance._chainの結果がtrueだった場合_(obj).chainの実行結果を、falseの場合はobjを返す。
+
+_chainは(_.chain)[https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1472]で定義されている
 
