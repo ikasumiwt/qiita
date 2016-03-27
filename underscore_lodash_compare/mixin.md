@@ -62,7 +62,7 @@ argsに[this._wrapped]を代入する。
 argsにargumentsをpushする。
 resultにthis,funcを渡した結果を返す。
 
-(resultは以下)[https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1484]
+[resultは以下](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1484)
 
 ```javascript
   // Helper function to continue chaining intermediate results.
@@ -73,5 +73,5 @@ resultにthis,funcを渡した結果を返す。
 
 instance._chainの結果がtrueだった場合_(obj).chainの実行結果を、falseの場合はobjを返す。
 
-_chainは(_.chain)[https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1472]で定義されている
+_chainは[_.chain](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1472)で定義されている
 
