@@ -41,9 +41,10 @@ _.iteratee('firstName');
 The following Underscore methods transform their predicates through _.iteratee: countBy, every, filter, find, findIndex, findKey, findLastIndex, groupBy, indexBy, map, mapObject, max, min, partition, reject, some, sortBy, sortedIndex, and uniq
 
 ------------- 
->Generates a callback that can be applied to each element in a collection. 
->_.iteratee supports a number of shorthand syntaxes for common callback use cases.
->Depending value's type _.iteratee will return:
+ 
+コレクションの中でそれぞれの要素に対して適用できるコールバックを生成します。
+_.iterateeは共通のコールバックのユースケースのために、簡略的なシンタックスをサポートします。
+_.iterateeは値の型に依存しています。
 
 
 次のUnderscoreのメソッドは_.iterateeを用いることによって変形されます。
