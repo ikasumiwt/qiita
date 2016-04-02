@@ -60,5 +60,5 @@ countBy, every, filter, find, findIndex, findKey, findLastIndex, groupBy, indexB
     return cb(value, context, Infinity);
   };
 ```
-引数はvalueとcontext
+引数はvalueとcontext。
 cbにvalue,context,Infinityを渡した結果を返す。
