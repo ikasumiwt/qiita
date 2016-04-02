@@ -27,7 +27,8 @@ _.uniqueId('contact_');
 ```
 
 ------------- 
-
+クライアントサイドのモデルやDOMで必要なグローバルなユニークIDを生成します。
+prefixが渡された場合、それをIDの前につけます
 
 ###[underscore.uniqueId](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1373)
 コード的にはこのあたり。
