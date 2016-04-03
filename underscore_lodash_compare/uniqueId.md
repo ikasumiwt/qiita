@@ -44,4 +44,4 @@ prefixが渡された場合、それをIDの前につけます
 ```
 idCounterを0で定義します。
 idをidCounterを前置インクリメントしたものをStringで代入します。
-prefixがある場合はprefix+idを、ない場合はidを返します。
+prefixがある場合はprefix+idを、ない場合はidのみを返します。
