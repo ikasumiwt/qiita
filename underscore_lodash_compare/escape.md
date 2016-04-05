@@ -24,7 +24,8 @@ _.escape('Curly, Larry & Moe');
 ```
 
 ------------- 
-
+HTMLに挿入するための文字列をエスケープします。
+エスケープするのは&, <, >, ", `, 'です。
 
 ###[underscore.escape](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1346)
 コード的にはこのあたり。
