@@ -64,7 +64,7 @@ stringに、stringがnullだった場合は空文字を、そうでない場合�
 
 escapeMapは以下。
 
-[underscore.escape](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1335)
+[underscore.escapeMap](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1335)
 
 
 ```javascript
