@@ -49,6 +49,21 @@ HTMLに挿入するための文字列をエスケープします。
 
 ```
 
+_.escapeはcreateEscaperにescapeMapを渡す関数である。
+createEscaperはmapを引数とする関数。内容は以下。
+escaperを定義する。引数はmatch。map[match]を返す。
+sourceに'(?:' + _.keys(map).join('|') + ')'を代入する。
+testRegexpにRegExpのsourceを渡したものを代入する。
+replaceRegepにRegExpにsource,'g'を渡したものを代入する。
+
+返り値は以下の処理をもつ関数。
+stringに、stringがnullだった場合は空文字を、そうでない場合はstring型にしたstringを代入する。
+関数の返り値はstringに対してtestRegexp.testした結果がtrueの場合はstring.replaceにreplaceRegexp,escaperを渡したもの、falseの場合はstringを返す。
+
+
+
+escapeMapは以下。
+
 [underscore.escape](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1335)
 
 
@@ -64,16 +79,5 @@ HTMLに挿入するための文字列をエスケープします。
   };
 ```
 
+escapeMapは&,<,>,",',`の各文字と、特殊文字の対応表。
 
-[underscore.escape](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1381)
-
-```javascript
-  // By default, Underscore uses ERB-style template delimiters, change the
-  // following template settings to use alternative delimiters.
-  _.templateSettings = {
-    evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g,
-    escape      : /<%-([\s\S]+?)%>/g
-  };
-
-```
