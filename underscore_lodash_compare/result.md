@@ -48,6 +48,9 @@ _.result(object, 'meat', 'ham');
     return _.isFunction(value) ? value.call(object) : value;
   };
 
-
 ```
 
+引数はobject,property,fallbackの３つ。
+変数valueにobjectがnullの場合はvoid 0(undefined)を、そうでない場合はobject[property]を入れる。
+valueが void 0だった場合、valueにfallbackを代入する。
+_.isFunctionにvalueを渡した結果が関数だった場合、objectを渡してvalueをcallしたものを返し、そうでない場合はvalueを返す。
