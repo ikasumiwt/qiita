@@ -31,6 +31,9 @@ _.result(object, 'meat', 'ham');
 ```
 
 ------------- 
+valueが関数の名前だった場合、その関数を利用してその結果を返します。そうでない場合、それを返します。
+デフォルトの値が与えられていて、そのプロパティが存在しないもしくはundefinedだった場合は、デフォルトの値を返します。
+defaultValueが関数なら、それを返します(?)
 
 
 ###[underscore.result](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1363)
