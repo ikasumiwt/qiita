@@ -15,7 +15,8 @@ underscoreに詳しくないので、勉強半分でソースコードを読む�
 
 こんな説明。
 >####_.now() 
-Returns an integer timestamp for the current time, using the fastest method available in the runtime. Useful for implementing timing/animation functions.
+> Returns an integer timestamp for the current time, using the fastest method available in the runtime. 
+> Useful for implementing timing/animation functions.
 
 
 ```javascript
@@ -24,6 +25,8 @@ _.now();
 ```
 
 ------------- 
+ランタイム上で利用できるもっとも早い方法を利用し、現在時刻をintegerのタイムスタンプを返します。
+タイミングやアニメーションの関数を実行する時に役立ちます
 
 
 ###[underscore.now](https://github.com/jashkenas/underscore/blob/1.8.3/underscore.js#L1330)
@@ -37,3 +40,5 @@ _.now();
 
 
 ```
+
+Date.nowを用いるか、存在しない場合はDateをnewしたものからgetTime関数を用いて返す。
