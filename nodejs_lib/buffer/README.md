@@ -355,9 +355,12 @@ Buffer.fromはマッピング関数持ってないです
 #### BufferとES6イテレーション
 (Buffers and ES6 iteration)
 
-Buffer instances can be iterated over using the ECMAScript 2015 (ES6) for..of syntax.
+Bufferインスタンスは イテレートする際にfor..ofのシンタックスとかを使えます。
 
-ex)
+追記：
+buf.values(),buf.keys(),buf.entries()のメソッドも使えます
+
+ex) src/iterate.js
 ```
 const buf = Buffer.from([1, 2, 3]);
 
@@ -368,6 +371,167 @@ const buf = Buffer.from([1, 2, 3]);
 for (var b of buf) {
   console.log(b);
 }
+
+console.log('-- buf.values');
+// values
+for(var a of buf.values()){
+  console.log(a);
+}
+
+console.log('-- buf.values');
+
+for(var a of buf.values()){
+  console.log(a)
+}
+console.log('-- buf.keys');
+for(var a of buf.keys()){
+  console.log(a)
+}
+
+console.log('-- buf.entries');
+
+for(var a of buf.entries()){
+  console.log(a)
+}
+
+/*
+prints:
+1
+2
+3
+-- buf.values
+1
+2
+3
+-- buf.values
+1
+2
+3
+-- buf.keys
+0
+1
+2
+-- buf.entries
+[ 0, 1 ]
+[ 1, 2 ]
+[ 2, 3 ]
+*/
 ```
 
 #### Class: Buffer
+
+Bufferクラスはバイナリデータを直接扱うのでグローバルです。
+色んな方法で構築できます。
+
+- new Buffer(array)
+- new Buffer(buffer)
+- new Buffer(arrayBuffer[, byteOffset [, length]])
+- new Buffer(size)
+- new Buffer(string[, encoding])
+
+->depricatedなので Buffer.from()を使いましょう
+
+- Class Method: Buffer.alloc(size[, fill[, encoding]])
+
+v5.10.0から追加
+
+```
+const buf = Buffer.alloc(5);
+
+// Prints: <Buffer 00 00 00 00 00>
+console.log(buf);
+```
+
+
+- Class Method: Buffer.alloc(size[, fill[, encoding]])
+- Class Method: Buffer.allocUnsafe(size)
+- Class Method: Buffer.allocUnsafeSlow(size)
+- Class Method: Buffer.byteLength(string[, encoding])
+- Class Method: Buffer.compare(buf1, buf2)
+- Class Method: Buffer.concat(list[, totalLength])
+- Class Method: Buffer.from(array)
+- Class Method: Buffer.from(arrayBuffer[, byteOffset[, length]])
+- Class Method: Buffer.from(buffer)
+- Class Method: Buffer.from(string[, encoding])
+- Class Method: Buffer.isBuffer(obj)
+- Class Method: Buffer.isEncoding(encoding)
+- Class Property: Buffer.poolSize
+- buf[index]
+- buf.compare(target[, targetStart[, targetEnd[, sourceStart[, sourceEnd]]]])
+- buf.copy(target[, targetStart[, sourceStart[, sourceEnd]]])
+- buf.entries()
+- buf.equals(otherBuffer)
+- buf.fill(value[, offset[, end]][, encoding])
+- buf.indexOf(value[, byteOffset][, encoding])
+- buf.includes(value[, byteOffset][, encoding])
+- buf.keys()
+- buf.lastIndexOf(value[, byteOffset][, encoding])
+- buf.length
+- buf.readDoubleBE(offset[, noAssert])
+- buf.readDoubleLE(offset[, noAssert])
+- buf.readFloatBE(offset[, noAssert])
+- buf.readFloatLE(offset[, noAssert])
+- buf.readInt8(offset[, noAssert])
+- buf.readInt16BE(offset[, noAssert])
+- buf.readInt16LE(offset[, noAssert])
+- buf.readInt32BE(offset[, noAssert])
+- buf.readInt32LE(offset[, noAssert])
+- buf.readIntBE(offset, byteLength[, noAssert])
+- buf.readIntLE(offset, byteLength[, noAssert])
+- buf.readUInt8(offset[, noAssert])
+- buf.readUInt16BE(offset[, noAssert])
+- buf.readUInt16LE(offset[, noAssert])
+- buf.readUInt32BE(offset[, noAssert])
+- buf.readUInt32LE(offset[, noAssert])
+- buf.readUIntBE(offset, byteLength[, noAssert])
+- buf.readUIntLE(offset, byteLength[, noAssert])
+- buf.slice([start[, end]])
+- buf.swap16()
+- bu- f.swap32()
+- bu- f.swap64()
+- bu- f.toString([encoding[, start[, end]]])
+- buf.toJSON()
+- buf.values()
+- buf.write(string[, offset[, length]][, encoding])
+- buf.writeDoubleBE(value, offset[, noAssert])
+- buf.writeDoubleLE(value, offset[, noAssert])
+- buf.writeFloatBE(value, offset[, noAssert])
+- buf.writeFloatLE(value, offset[, noAssert])
+- buf.writeInt8(value, offset[, noAssert])
+- buf.writeInt16BE(value, offset[, noAssert])
+- buf.writeInt16LE(value, offset[, noAssert])
+- buf.writeInt32BE(value, offset[, noAssert])
+- buf.writeInt32LE(value, offset[, noAssert])
+- buf.writeIntBE(value, offset, byteLength[, noAssert])
+- buf.writeIntLE(value, offset, byteLength[, noAssert])
+- buf.writeUInt8(value, offset[, noAssert])
+- buf.writeUInt16BE(value, offset[, noAssert])
+- buf.writeUInt16LE(value, offset[, noAssert])
+- buf.writeUInt32BE(value, offset[, noAssert])
+- buf.writeUInt32LE(value, offset[, noAssert])
+- buf.writeUIntBE(value, offset, byteLength[, noAssert])
+- buf.writeUIntLE(value, offset, byteLength[, noAssert])
+
+
+#### buffer.INSPECT_MAX_BYTES
+
+v0.5.4から追加
+デフォルトは50
+
+Returns the maximum number of bytes that will be returned when buf.inspect() is called. This can be overridden by user modules. See util.inspect() for more details on buf.inspect() behavior.
+
+Note that this is a property on the buffer module as returned by require('buffer'), not on the Buffer global or a Buffer instance.
+
+
+#### buffer.kMaxLength
+v3.0.0から追加
+
+- <Integer> The largest size allowed for a single Buffer instance
+
+On 32-bit architectures, this value is (2^30)-1 (~1GB). On 64-bit architectures, this value is (2^31)-1 (~2GB).
+
+
+#### Class: SlowBuffer
+- new SlowBuffer(size)
+Deprecated since: v6.0.0
+-> Buffer.allocUnsafeSlowを使いましょう
