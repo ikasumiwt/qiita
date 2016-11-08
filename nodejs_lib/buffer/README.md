@@ -823,6 +823,10 @@ console.log(buf.length);
 - buf.readUInt32LE(offset[, noAssert])
 - buf.readUIntBE(offset, byteLength[, noAssert])
 - buf.readUIntLE(offset, byteLength[, noAssert])
+
+単精度、倍精度、8bit/16bit/32bit リトルエンディアン/ビッグエンディアンで読み取るメソッド
+offsetは取得するデータの位置
+
 - buf.slice([start[, end]])
 - buf.swap16()
 - bu- f.swap32()
@@ -830,6 +834,7 @@ console.log(buf.length);
 - bu- f.toString([encoding[, start[, end]]])
 - buf.toJSON()
 - buf.values()
+
 - buf.write(string[, offset[, length]][, encoding])
 - buf.writeDoubleBE(value, offset[, noAssert])
 - buf.writeDoubleLE(value, offset[, noAssert])
@@ -849,7 +854,7 @@ console.log(buf.length);
 - buf.writeUInt32LE(value, offset[, noAssert])
 - buf.writeUIntBE(value, offset, byteLength[, noAssert])
 - buf.writeUIntLE(value, offset, byteLength[, noAssert])
-
+単精度、倍精度、8bit/16bit/32bit リトルエンディアン/ビッグエンディアンで書き込むメソッド
 
 #### buffer.INSPECT_MAX_BYTES
 
