@@ -878,3 +878,10 @@ On 32-bit architectures, this value is (2^30)-1 (~1GB). On 64-bit architectures,
 - new SlowBuffer(size)
 Deprecated since: v6.0.0
 -> Buffer.allocUnsafeSlowを使いましょう
+
+
+
+#### 参考
+http://html5.ohtsu.org/nodejuku01/nodejuku01_ohtsu.pdf
+http://www.slideshare.net/shigeki_ohtsu/processnext-tick-nodejs
+http://info-i.net/buffer
