@@ -320,7 +320,7 @@ console.log(buf1);
 console.log(buf2);
 ```
 
-Note that when creating a Buffer using a TypedArray's .buffer, it is possible to use only a portion of the underlying ArrayBuffer by passing in byteOffset and length parameters.
+TypedArrayの .bufferを利用してBufferを作成する際、ArrayBufferのbyteOffsetとlengthのパラメータのみ利用可能です
 
 ex)
 ```
@@ -331,11 +331,20 @@ const buf = Buffer.from(arr.buffer, 0, 16);
 console.log(buf.length);
 ```
 
-The Buffer.from() and TypedArray.from() have different signatures and implementations. Specifically, the TypedArray variants accept a second argument that is a mapping function that is invoked on every element of the typed array:
+Buffer.fromとTypedArray.fromは異なる実装とシグネチャを持っています。
+具体的には、TypedArrayは、第二引数でマッピング関数を受け付けます。(??that is invoked on every element of the typed array)
+
+ex) https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/from
+```
+// Using an arrow function as the map function to
+// manipulate the elements
+Float32Array.from([1, 2, 3], x => x + x);      
+// Float32Array [ 2, 4, 6 ]
+```
 
 - TypedArray.from(source[, mapFn[, thisArg]])
 
-The Buffer.from() method, however, does not support the use of a mapping function:
+Buffer.fromはマッピング関数持ってないです
 
 - Buffer.from(array)
 - Buffer.from(buffer)
