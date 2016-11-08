@@ -175,7 +175,7 @@ arrayの8bitのcopyを含む新しいBufferを返す
 
 - Buffer.from(arrayBuffer[, byteOffset [, length]])
 
-与えられたArrayBufferと同じメモリ空間に割り当てた新しいBufferを返す (?)
+与えられたArrayBufferと同じメモリ空間に割り当てた新しいBufferを返す
 
 
 - Buffer.from(buffer)
@@ -196,7 +196,7 @@ arrayの8bitのcopyを含む新しいBufferを返す
 
 サンプルコード
 Examples:)参考
-
+src/alloc.js
 
 ------------
 
@@ -205,11 +205,43 @@ Buffer.allocUnsafe()によって返されるBufferのインスタンスは　サ
 Buffer.allocUnsafeSlow()によって返されるBufferのインスタンスは内部のメモリプールを一切使うことはありません。
 
 
-#### Buffers and Character Encodings
-Buffer instances are commonly used to represent sequences of encoded characters such as UTF-8, UCS2, Base64 or even Hex-encoded data. It is possible to convert back and forth between Buffer instances and ordinary JavaScript strings by using an explicit character encoding.
+##### --zero-fill-buffers コマンドラインオプション
+(The --zero-fill-buffers command line option)
+v5.10.0から追加
+
+Node.jsは --zero-fill-buffersを用いて起動することができる。これによって、new Buffer,Buffer.allocUnsafe,Buffer.allocUnsafeSlow,new SlowBuffer などで新しく割り当てられるすべてのBufferは自動的に0フィルされます。
+
+このフラグを使うと、↑のメソッドのデフォルトの動作を変更することになるので、パフォーマンスに大きな影響がでるかもしれません。
+
+--zero-fill-buffers は、Bufferインスタンスに機密データを含んだメモリ空間が割り当てられる可能性がある場合のときのみ、使うことが推奨されます。
+
+ex)
+```
+$ node --zero-fill-buffers
+> Buffer.allocUnsafe(5);
+<Buffer 00 00 00 00 00>
+```
+
+##### Buffer.allocUnsafeとBuffer.allocUnsafeSlowは何が安全じゃないのか
+(What makes Buffer.allocUnsafe() and Buffer.allocUnsafeSlow() "unsafe"?)
+
+Buffer.allocUnsafeとBuffer.allocUnsafeSlowが呼ばれる時、メモリの割り当てられたセグメントは初期化されていません（0フィルされてません)
+
+この設計は、メモリの割当はとても早くなるけれど、メモリの割り当てられたセグメントは古いデータが含まれていて、可能性としては機密データの可能性もあります。
+
+メモリを完全に上書きせずに、Buffer.allocUnsafeを用いてBufferを作成する場合、この古いデータが読み取ることができる可能性が残ります。
+
+Buffer.allocUnsafe を用いるとパフォーマンスが向上するというメリットはありますが、アプリケーションのセキュリティ(脆弱性)には、より一層注意する必要があります。
+
+
+####  バッファと文字コード
+(Buffers and Character Encodings)
+
+バッファのインスタンスは、シーケンスを表現するのにUTF-8, UCS2, Base64  Hex-encoded data.のような物がよく使われます
+明示的にencodingを指定することでBufferのインスタンスとJavaScriptの文字列の間でコンバートできます
 
 Example:
-
+```
 const buf = Buffer.from('hello world', 'ascii');
 
 // Prints: 68656c6c6f20776f726c64
@@ -219,11 +251,114 @@ console.log(buf.toString('hex'));
 console.log(buf.toString('base64'));
 
 
-#### Buffers and TypedArray
+```
 
-Buffer instances are also Uint8Array instances. However, there are subtle incompatibilities with the TypedArray specification in ECMAScript 2015. For example, while ArrayBuffer#slice() creates a copy of the slice, the implementation of Buffer#slice() creates a view over the existing Buffer without copying, making Buffer#slice() far more efficient.
+#### BuffersとTypedArray
+Buffers and TypedArray
 
-#### Buffers and ES6 iteration
+Bufferインスタンスは　Uint8Arrayのインスタンスです。[(参考)](https://github.com/nodejs/node/blob/v6.9.1-proposal/lib/buffer.js#L9)
 
+しかし、ECMAScript 2015のTypedArrayの仕様とは微妙に互換性がないです。
+例えば、ArrayBuffer#slice()はsliceのコピーを生成するけれど、
+Buffer#sliceの実装は,既存のBufferのコピーなしで作成するので、Buffer#sliceのほうがはるかに効率的です。
+
+
+次の点に注意すれば、Bufferから TypedArrayのインスタンスを作成することも出来ます。
+
+
+1. バッファのオブジェクトのメモリはTypedArrayにコピーされ、シェアはされません。
+
+2. バッファのオブジェクトのメモリは、異なる要素のArrayと解釈することができ(?)、ターゲットとなる方のバイトの配列としては解釈されません(?)
+これは、
+new Uint32Array(Buffer.from([1, 2, 3, 4]))は4つの要素として作られ、[0x1020304] or [0x4030201]みたいな一つの要素にはなりません
+
+->試しに src/convertArr.js
+```
+let buf = Buffer.from([1,2,3]);
+let arr = new Uint32Array(buf);
+
+console.log( buf );
+console.log( arr );
+console.log( arr.length );
+/* prints:
+ <Buffer 01 02 03>
+ Uint32Array [ 1, 2, 3 ]
+ 3 //not single elements
+*/
+```
+
+TypeArrayオブジェクトの.buffer プロパティを用いることによって、TypedArrayインスタンスと同じ割り当てられたメモリを共有したnew Bufferを作成することが出来ます。
+
+[.buffer](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/buffer)
+
+ex)
+
+```
+const arr = new Uint16Array(2);
+
+arr[0] = 5000;
+arr[1] = 4000;
+
+// Copies the contents of `arr`
+const buf1 = Buffer.from(arr);
+
+// Shares memory with `arr`
+const buf2 = Buffer.from(arr.buffer);
+
+// Prints: <Buffer 88 a0>
+console.log(buf1);
+
+// Prints: <Buffer 88 13 a0 0f>
+console.log(buf2);
+
+arr[1] = 6000;
+
+// Prints: <Buffer 88 a0>
+console.log(buf1);
+
+// Prints: <Buffer 88 13 70 17>
+console.log(buf2);
+```
+
+Note that when creating a Buffer using a TypedArray's .buffer, it is possible to use only a portion of the underlying ArrayBuffer by passing in byteOffset and length parameters.
+
+ex)
+```
+const arr = new Uint16Array(20);
+const buf = Buffer.from(arr.buffer, 0, 16);
+
+// Prints: 16
+console.log(buf.length);
+```
+
+The Buffer.from() and TypedArray.from() have different signatures and implementations. Specifically, the TypedArray variants accept a second argument that is a mapping function that is invoked on every element of the typed array:
+
+- TypedArray.from(source[, mapFn[, thisArg]])
+
+The Buffer.from() method, however, does not support the use of a mapping function:
+
+- Buffer.from(array)
+- Buffer.from(buffer)
+- Buffer.from(arrayBuffer[, byteOffset [, length]])
+- Buffer.from(string[, encoding])
+
+
+#### BufferとES6イテレーション
+(Buffers and ES6 iteration)
+
+Buffer instances can be iterated over using the ECMAScript 2015 (ES6) for..of syntax.
+
+ex)
+```
+const buf = Buffer.from([1, 2, 3]);
+
+// Prints:
+//   1
+//   2
+//   3
+for (var b of buf) {
+  console.log(b);
+}
+```
 
 #### Class: Buffer
