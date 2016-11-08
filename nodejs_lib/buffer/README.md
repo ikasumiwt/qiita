@@ -170,30 +170,29 @@ Bufferのインスタンスを作るときに new Buffer()は非推奨なので 
 
 ------
 
-Buffer.from(array)
+- Buffer.from(array)
 arrayの8bitのcopyを含む新しいBufferを返す
 
-Buffer.from(arrayBuffer[, byteOffset [, length]])
+- Buffer.from(arrayBuffer[, byteOffset [, length]])
 
 与えられたArrayBufferと同じメモリ空間に割り当てた新しいBufferを返す (?)
 
 
-Buffer.from(buffer)
+- Buffer.from(buffer)
 与えられたBufferのcopyを含む新しいBufferを返す
 
-Buffer.from(string[, encoding])
-
+- Buffer.from(string[, encoding])
 与えられたstringのcopyを含む新しいBufferを返す
 
 
-Buffer.alloc(size[, fill[, encoding]])
+- Buffer.alloc(size[, fill[, encoding]])
 指定されたsizeのfilled なBufferを返す。
 
-このメソッドはallocUnsafeよりめっちゃ遅くなるけど新しく作成されたBufferインスタンスは古い、気密性のあるデータが含まれていないことを保証します。
+このメソッドはallocUnsafeよりめっちゃ遅くなるけど新しく作成されたBufferインスタンスは古い、機密性のあるデータが含まれていないことを保証します。
 
-Buffer.allocUnsafe(size) と Buffer.allocUnsafeSlow(size)
+- Buffer.allocUnsafe(size) &  Buffer.allocUnsafeSlow(size)
 どちらも 指定されたsizeの新しいBufferを返す。
-ただし、初期化されていないのでbuf.fill(0)か完全に上書きしてから使わないとだめです
+ただし、初期化されていないのでbuf.fill(0)か完全に上書きしてから使わないとだめです。
 
 
 sample codeを適当に書く（あとで）
