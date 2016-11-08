@@ -254,7 +254,7 @@ console.log(buf.toString('base64'));
 ```
 
 #### BuffersとTypedArray
-Buffers and TypedArray
+(Buffers and TypedArray)
 
 Bufferインスタンスは　Uint8Arrayのインスタンスです。[(参考)](https://github.com/nodejs/node/blob/v6.9.1-proposal/lib/buffer.js#L9)
 
@@ -435,38 +435,376 @@ Bufferクラスはバイナリデータを直接扱うのでグローバルで�
 
 v5.10.0から追加
 
-```
-const buf = Buffer.alloc(5);
+size: new Bufferする際のlength
+fill:fillする際の値。デフォルト0
+encoding:fillするのが文字列のときのエンコードする名前。デフォルトutf8
 
-// Prints: <Buffer 00 00 00 00 00>
+```
+const buf1 = Buffer.alloc(5);
+const buf2 = Buffer.alloc(5, 'a');
+const buf3 = Buffer.alloc(5, 'a', 'ASCII');
+
+
+console.log( buf1 );
+console.log( buf2 );
+console.log( buf3 );
+/*
+prints:
+<Buffer 00 00 00 00 00>
+<Buffer 61 61 61 61 61>
+<Buffer 61 61 61 61 61>
+*/
+```
+
+
+- Class Method: Buffer.allocUnsafe(size)
+- Class Method: Buffer.allocUnsafeSlow(size)
+v5.10.0から追加
+
+```
+const buf = Buffer.allocUnsafe(5);
+
+console.log(buf);
+//prints: ex <Buffer 50 86 03 03 01> etc.
+buf.fill(0);
+//prints:
+//<Buffer 00 00 00 00 00>
 console.log(buf);
 ```
 
+```
+バッファの作成において予め確保されている共有メモリプールの領域を使用しても良い場合にはBuffer.allocUnsafe関数を使用し、使用してはならない場合にはBuffer.allocUnsafeSlow関数を使用します。
+```
+参考:http://info-i.net/buffer
 
-- Class Method: Buffer.alloc(size[, fill[, encoding]])
-- Class Method: Buffer.allocUnsafe(size)
-- Class Method: Buffer.allocUnsafeSlow(size)
 - Class Method: Buffer.byteLength(string[, encoding])
+v0.1.90から追加
+
+文字列のbyte のlengthを返す
+ex) src/buffer.byteLength.js
+```
+const length = Buffer.byteLength('aaa', 'utf-8');
+
+console.log( length );
+//prints: 3
+```
+
 - Class Method: Buffer.compare(buf1, buf2)
+v0.11.13から追加
+buf1とbuf2を比較する
+
+ex) src/buffer.compare.js
+```
+const buf1 = Buffer.from('1234');
+const buf2 = Buffer.from('0123');
+const buf3 = Buffer.from('0123');
+const arr = [buf1, buf2];
+
+console.log( Buffer.compare( buf1,buf2 ));
+// -> 1
+console.log( Buffer.compare( buf2,buf3 ));
+// -> 0
+console.log( Buffer.compare( buf2,buf1 ));
+// -> -1
+```
+
 - Class Method: Buffer.concat(list[, totalLength])
+v0.7.11から追加
+
+ex) src/buffer.concat.js
+```
+const buf1 = Buffer.alloc(10);
+const buf2 = Buffer.alloc(14);
+const buf3 = Buffer.alloc(18);
+const totalLength = buf1.length + buf2.length + buf3.length;
+
+// Prints: 42
+console.log(totalLength);
+
+const bufA = Buffer.concat([buf1, buf2, buf3], totalLength);
+
+// Prints: <Buffer 00 00 00 00 ...>
+console.log(bufA);
+
+// Prints: 42
+console.log(bufA.length);
+
+```
+
 - Class Method: Buffer.from(array)
 - Class Method: Buffer.from(arrayBuffer[, byteOffset[, length]])
 - Class Method: Buffer.from(buffer)
 - Class Method: Buffer.from(string[, encoding])
+
+```
+// 1,2,3の配列からBufferを作る
+const buf4 = Buffer.from([1, 2, 3]);
+console.log( buf4 );
+// -> <Buffer 01 02 03>$
+// ASCII バイトを含んだバッファを作成する
+//Creates a Buffer containing ASCII bytes [0x74, 0x65, 0x73, 0x74]
+const buf5 = Buffer.from('test');
+
+console.log( buf5 );
+// -> <Buffer 74 65 73 74>
+
+// UTF-8形式のバッファを作成する
+// Creates a Buffer containing UTF-8 bytes [0x74, 0xc3, 0xa9, 0x73, 0x74]
+const buf6 = Buffer.from('tést','utf8');
+
+ console.log( buf6 );
+// -> <Buffer 74 c3 a9 73 74>
+```
+
 - Class Method: Buffer.isBuffer(obj)
+v0.1.101から追加
+bufferかどうかtrue/false返す
+
 - Class Method: Buffer.isEncoding(encoding)
+v0.9.1から追加
+
+encoding可能なものかどうかチェック
+```
+let isEncoding = Buffer.isEncoding('utf8');
+
+console.log(isEncoding);
+// -> true
+isEncoding = Buffer.isEncoding('hogehoge');
+console.log(isEncoding);
+// -> false
+```
+
 - Class Property: Buffer.poolSize
+v0.11.3 から追加
+デフォルトは8192(8 * 1024)
+これ -> https://github.com/nodejs/node/blob/v6.9.1-proposal/lib/buffer.js#L26
+
+事前に確保してあるbytes。
+この値は変更しても良い。
+
 - buf[index]
+
+ex)
+
+```
+const str = 'Node.js';
+const buf = Buffer.allocUnsafe(str.length);
+
+for (let i = 0; i < str.length ; i++) {
+  buf[i] = str.charCodeAt(i);
+}
+
+// Prints: Node.js
+console.log(buf.toString('ascii'));
+```
+
 - buf.compare(target[, targetStart[, targetEnd[, sourceStart[, sourceEnd]]]])
+
+Buffer.compareとほぼ同じ・・・？
+
 - buf.copy(target[, targetStart[, sourceStart[, sourceEnd]]])
+ex) src/buffer.copy.js
+```
+const buf1 = Buffer.allocUnsafe(26);
+const buf2 = Buffer.allocUnsafe(26).fill('!');
+
+for (let i = 0 ; i < 26 ; i++) {
+  // 97 is the decimal ASCII value for 'a'
+  buf1[i] = i + 97;
+ }
+
+//prints: abcdefghijklmnopqrstuvwxy
+console.log(buf1.toString('ascii', 0, 25));
+buf1.copy(buf2, 8, 16, 20);
+//qrstをbuf2のbuf2[8]~の箇所に コピー
+// Prints: !!!!!!!!qrst!!!!!!!!!!!!!
+console.log(buf2.toString('ascii', 0, 25));
+```
+
 - buf.entries()
+v1.1.0から追加
+
+```
+const buf = Buffer.from('buffer');
+
+// Prints:
+//   [0, 98]
+//   [1, 117]
+//   [2, 102]
+//   [3, 102]
+//   [4, 101]
+//   [5, 114]
+for (var pair of buf.entries()) {
+  console.log(pair);
+}
+```
+
 - buf.equals(otherBuffer)
+v0.11.13から追加
+
+比較してbooleanを返す。
+
+```
+const buf1 = Buffer.from('ABC');
+const buf2 = Buffer.from('414243', 'hex');
+const buf3 = Buffer.from('ABCD');
+
+// Prints: true
+console.log(buf1.equals(buf2));
+
+// Prints: false
+console.log(buf1.equals(buf3));
+```
+
+
 - buf.fill(value[, offset[, end]][, encoding])
+v0.5.0から追加
+
+```
+const b = Buffer.allocUnsafe(50).fill('h');
+
+// Prints: hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+console.log(b.toString());
+```
+
 - buf.indexOf(value[, byteOffset][, encoding])
+v1.5.0から追加
+
+ex)
+```
+const buf = Buffer.from('this is a buffer');
+
+// Prints: 0
+console.log(buf.indexOf('this')));
+
+// Prints: 2
+console.log(buf.indexOf('is'));
+
+// Prints: 8
+console.log(buf.indexOf(Buffer.from('a buffer')));
+
+// Prints: 8
+// (97 is the decimal ASCII value for 'a')
+console.log(buf.indexOf(97));
+
+// Prints: -1
+console.log(buf.indexOf(Buffer.from('a buffer example')));
+
+// Prints: 8
+console.log(buf.indexOf(Buffer.from('a buffer example').slice(0, 8)));
+
+
+const utf16Buffer = Buffer.from('\u039a\u0391\u03a3\u03a3\u0395', 'ucs2');
+
+// Prints: 4
+console.log(utf16Buffer.indexOf('\u03a3', 0, 'ucs2'));
+
+// Prints: 6
+console.log(utf16Buffer.indexOf('\u03a3', -4, 'ucs2'));
+
+```
+
 - buf.includes(value[, byteOffset][, encoding])
+v5.3.0から追加
+
+```
+const buf = Buffer.from('this is a buffer');
+
+// Prints: true
+console.log(buf.includes('this'));
+
+// Prints: true
+console.log(buf.includes('is'));
+
+// Prints: true
+console.log(buf.includes(Buffer.from('a buffer')));
+
+// Prints: true
+// (97 is the decimal ASCII value for 'a')
+console.log(buf.includes(97));
+
+// Prints: false
+console.log(buf.includes(Buffer.from('a buffer example')));
+
+// Prints: true
+console.log(buf.includes(Buffer.from('a buffer example').slice(0, 8)));
+
+// Prints: false
+console.log(buf.includes('this', 4));
+```
+
+
 - buf.keys()
+v1.1.0から追加
+返り値はiterator
+```
+const buf = Buffer.from('buffer');
+
+// Prints:
+//   0
+//   1
+//   2
+//   3
+//   4
+//   5
+for (var key of buf.keys()) {
+  console.log(key);
+}
+```
+
 - buf.lastIndexOf(value[, byteOffset][, encoding])
+ v6.0.0から追加
+
+```
+const buf = Buffer.from('this buffer is a buffer');
+
+// Prints: 0
+console.log(buf.lastIndexOf('this'));
+
+// Prints: 17
+console.log(buf.lastIndexOf('buffer'));
+
+// Prints: 17
+console.log(buf.lastIndexOf(Buffer.from('buffer')));
+
+// Prints: 15
+// (97 is the decimal ASCII value for 'a')
+console.log(buf.lastIndexOf(97));
+
+// Prints: -1
+console.log(buf.lastIndexOf(Buffer.from('yolo')));
+
+// Prints: 5
+console.log(buf.lastIndexOf('buffer', 5));
+
+// Prints: -1
+console.log(buf.lastIndexOf('buffer', 4));
+
+
+const utf16Buffer = Buffer.from('\u039a\u0391\u03a3\u03a3\u0395', 'ucs2');
+
+// Prints: 6
+console.log(utf16Buffer.lastIndexOf('\u03a3', null, 'ucs2'));
+
+// Prints: 4
+console.log(utf16Buffer.lastIndexOf('\u03a3', -5, 'ucs2'));
+```
+
 - buf.length
+v0.1.90から追加
+bufferのlengthを返す
+```
+const buf = Buffer.alloc(1234);
+
+// Prints: 1234
+console.log(buf.length);
+
+buf.write('some string', 0, 'ascii');
+
+// Prints: 1234
+console.log(buf.length);
+```
+
 - buf.readDoubleBE(offset[, noAssert])
 - buf.readDoubleLE(offset[, noAssert])
 - buf.readFloatBE(offset[, noAssert])
