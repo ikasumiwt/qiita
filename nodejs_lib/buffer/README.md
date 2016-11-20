@@ -854,22 +854,24 @@ offsetは取得するデータの位置
 v0.5.4から追加
 デフォルトは50
 
-Returns the maximum number of bytes that will be returned when buf.inspect() is called. This can be overridden by user modules. See util.inspect() for more details on buf.inspect() behavior.
+buf.inspect()が呼ばれた際に返すバイト数の大きさ。
+ユーザモジュールよって上書きすることが可能。
+util.instpect()に詳細がある。
 
-Note that this is a property on the buffer module as returned by require('buffer'), not on the Buffer global or a Buffer instance.
+これは、bufferモジュールやそのインスタンスが返すのではなく、 require('buffer')によって返されます
 
 
 #### buffer.kMaxLength
 v3.0.0から追加
 
-- <Integer> The largest size allowed for a single Buffer instance
+バッファインスタンスが許容できる最大のサイズ
 
-On 32-bit architectures, this value is (2^30)-1 (~1GB). On 64-bit architectures, this value is (2^31)-1 (~2GB).
-
+32Bitのアーキテクチャではこの値は (2^30)-1 (~1GB)64Bitのアーキテクチャでは(2^31)-1 (~2GB)となる。
 
 #### Class: SlowBuffer
 - new SlowBuffer(size)
 Deprecated since: v6.0.0
+非推奨
 -> Buffer.allocUnsafeSlowを使いましょう
 
 
