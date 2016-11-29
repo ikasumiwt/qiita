@@ -139,11 +139,8 @@ return bする
 ーーここまで脱線
 
 で、
-> 最初の引数としてstring,array,bufferを渡した時、Bufferの中の渡されたオブジェクトデータとしてコピーされる
-> Passing a string, array, or Buffer as the first argument copies the passed object's data into the Buffer.
 
-はBufferに格納されるということであっている…？
-
+最初の引数としてstring,array,bufferを渡した時、Bufferの中の渡されたオブジェクトデータとしてコピーされる
 ----------
 
 ArrayBufferを渡した場合、渡したArrayBufferがメモリ空間に割り当てられて返される。
@@ -158,13 +155,9 @@ new Buffer()に渡す引数が適切にバリデートされていないアプ�
 コードにセキュリティと信頼性を導入することができる(inadvertentry?)
 
 
-> 翻訳できぬ
-> applications that do not properly validate the input arguments passed to new Buffer(), or that fail to appropriately initialize newly allocated Buffer content
+Bufferのインスタンスを作るときに new Buffer()は非推奨なので Buffer.from()とかBuffer.alloc()とかBuffer.allocUnsafe()とかに置き換える必要がある
 
-
-Bufferのインスタンスを作るときに new Buffer()は非推奨なので Buffer.from()とかBuffer.alloc()とかBuffer.allocUnsafe()とかに置き換えてね！
-
-開発者はnew Buffer()使っていたらこれらの新しいAPIに以降すべきです
+開発者はnew Buffer()使っていたらこれらの新しいAPIに移行すべきです
 > Developers should migrate all existing uses of the new Buffer() constructors to one of these new APIs.
 
 
@@ -861,22 +854,24 @@ offsetは取得するデータの位置
 v0.5.4から追加
 デフォルトは50
 
-Returns the maximum number of bytes that will be returned when buf.inspect() is called. This can be overridden by user modules. See util.inspect() for more details on buf.inspect() behavior.
+buf.inspect()が呼ばれた際に返すバイト数の大きさ。
+ユーザモジュールよって上書きすることが可能。
+util.instpect()に詳細がある。
 
-Note that this is a property on the buffer module as returned by require('buffer'), not on the Buffer global or a Buffer instance.
+これは、bufferモジュールやそのインスタンスが返すのではなく、 require('buffer')によって返されます
 
 
 #### buffer.kMaxLength
 v3.0.0から追加
 
-- <Integer> The largest size allowed for a single Buffer instance
+バッファインスタンスが許容できる最大のサイズ
 
-On 32-bit architectures, this value is (2^30)-1 (~1GB). On 64-bit architectures, this value is (2^31)-1 (~2GB).
-
+32Bitのアーキテクチャではこの値は (2^30)-1 (~1GB)64Bitのアーキテクチャでは(2^31)-1 (~2GB)となる。
 
 #### Class: SlowBuffer
 - new SlowBuffer(size)
 Deprecated since: v6.0.0
+非推奨
 -> Buffer.allocUnsafeSlowを使いましょう
 
 
