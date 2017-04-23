@@ -1407,6 +1407,13 @@ listenerのコールバックはeventType,filenameの2つの引数を与えら�
 
 fs.watch APIはすべてのプラットフォームでい使えるわけではなく、いくつかのシチュエーションでは使えません。
 
+(例えば)recursiveオプションはOS XとWindowsでしかサポートされていません。
+
+##### 可用性
+// Availability
+
+以下の機能は、基本となるOSに依存してファイルシステムの変更を通知する方法を提供しています。
+
 - On Linux systems, this uses inotify
 - On BSD systems, this uses kqueue
 - On OS X, this uses kqueue for files and FSEvents for directories.
@@ -1414,14 +1421,132 @@ fs.watch APIはすべてのプラットフォームでい使えるわけでは�
 - On Windows systems, this feature depends on ReadDirectoryChangesW.
 - On Aix systems, this feature depends on AHAFS, which must be enabled.
 
+基本的な機能が何らかの理由で利用できない場合、fs.watchは機能しません。たとえば、Vagrant、Dockerなどの仮想化ソフトウェアを使用している場合、ファイルやディレクトリを監視することは信頼できない場合もあり、ネットワークファイルシステム（NFS、SMBなど）やホストファイルシステムでは不可能な場合もあります。
+
 fs.watchFileを利用することはできますが、統計的にポーリングすることはできますが、速度は遅く、信頼性も低くなります。
 
+##### Inodes
+// Inodes
+
+LinuxおよびOS Xでは、fs.watch()はinodeへのpathを解決し、inodeを監視します。
+監視しているパスが削除されて再作成されると、新しいinodeが割り当てられます。
+watchは削除のイベントを発行しますが、元の(オリジナルの)inodeを監視し続け、新しいinodeのイベントはemitされません。
+これは予想される動作です。
+
+
+##### ファイル名の引数
+// Filename Arguments
+callbackにfilename引数を指定するのは、LinuxとWindowsのみサポートされています。
+サポートされているプラットフォームであっても、ファイル名は必ず提供されているわけではありません。
+よって、filename引数がcallbackに常に提供されているとは想定せず、nullの場合を想定してfallbackするロジックを持つべきです。
+
+```
+fs.watch('somedir', (eventType, filename) => {
+  console.log(`event type is: ${eventType}`);
+  if (filename) {
+    console.log(`filename provided: ${filename}`);
+  } else {
+    console.log('filename not provided');
+  }
+});
+```
+
+
 ### fs.watchFile(filename[, options], listener)
+
+- filename <String> | <Buffer>
+- options <Object>
+ - persistent <Boolean>
+ - interval <Integer>
+- listener <Function>
+
+filenameで指定されたファイルの監視をします。
+listenerはファイルにアクセスするたびに呼び出されます。
+
+optionsは省略することが出来ますが、省略しない場合はObjectである必要があります。
+options オブジェクトはファイルが監視されている限りプロセスを実行し続けるかどうかを表すpersistentというbooleanの値を持つことができます。
+optionsは同じように、監視対象に対してポーリングする頻度をミリ秒で設定できるintervalプロパティも持つことが出来ます。
+デフォルトは{ persistent: true, interval: 5007 }です
+
+listenerは、現在と過去の2つのstatオブジェクトを持つことが出来ます。
+```
+fs.watchFile('message.text', (curr, prev) => {
+  console.log(`the current mtime is: ${curr.mtime}`);
+  console.log(`the previous mtime was: ${prev.mtime}`);
+});
+```
+
+このstat objectsはfs.Statのインスタンスです。
+
+ファイルが変更された時に通知されますが、アクセスするだけでなく、curr.mtimeとprev.mtimeを比較する必要があります。
+
+注意：fs.watchFile()操作でENOENTエラーが発生すると、全てのフィールドが0になった(もしくは全てunix エポックタイムになった)リスナーが1°呼び出されます。
+Windowsでは、blksizeとblocksフィールドがundefinedとなります。
+
+あとでファイルが作成されると、最新のstatオブジェクトを用いてlistnerがもう一度呼び出されます。
+この変更はv0.10.0から行われています。
+
+
+注意：fs.watch（）はfs.watchFileとfs.unwatchFileより効率的です。 fs.watchFileとfs.unwatchFileの代わりにfs.watchを使用する必要があります。
 
 
 ### fs.write(fd, buffer, offset, length[, position], callback)
 
+- fd <Integer>
+- buffer <String> | <Buffer>
+- offset <Integer>
+- length <Integer>
+- position <Integer>
+- callback <Function>
+
+fdで指定されたファイルにbufferを書き込みます。
+
+offsetは、書き込まれるbufferの部分を決定し、lengthは書き込むバイト数を指定する整数です。
+
+positionはこのデータを書きこむファイルの先頭からのオフセットを示しています。
+positionがnumberではない場合、現在のポジションからデータは書き込まれます。
+pwirte(2)を参照ください。
+
+callbackにはerr, written, bufferの3つの値が与えられ、writtenはbufferから書き込まれたバイト数を指定しています。
+
+注意：callbackを待たずに、同じファイルにfs.writeすることは安全ではないことに注意してください。
+そのような場合はfs.createWriteStreamを利用することを強く推奨します。
+
+Linuxでは、ファイルが追加モードで開かれると位置指定した書き込みは機能しません。
+位置を指定する引数は引数は無視され、いつもファイルの最後にデータを追加します。
+
+
+
 ### fs.write(fd, data[, position[, encoding]], callback)
+
+- fd <Integer>
+- data <String> | <Buffer>
+- position <Integer>
+- encoding <String>
+- callback <Function>
+
+fdで指定されたファイルにdataを書き込みます。
+dataがBufferインスタンスではない場合、値は文字列に変換されます。
+
+positionがnumberではない場合、現在のポジションからデータは書き込まれます。
+pwirte(2)を参照ください。
+
+encodingは文字列のエンコーディングです。
+
+callbackには、err, written, stringの3つの引数が与えられ、writtenは渡された文字列が書き込まれる必要ががあるバイト数を指定します。
+ここの書き込まれるバイト数は、stringの文字列のバイト数と同じではありません。
+Buffer.byteLengthを参照ください。
+
+Bufferを使った書き込みのときとは違い、文字列全体を書き込む必要があります。
+部分的な文字列は指定できません。
+これは、結果のデータのbyteOffsetと文字列のoffsetが同じではない可能性があるためです。
+
+注意：callbackを待たずに、同じファイルにfs.writeすることは安全ではないことに注意してください。
+そのような場合はfs.createWriteStreamを利用することを強く推奨します。
+
+Linuxでは、ファイルが追加モードで開かれると位置指定した書き込みは機能しません。
+位置を指定する引数は引数は無視され、いつもファイルの最後にデータを追加します。
+
 
 ### fs.writeFile(file, data[, options], callback)
 
@@ -1431,8 +1556,28 @@ fs.watchFileを利用することはできますが、統計的にポーリン�
  - encoding <String> | <Null> default = 'utf8'
  - mode <Integer> default = 0o666
  - flag <String> default = 'w'
-- callback <Function> 
+- callback <Function>
 
+非同期でデータをファイルに書き込み、ファイルが既に存在する場合は置き換えます。
+dataはstringかbufferです。
+
+encodingはbufferの場合は無視されます。デフォルトはutf8です。
+
+
+例：
+
+```
+fs.writeFile('message.txt', 'Hello Node.js', (err) => {
+  if (err) throw err;
+  console.log('It\'s saved!');
+});
+```
+
+optionsはstringの場合、エンコーディングを指定します。
+
+```
+fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
+```
 
 ### fs.writeFileSync(file, data[, options])
 
@@ -1444,6 +1589,11 @@ fs.watchFileを利用することはできますが、統計的にポーリン�
  - flag <String> default = 'w'
 
 fs.writeFile()の同期バージョンです。undefinedが返されます。
+
+指定されたファイルディスクリプタは、すべての書き込みをサポートする必要があります。
+
+callbackを待たずに同じファイルに対してfs.writeFileを複数回指定することは安全ではないことに注意してください。
+そのような場合、fs.createWriteStreamを利用することを強くおすすめします。
 
 
 ### fs.writeSync(fd, buffer, offset, length[, position])
@@ -1468,9 +1618,69 @@ fs.write()の同期的なバージョンです。
 
 ### FS Constants
 
+次の定数はfs.Constantsでエクスポートされています。
+
+注意：すべてのOSですべての定数を使えるわけではありません。
+
+#### ファイルアクセス用の定数
+fs.accessで利用するための定数です。
+
+Constant	Description
+F_OK	Flag indicating that the file is visible to the calling process.
+R_OK	Flag indicating that the file can be read by the calling process.
+W_OK	Flag indicating that the file can be written by the calling process.
+X_OK	Flag indicating that the file can be executed by the calling process.
+
+#### ファイルオープン用の定数
+
+fs.open()で利用するための定数です。
+
+O_RDONLY	Flag indicating to open a file for read-only access.
+O_WRONLY	Flag indicating to open a file for write-only access.
+O_RDWR	Flag indicating to open a file for read-write access.
+O_CREAT	Flag indicating to create the file if it does not already exist.
+O_EXCL	Flag indicating that opening a file should fail if the O_CREAT flag is set and the file already exists.
+O_NOCTTY	Flag indicating that if path identifies a terminal device, opening the path shall not cause that terminal to become the controlling terminal for the process (if the process does not already have one).
+O_TRUNC	Flag indicating that if the file exists and is a regular file, and the file is opened successfully for write access, its length shall be truncated to zero.
+O_APPEND	Flag indicating that data will be appended to the end of the file.
+O_DIRECTORY	Flag indicating that the open should fail if the path is not a directory.
+O_NOATIME	Flag indicating reading accesses to the file system will no longer result in an update to the atime information associated with the file. This flag is available on Linux operating systems only.
+O_NOFOLLOW	Flag indicating that the open should fail if the path is a symbolic link.
+O_SYNC	Flag indicating that the file is opened for synchronous I/O.
+O_SYMLINK	Flag indicating to open the symbolic link itself rather than the resource it is pointing to.
+O_DIRECT	When set, an attempt will be made to minimize caching effects of file I/O.
+O_NONBLOCK	Flag indicating to open the file in nonblocking mode when possible.
 
 
+#### ファイルタイプ定数
+fs.Statsオブジェクトのmodeプロパティでファイルタイプを決定するために使用される定数です。
 
+S_IFMT	Bit mask used to extract the file type code.
+S_IFREG	File type constant for a regular file.
+S_IFDIR	File type constant for a directory.
+S_IFCHR	File type constant for a character-oriented device file.
+S_IFBLK	File type constant for a block-oriented device file.
+S_IFIFO	File type constant for a FIFO/pipe.
+S_IFLNK	File type constant for a symbolic link.
+S_IFSOCK	File type constant for a socket.
+
+
+#### ファイルモード定数
+
+fs.Stats オブジェクトのmodeプロパティと一緒にaccessの許可を決定するためのオブジェクトです。
+
+S_IRWXU	File mode indicating readable, writable and executable by owner.
+S_IRUSR	File mode indicating readable by owner.
+S_IWUSR	File mode indicating writable by owner.
+S_IXUSR	File mode indicating executable by owner.
+S_IRWXG	File mode indicating readable, writable and executable by group.
+S_IRGRP	File mode indicating readable by group.
+S_IWGRP	File mode indicating writable by group.
+S_IXGRP	File mode indicating executable by group.
+S_IRWXO	File mode indicating readable, writable and executable by others.
+S_IROTH	File mode indicating readable by others.
+S_IWOTH	File mode indicating writable by others.
+S_IXOTH	File mode indicating executable by others.
 
 #### 参考
 http://html5.ohtsu.org/nodejuku01/nodejuku01_ohtsu.pdf
