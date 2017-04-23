@@ -489,140 +489,935 @@ fs.close()の同期バージョンです。
 現在定義されている定数に関しては[FS constants](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html#fs_fs_constants_1)を参照ください。
 
 
+
+
 ### fs.createReadStream(path[, options])
+
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - flags <String>
+ - encoding <String>
+ - fd <Integer>
+ - mode <Integer>
+ - autoClose <Boolean>
+ - start <Integer>
+ - end <Integer>
+
+ReadStreamオブジェクトを返します。詳しくは:[Readable Stream](https://nodejs.org/dist/latest-v6.x/docs/api/stream.html#stream_class_stream_readable)
+
+Stream APIで作られるReadableStreamでは、highWaterMarkのデフォルトの値が16kbですが、この関数から返されるストリームのhighWaterMarkは64kbがデフォルトになっていることに注意してください。
+
+optionsは、以下のデフォルトの値を持つオブジェクトかStringです。
+
+```
+{
+  flags: 'r',
+  encoding: null,
+  fd: null,
+  mode: 0o666,
+  autoClose: true
+}
+```
+
+optionsには、ファイル全体ではなく、ファイルの読み込む範囲の開始と終了の(start/endの)値を含めることが出来ます。
+start/endの両方が含まれ、そして0からカウントを開始します。
+もしfdが指定され、startが省略かundefinedだった場合、fs.createReadStreamは現在のファイルの位置から順番に読み込みます。
+encodingはBufferで受け入れることのできるいずれかの値を１つだけ指定できます。
+
+fdを指定した場合、ReadStreamは引数のpathを無視して、指定されたファイルディスクリプタを使用します。
+これは、'open'イベントが発火されないという意味です。
+
+note:fdはブロックされているべきです。
+ノンブロッキングなfdはnet.Socketを渡すべきです。
+
+autoCloseがfalseな場合、エラーがあったとしてもファイルディスクリプタはクローズされません。
+その場合、ファイルディスクリプタがリークしていないかを確認するのはあなたの責任になります。
+
+もし、autoCloseがtrueの場合(デフォルトの場合)、on errorやendになると自動的にファイルディスクリプタは閉じられます。
+modeは、ファイルモード（パーミッションとスティッキービット）を設定しますg、これはファイルが作成された場合に限ります。
+
+以下は、100バイトのファイルの最後の10バイトだけを読み込む場合のサンプルです。
+
+```
+fs.createReadStream('sample.txt', {start: 90, end: 99});
+```
+
+optionsが文字列で渡された場合はエンコーディングを指定します。
+
 
 ### fs.createWriteStream(path[, options])
 
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - flags <String>
+ - defaultEncoding <String>
+ - fd <Integer>
+ - mode <Integer>
+ - autoClose <Boolean>
+ - start <Integer>
+
+WriteStreamを返します。詳しくは：[Writable Stream](https://nodejs.org/dist/latest-v6.x/docs/api/stream.html#stream_class_stream_writable)
+
+optionsは、以下のデフォルトの値を持つオブジェクトか、Stringです。
+
+```
+{
+  flags: 'w',
+  defaultEncoding: 'utf8',
+  fd: null,
+  mode: 0o666,
+  autoClose: true
+}
+```
+
+optionsにはstartオプションが含まれています。
+ファイルの開始位置からいくつか前からデータを書き込む許可も含まれています。
+ファイルを置き換えるのではなく、変更する場合、デフォルトのw flagsではなく、r+のflagsが必要な場合があります。
+defaultEncodingオプションはBufferによって受け入れることのできるエンコーディングであればなんでも大丈夫です。
+
+autoCloseがtrue(デフォルト)の場合、on errorやendはファイルディスクリプタが閉じられた時に自動で発火します。
+falseの場合、エラーがあっても自動でファイルディスクリプタは閉じられません。これを閉じ、ファイルディスクリプタがリークしないようにチェックするのはあなたの責任になります。
+
+ReadStreamのように、fdを指定するとWriteStreamは引数のpathを無視して、指定されたファイルディスクリプタを利用します。
+これは、'open'イベントが発火されないという意味です。
+
+note:fdはブロックされているべきです。
+ノンブロッキングなfdはnet.Socketを渡すべきです。
+
+
+optionsがstringの場合、それはencodingを指定します。
+
+
 ### fs.exists(path, callback)
+v1.0.0からDeprecated
+
+fs.stat()かfs.accessを利用しましょう。
+
+- path <String> | <Buffer>
+- callback <Function>
+
+与えられたpathが存在するかどうかをチェックします。
+その後、callbackにtrue/falseを渡します。
+
+例：
+```
+fs.exists('/etc/passwd', (exists) => {
+  console.log(exists ? 'it\'s there' : 'no passwd!');
+});
+```
+
+このコールバックのパラメータは、他のNode.jsコールバックと一貫性がないことに注意してください。
+
+普通、Node,jsのコールバックの第一引数はerrパラメータが返され、それに続いて他のパラメータが返却されます。
+このfs.exists()のコールバックは、たったひとつのbooleanのパラメータしか返しません。
+それが、fs.exists()が非推奨で、fs.accessが推奨される理由の１つです。
+
+~非推奨なので略~
 
 ### fs.existsSync(path)
 
+- path <String> | <Buffer>
+
+fs.exists()の同期バージョンです。trueまたはfalseのどちらかを返します。
+
+注意：fs.exists()は非推奨ですが、こちらは非推奨ではありません。
+fs.existsのコールバックパラメータは（上述の通り）他のパラメータと矛盾しますが、fs.existsSyncはコールバックを使わないためです。
+
+
 ### fs.fchmod(fd, mode, callback)
 
+- fd <Integer>
+- mode <Integer>
+- callback <Function>
+
+fchmodの非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
 ### fs.fchmodSync(fd, mode)
+
+- fd <Integer>
+- mode <Integer>
+
+fchmodの同期バージョンです。undefinedを返します。
 
 
 ### fs.fchown(fd, uid, gid, callback)
 
+- fd <Integer>
+- uid <Integer>
+- gid <Integer>
+- callback <Function>
+fchownの非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
 ### fs.fchownSync(fd, uid, gid)
+
+- fd <Integer>
+- uid <Integer>
+- gid <Integer>
+
+fchownの同期バージョンです。undefinedが返されます。
 
 ### fs.fdatasync(fd, callback)
 
+- fd <Integer>
+- callback <Function>
+fdatasyncの非同期版です。
+callbackには例外以外の引数は与えられません。
+
+
 ### fs.fdatasyncSync(fd)
+
+- fd <Integer>
+
+fdatasyncの同期バージョンです。undefinedが返されます。
+
 
 ### fs.fstat(fd, callback)
 
+- fd <Integer>
+- callback <Function>
+
+ fstat(2)の非同期バージョンです。
+ callbackはerr,statsの２つの引数を持ち、statsはfs.Statsオブジェクトです。
+ fstat()はstats()と同じですが、ファイルディスクリプタのfdによって統計的に処理されたファイルです。
+
+
 ### fs.fstatSync(fd)
 
+fchownの同期バージョンです。fs.fStatsのインスタンスが返されます。
 
 ### fs.fsync(fd, callback)
 
+- fd <Integer>
+- callback <Function>
+
+fsync(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
 ### fs.fsyncSync(fd)
+- fd <Integer>
+
+fsync(2)の同期バージョンです。
+undefinedが返されます。
 
 ### fs.ftruncate(fd, len, callback)
 
+- fd <Integer>
+- len <Integer> default = 0
+- callback <Function>
+
+ ftruncate(2)の非同期バージョンです。
+ callbackには例外以外の引数は与えられません。
+
+もしファイルディスクリプタによって参照されたファイルがlenで指定されたbyteより大きい場合、最初のlenのbyteだけがファイルに保有されます。
+
+例えば、次のプログラムは最初の4 byteだけを保有します。
+
+```
+console.log(fs.readFileSync('temp.txt', 'utf8'));
+// Prints: Node.js
+
+// get the file descriptor of the file to be truncated
+const fd = fs.openSync('temp.txt', 'r+');
+
+// truncate the file to first four bytes
+fs.ftruncate(fd, 4, (err) => {
+  assert.ifError(err);
+  console.log(fs.readFileSync('temp.txt', 'utf8'));
+});
+// Prints: Node
+```
+
+lenのbyteよりもファイルが短い場合、ファイルは拡張されて、\0のbyteで埋められます。
+
+```
+console.log(fs.readFileSync('temp.txt', 'utf-8'));
+// Prints: Node.js
+
+// get the file descriptor of the file to be truncated
+const fd = fs.openSync('temp.txt', 'r+');
+
+// truncate the file to 10 bytes, whereas the actual size is 7 bytes
+fs.ftruncate(fd, 10, (err) => {
+  assert.ifError(!err);
+  console.log(fs.readFileSync('temp.txt'));
+});
+// Prints: <Buffer 4e 6f 64 65 2e 6a 73 00 00 00>
+// ('Node.js\0\0\0' in UTF8)
+```
+
+最後の3byteはオーバートランケーションを補うためのnull byte(\0)です。
+
+// 手元で試したら改行コードが1 byte入ったので結果が違った
+```
+$ echo "Node.js" > temp2.txt
+$ node ftrancate_fill.js
+Node.js
+
+<Buffer 4e 6f 64 65 2e 6a 73 0a 00 00>
+```
+
+
 ### fs.ftruncateSync(fd, len)
+
+- fd <Integer>
+- len <Integer> default = 0
+
+ftrancateの同期バージョンです。undefinedを返します。
+
 
 ### fs.futimes(fd, atime, mtime, callback)
 
+- fd <Integer>
+- atime <Integer>
+- mtime <Integer>
+- callback <Function>
+
+与えられたファイルディスクリプタによって参照されたファイルのタイムスタンプを変更します。
+
 ### fs.futimesSync(fd, atime, mtime)
+
+- fd <Integer>
+- atime <Integer>
+- mtime <Integer>
+
+fs.futimes()の同期バージョンです。undefinedを返します。
+
 
 ### fs.lchmod(path, mode, callback)
 
+- path <String> | <Buffer>
+- mode <Integer>
+- callback <Function>
+
+lchmod(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
+Mac OS X でのみ利用できます。
+
 ### fs.lchmodSync(path, mode)
+
+- path <String> | <Buffer>
+- mode <Integer>
+
+lchmod(2)の同期バージョンです。undefinedを返します。
+
 
 ### fs.lchown(path, uid, gid, callback)
 
+- path <String> | <Buffer>
+- uid <Integer>
+- gid <Integer>
+- callback <Function>
+
+lchown(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
 ### fs.lchownSync(path, uid, gid)
+
+- path <String> | <Buffer>
+- uid <Integer>
+- gid <Integer>
+
+lchown(2)の同期バージョンです。
+undefinedを返します。
 
 ### fs.link(existingPath, newPath, callback)
 
+- existingPath <String> | <Buffer>
+- newPath <String> | <Buffer>
+- callback <Function>
+
+link(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
 
 ### fs.linkSync(existingPath, newPath)
 
+- existingPath <String> | <Buffer>
+- newPath <String> | <Buffer>
+
+link(2)の同期バージョンです。
+undefinedを返します。
 
 ### fs.lstat(path, callback)
 
+- path <String> | <Buffer>
+- callback <Function>
+
+lstat(2)の非同期バージョンです。
+callbackには、err,statsの2つの引数が与えられ、statsはfs.Statsオブジェクトです。
+lstats()はstat()と同じですが、pathがシンボリックリンクの場合は、そのリンク自身が統計的に処理されていて、その参照先のファイルがされているわけではないことに注意する必要があります。
+
+```
+$ ls stat
+test.txt
+$ cat stat/test.txt
+aaaaa
+$ node lstat.js
+{ dev: 16777220,
+  mode: 16877,
+  nlink: 3,
+  uid: 501,
+  gid: 20,
+  rdev: 0,
+  blksize: 4096,
+  ino: 78135007,
+  size: 102,
+  blocks: 0,
+  atime: 2017-04-23T17:17:31.000Z,
+  mtime: 2017-04-23T17:17:20.000Z,
+  ctime: 2017-04-23T17:17:20.000Z,
+  birthtime: 2017-04-23T17:17:12.000Z }
+```
+
+```
+$ ln -s ./stat/test.txt ./linked.txt
+
+$ node lstat.js
+{ dev: 16777220,
+  mode: 16877,
+  nlink: 3,
+  uid: 501,
+  gid: 20,
+  rdev: 0,
+  blksize: 4096,
+  ino: 78135007,
+  size: 102,
+  blocks: 0,
+  atime: 2017-04-23T17:20:10.000Z,
+  mtime: 2017-04-23T17:19:59.000Z,
+  ctime: 2017-04-23T17:19:59.000Z,
+  birthtime: 2017-04-23T17:17:12.000Z }
+```
+
 ### fs.lstatSync(path)
+
+- path <String> | <Buffer>
+
+lstat(2)の同期バージョンです。
+fs.Statsを返します。
+
 
 ### fs.mkdir(path[, mode], callback)
 
+- path <String> | <Buffer>
+- mode <Integer>
+- callback <Function>
+
+mkdir(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+modeのデフォルトの値は0o777です。
 
 ### fs.mkdirSync(path[, mode])
 
+- path <String> | <Buffer>
+- mode <Integer>
+
+mkdir(2)の同期バージョンです。undefinedを返します。
+
+
 ### fs.mkdtemp(prefix[, options], callback)
 
+- prefix <String>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+- callback <Function>
+
+ユニークなテンポラリディレクトリを作成します。
+
+ユニークなテンポラリディレクトリを作るために、6つのランダムな文字を生成し、prefixの後ろに追加します。
+
+生成されたフォルダのパスはstringとしてcallbackの２つ目の引数として渡されます。
+
+引数のoptionsには、encodingを指定する文字列かオブジェクトを指定することが出来ます。
+
+例：
+```
+fs.mkdtemp('/tmp/foo-', (err, folder) => {
+  if (err) throw err;
+  console.log(folder);
+  // Prints: /tmp/foo-itXde2
+});
+```
+
+注意:
+fs.mkdtemp()関数は6つのランダムに得られた文字列をprefiの文字列に直接追加されます。
+例えば、/tmpに指定されている時、/tmpのディレクトリの中に一時ディレクトリを作成する場合は、プラットフォーム独自のpathセパレータ（require('path').sep）を付ける必要があります。
+
+```
+// The parent directory for the new temporary directory
+const tmpDir = '/tmp';
+
+// This method is *INCORRECT*:
+fs.mkdtemp(tmpDir, (err, folder) => {
+  if (err) throw err;
+  console.log(folder);
+  // Will print something similar to `/tmpabc123`.
+  // Note that a new temporary directory is created
+  // at the file system root rather than *within*
+  // the /tmp directory.
+});
+
+// This method is *CORRECT*:
+const path = require('path');
+fs.mkdtemp(tmpDir + path.sep, (err, folder) => {
+  if (err) throw err;
+  console.log(folder);
+  // Will print something similar to `/tmp/abc123`.
+  // A new temporary directory is created within
+  // the /tmp directory.
+});
+
+```
+
+
 ### fs.mkdtempSync(prefix[, options])
+
+- prefix <String>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+
+f fs.mkdtemp()の同期バージョンです。生成されたフォルダのpathを返します。
+
+options引数はエンコードを指定するstringか、encodingプロパティをもったオブジェクトを指定することが出来ます。
 
 
 ### fs.open(path, flags[, mode], callback)
 
+- path <String> | <Buffer>
+- flags <String> | <Number>
+- mode <Integer>
+- callback <Function>
+
+非同期でファイルを開きます。詳細は[open(2)](http://man7.org/linux/man-pages/man2/open.2.html)を見てください。
+flagsは
+- r (読み込む用にファイルを開く。ファイルが存在しない場合は例外が発生)
+- r+ (読み書き用にファイルを開く。ファイルが存在しない場合は例外が発生)
+- rs+ (同期で読み書き用にファイルを開く。ローカルのファイルシステムのキャッシュをバイパスするようにOSに指示する)
+を指定できます。
+
+これ(rs+)は、潜在的に失効したローカルキャッシュをスキップできるようにするために、NFSがマウントされた上でファイルを開く時に特に役立ちます。
+これはI/Oのパフォーマンスにとても大きな影響を与えるため、必要が無い場合はこれをflagに指定しないでください。
+
+- w (書き込み用にファイルを開く。存在しない場合はファイルが作成され、存在する場合は切り捨てられます。)
+- wx (wに近いですが、pathが存在していた場合は失敗します。)
+- w+ (読み書き用にファイルを開きます。存在しない場合はファイルが作成され、存在する場合は切り捨てられます。)
+- wx+ (w+に近いですが、pathが存在していた場合は失敗します。)
+- a (追加する用にファイルを開く。ファイルが存在しない場合はファイルを生成する。)
+- ax (aに近いですが、pathが存在した場合は失敗します。)
+- a+ (読みこむのと追加するようにファイルを開く。ファイルが存在しない場合はファイルを生成する。)
+- ax+ (a+に近いですが、pathが存在する場合は失敗します。)
+
+modeはファイルのモード(パーミッションとスティッキービット)を設定しますが、ファイルを生成した際に限ります。デフォルトは0666で、読み書き可能です。
+
+callbackにはerrとfdの2つの引数が与えられます。
+
+flagsには、open(2)で記述されているのと同じ数値を指定することもできます。よく使う定数はfs.constantsに存在します。
+
+Windowsでは、flagsは該当するものに変換されます。
+例えば、O_WRONLY は FILE_GENERIC_WRITE、 O_EXCL|O_CREAT は CREATE_NEWまたはCreateFileWによって受け付けられます。
+
+Linuxでは、ファオルガ追加モードで開かれた場合、位置指定の書き込みは動きません。
+カーネルは位置の引数を無視し、常にファイルの最後にデータを追加していきます。
+
+
+注意：fs.open()の動作は、いくつかのflagsによってはプラットフォーム固有の挙動をします。
+そのため、OS X と Linux上ではa+ flagは(以下の例を見てください)の状態でディレクトリを開くと、エラーが返ってきます。
+逆に、WindowsとFreeBSDでは、ファイルディスクリプタが返されます。
+
+```
+// OS X and Linux
+fs.open('<directory>', 'a+', (err, fd) => {
+  // => [Error: EISDIR: illegal operation on a directory, open <directory>]
+});
+
+// Windows and FreeBSD
+fs.open('<directory>', 'a+', (err, fd) => {
+  // => null, <fd>
+});
+
+```
+
+
 ### fs.openSync(path, flags[, mode])
+
+ fs.open()の同期バージョンです。ファイルディスクリプタを表す整数を返します。
+
 
 ### fs.read(fd, buffer, offset, length, position, callback)
 
+- fd <Integer>
+- buffer <String> | <Buffer>
+- offset <Integer>
+- length <Integer>
+- position <Integer>
+- callback <Function>
+
+
+fdによって指定されたファイルのデータを読み込みます。
+
+bufferはデータが書き込まれるバッファです。
+
+offsetはbufferのどの位置から書き込むかを指定する値です。
+
+lengthは読み込むbyte吸うを示す整数です。
+
+positionはファイル内のどこから読み込むかを示す整数です。
+positionがnullの場合、dataは現在の位置から読み込まれます。
+
+callbackにはerr, bytesRead, bufferの3つの引数が与えられます。
+
+
 ### fs.readdir(path[, options], callback)
+
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+- callback <Function>
+
+readdir(3)の非同期バージョンです。対象のディレクトリのコンテンツを読み込みます。
+callbackにはerr,filesの2つの引数が与えられ、filesは'.' と　'..' を含むファイル名の配列です。
+
+optionsはオプショナルな引数で、これはエンコーディングを指定するstringか、encodingプロパティをもったオブジェクトを指定することによって、filenamesやcallbackに使われるエンコーディングを指定することが出来ます。
+encodingにbufferがsetされた場合、filenamesはBufferオブジェクトとして渡されます。
 
 ### fs.readdirSync(path[, options])
 
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+
+readdir(3)の同期バージョンです。返り値は'.' と　'..' を含むファイル名の配列です。
+
+optionsはオプショナルな引数で、これはエンコーディングを指定するstringか、encodingプロパティをもったオブジェクトを指定することによって、filenamesやcallbackに使われるエンコーディングを指定することが出来ます。
+encodingにbufferがsetされた場合、filenamesはBufferオブジェクトとして渡されます。
+
+
 ### fs.readFile(file[, options], callback)
 
+- file <String> | <Buffer> | <Integer> filename or file descriptor
+- options <Object> | <String>
+ - encoding <String> | <Null> default = null
+ - flag <String> default = 'r'
+- callback <Function>
+
+
+非同期でfileに含まれるコンテンツを読み込みます。
+
+例：
+```
+fs.readFile('/etc/passwd', (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+```
+
+callbackはerr,dataの2つの引数が渡され、dataはfileのコンテンツです。
+
+encodingが指定されていない場合、bufferで返されます。
+
+optionsがstringの場合、encodingが指定されます。
+
+例：
+```
+fs.readFile('/etc/passwd', 'utf8', callback);
+```
+
+指定されたファイルディスクリプタはすべて読み取りをサポートする必要があります。
+
+注意：
+ファイルディスクリプタがファイルとして指定されている場合、自動的にcloseされません。
 
 
 ### fs.readFileSync(file[, options])
 
+- file <String> | <Buffer> | <Integer> filename or file descriptor
+- options <Object> | <String>
+ - encoding <String> | <Null> default = null
+ - flag <String> default = 'r'
+
+fs.readFileの同期バージョンです。
+fileの中身が返されます。
+
+encodingが指定されている場合は、この関数はstringを返しますが、そうでない場合はBufferで返ります。
 
 ### fs.readlink(path[, options], callback)
+
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+- callback <Function>
+
+readlink(2)の非同期バージョンです。
+
+callbacにkはerr, linkStringの2つの引数が与えられます。
+
+optionsの引数はオプショナルですが、callbackに渡されるlink pathで利用するエンコーディングを指定する文字列か、encodingプロパティをもったオブジェクトを指定することが出来ます。
+
+encodingがbufferにセットされている場合、返されるlink pathはBufferオブジェクトとして返されます。
 
 ### fs.readlinkSync(path[, options])
 
 
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+- callback <Function>
+
+readlink(2)の同期バージョンです。
+シンボリックリンクの文字の値が返されます。
+
+optionsの引数はオプショナルですが、callbackに渡されるlink pathで利用するエンコーディングを指定する文字列か、encodingプロパティをもったオブジェクトを指定することが出来ます。
+
+encodingがbufferにセットされている場合、返されるlink pathはBufferオブジェクトとして返されます。
+
+
 ### fs.readSync(fd, buffer, offset, length, position)
 
+- fd <Integer>
+- buffer <String> | <Buffer>
+- offset <Integer>
+- length <Integer>
+- position <Integer>
+
+fs.read()の同期バージョンです。bytesReadの値が返されます。
+
+
 ### fs.realpath(path[, options], callback)
+
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+- callback <Function>
+
+realpath(3)の非同期バージョンです。
+err, resolvedPathの2つの引数がcallbackに与えられます。
+process.cwdを使用して、相対パスを解決できます。
+
+
+UTF8に変換できるpathだけサポートされています。
+
+optionsはオプショナルな引数ですが、callbackに渡されるpathのエンコーディングを指定する文字列かencodingプロパティをもったオブジェクトを指定することが出来ます。encodingにbufferが指定された場合、返されるpathはBufferオブジェクトです。
 
 
 ### fs.realpathSync(path[, options])
 
+- path <String> | <Buffer>
+- options <String> | <Object>
+ - encoding <String> default = 'utf8'
+
+realpath(3)の同期バージョンです。解決されたpathが返されます。
+
+optionsはオプショナルな引数ですが、callbackに渡されるpathのエンコーディングを指定する文字列かencodingプロパティをもったオブジェクトを指定することが出来ます。encodingにbufferが指定された場合、返されるpathはBufferオブジェクトです。
+
+
 ### fs.rename(oldPath, newPath, callback)
+
+- oldPath <String> | <Buffer>
+- newPath <String> | <Buffer>
+- callback <Function>
+
+rename(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
 
 ### fs.renameSync(oldPath, newPath)
 
+- oldPath <String> | <Buffer>
+- newPath <String> | <Buffer>
+
+rename(2)の同期バージョンです。
+undefinedが返されます。
+
+
 ### fs.rmdir(path, callback)
+
+- path <String> | <Buffer>
+- callback <Function>
+
+rmdir(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
 
 ### fs.rmdirSync(path)
 
+- path <String> | <Buffer>
+
+rmdir(2)の同期バージョンです。
+undefinedが返されます。
 
 ### fs.stat(path, callback)
 
+- path <String> | <Buffer>
+- callback <Function>
+
+stat(2)の非同期バージョンです。
+callbackにはerr, statsの2つの引数が渡されstatsはfs.Statsオブジェクトです。
+
+エラーが起きた場合、err.codeは[Common System Errors](https://nodejs.org/dist/latest-v6.x/docs/api/errors.html#errors_common_system_errors)の1つです。
+
+
+fs.open()、fs.readFile()またはfs.writeFile()の前にfs.stat()を利用してファイルの存在を確認することは推奨されません。
+代わりに、usercodeはファイルを直接開いたり、読み書きしたりする時に、ファイルが存在しない場合には発生しtエラーを処理する必要があります。
+
+ファイルを操作することなくファイルが存在することを確認するには、fs.access()を利用することを推奨します。
+
 ### fs.statSync(path)
+
+- path <String> | <Buffer>
+
+stat(2)の同期バージョンです。
+fs.Statsオブジェクトが返されます。
+
 
 ### fs.symlink(target, path[, type], callback)
 
+- target <String> | <Buffer>
+- path <String> | <Buffer>
+- type <String>
+- callback <Function>
+
+symlink(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+type引数はデフォルトはfileですが、Windowsプラットフォーム上でのみdir,file,junctionを指定することが出来ます。（他のプラットフォームでは無視されます）
+
+Windowsでのjunctionポイントは絶対パスである必要があります。
+
+junctionを使用する場合、targetの引数は自動的に絶対パスに正規化されます。
+
+サンプルコードは以下です。
+
+```
+fs.symlink('./foo', './new-port');
+```
+
+これを実行すると、fooを指し示すnew-portというシンボリックリンクが作成されます。
+
+
 ### fs.symlinkSync(target, path[, type])
 
+- target <String> | <Buffer>
+- path <String> | <Buffer>
+- type <String>
+
+symlink(2)の同期バージョンです。
+undefinedが返されます。
+
 ### fs.truncate(path, len, callback)
+
+- path <String> | <Buffer>
+- len <Integer> default = 0
+- callback <Function>
+
+truncate(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
+
+ファイルディスクリプタも最初の引数として与えることが出来ます。
+この場合は、fs.ftruncateが呼び出されます。
 
 
 ### fs.truncateSync(path, len)
 
+- path <String> | <Buffer>
+- len <Integer> default = 0
+
+truncate(2)の同期バージョンです。
+undefinedが返されます。
+ファイルディスクリプタも最初の引数として与えることが出来ます。
+この場合は、fs.ftruncateSyncが呼び出されます。
+
+
 ### fs.unlink(path, callback)
+
+- path <String> | <Buffer>
+- callback <Function>
+
+unlink(2)の非同期バージョンです。
+callbackには例外以外の引数は与えられません。
 
 ### fs.unlinkSync(path)
 
+- path <String> | <Buffer>
+
+unlink(2)の同期バージョンです。
+undefinedが返されます。
+
 ### fs.unwatchFile(filename[, listener])
 
+- filename <String> | <Buffer>
+- listener <Function>
+
+filenameに指定されたファイルの変更の監視をやめます。
+listenerが指定されている場合、そのlinstenerのみが削除されます。
+それ以外の場合、すべてのリスナーが削除され、filenameに対する冠水がすべて停止します。
+
+監視されていないfs.unwatchFile()を呼び出すと、エラーは起きず、操作されません。
+
+注意：fs.watch()はfs.watchFile()、fs.unwatchFile()よりも効率的です。
+fs.watchfs.watchFile()、fs.unwatchFile()よりも、可能であれば、fs.watch()を使ってください。
 
 ### fs.utimes(path, atime, mtime, callback)
 
+- path <String> | <Buffer>
+- atime <Integer>
+- mtime <Integer>
+- callback <Function>
+
+与えられたpathによって参照されるファイルのファイルタイムスタンプを変更します。
+
+注意：atime,mtimeは以下の関連する関数のルールに従います。
+
+- 値は秒単位のUnix timestampでないといけません。例えば、Date.nowはミリ秒を返すので、1000で割る必要があります。
+- 値が'123456789'のような数値文字列の場合、値は数値に変換されます。
+- NaNやInfinityの場合、Date.now()/1000に変換されます。
+
+
 ### fs.utimesSync(path, atime, mtime)
+
+- path <String> | <Buffer>
+- atime <Integer>
+- mtime <Integer>
+
+fs.utimes()の同期バージョンです。undefinedが返されます。
 
 ### fs.watch(filename[, options][, listener])
 
-#### Caveats
+- filename <String> | <Buffer>
+- options <String> | <Object>
+ - persistent <Boolean> ファイルが監視されている間、プロセスを継続して実行しておくかどうかを表します。 default = true
+ - recursive <Boolean> 再帰的にすべてのサブディレクトリを監視するか、今のディレクトリのみを監視するかを示します。ディレクトリが指定されている場合、サポートされているプラットフォームでのみ動きます。詳細はCaveatsを見てください default = false
+ - encoding <String> リスナに渡されるファイル名に利用するエンコーディングを指定します。 default = 'utf8'
+- listener <Function>
 
+filenameで指定されたファイルまたはディレクトリの変更を監視します。返されるオブジェクトはfs.FSWatcherです。
+
+第二引数はオプショナルです。optionsがstringの場合はエンコーディングを指定しています。
+それ以外の場合はobjectとして渡すべきです。
+
+listenerのコールバックはeventType,filenameの2つの引数を与えられます。eventTypeはrenameまたはchangeのどちらかで、filenameはそのイベントを発火させたファイルの名前です。
+
+
+ほとんどのプラットフォームでは、ファイル名がディレクトリに表示されたり消えたりするたびに、名前の変更が行われます
+
+
+同じように、リスナーコールバックはfs.FSWatcherによって発火された'change'イベントに関連付けられていますが、eventTypeの 'change'の値と同じではありません。
+
+#### 警告
+// Caveats
+
+fs.watch APIはすべてのプラットフォームでい使えるわけではなく、いくつかのシチュエーションでは使えません。
+
+- On Linux systems, this uses inotify
+- On BSD systems, this uses kqueue
+- On OS X, this uses kqueue for files and FSEvents for directories.
+- On SunOS systems (including Solaris and SmartOS), this uses event ports.
+- On Windows systems, this feature depends on ReadDirectoryChangesW.
+- On Aix systems, this feature depends on AHAFS, which must be enabled.
+
+fs.watchFileを利用することはできますが、統計的にポーリングすることはできますが、速度は遅く、信頼性も低くなります。
 
 ### fs.watchFile(filename[, options], listener)
+
 
 ### fs.write(fd, buffer, offset, length[, position], callback)
 
@@ -630,15 +1425,46 @@ fs.close()の同期バージョンです。
 
 ### fs.writeFile(file, data[, options], callback)
 
+- file <String> | <Buffer> | <Integer> filename or file descriptor
+- data <String> | <Buffer>
+- options <Object> | <String>
+ - encoding <String> | <Null> default = 'utf8'
+ - mode <Integer> default = 0o666
+ - flag <String> default = 'w'
+- callback <Function> 
 
 
 ### fs.writeFileSync(file, data[, options])
 
+- file <String> | <Buffer> | <Integer> filename or file descriptor
+- data <String> | <Buffer>
+- options <Object> | <String>
+ - encoding <String> | <Null> default = 'utf8'
+ - mode <Integer> default = 0o666
+ - flag <String> default = 'w'
+
+fs.writeFile()の同期バージョンです。undefinedが返されます。
 
 
 ### fs.writeSync(fd, buffer, offset, length[, position])
 
+- fd <Integer>
+- buffer <String> | <Buffer>
+- offset <Integer>
+- length <Integer>
+- position <Integer>
+
+// 説明が一切ないのでチャンス？
+
 ### fs.writeSync(fd, data[, position[, encoding]])
+
+- fd <Integer>
+- data <String> | <Buffer>
+- position <Integer>
+- encoding <String>
+
+fs.write()の同期的なバージョンです。
+書き込まれたbytesの数値が返されます。
 
 ### FS Constants
 
