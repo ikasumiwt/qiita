@@ -410,6 +410,7 @@ fs.access()の同期的なバージョンです。
 
 ### fs.appendFile(file, data[, options], callback)
 
+
 - file <String> | <Buffer> | <Number> filename or file descriptor
 - data <String> | <Buffer>
 - options <Object> | <String>
@@ -419,7 +420,9 @@ fs.access()の同期的なバージョンです。
 - callback <Function>
 
 
-非同期的にファイルにデータを追加します。ファイルが存在しない場合はファイルを作ります。
+
+非同期的にファイルにデータを追加します。
+ファイルが存在しない場合はファイルを作ります。
 データはstringかbufferです。
 
 例：
@@ -439,9 +442,11 @@ fs.appendFile('message.txt', 'data to append', 'utf8', callback);
 
 指定されたファイルディスクリプタが追加のために開かれていなければいけません。
 
+
 ### fs.appendFileSync(file, data[, options])
 
 fs.appendFile()の同期バージョンです。
+
 
 ### fs.chmod(path, mode, callback)
 
