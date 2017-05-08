@@ -852,25 +852,25 @@ undefinedを返します。
 
 ### fs.link(existingPath, newPath, callback)
 
-* existingPath <String> | <Buffer>
-* newPath <String> | <Buffer>
-* callback <Function>
+* `existingPath` {string|Buffer|URL}
+* `newPath` {string|Buffer|URL}
+* `callback` {Function}
 
 link(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.linkSync(existingPath, newPath)
 
-* existingPath <String> | <Buffer>
-* newPath <String> | <Buffer>
+* `existingPath` {string|Buffer|URL}
+* `newPath` {string|Buffer|URL}
 
 link(2)の同期バージョンです。
 undefinedを返します。
 
 ### fs.lstat(path, callback)
 
-* path <String> | <Buffer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `callback` {Function}
 
 lstat(2)の非同期バージョンです。
 callbackには、err,statsの2つの引数が与えられ、statsはfs.Statsオブジェクトです。
@@ -920,7 +920,7 @@ $ node lstat.js
 
 ### fs.lstatSync(path)
 
-* path <String> | <Buffer>
+* `path` {string|Buffer|URL}
 
 lstat(2)の同期バージョンです。
 fs.Statsを返します。
@@ -928,9 +928,9 @@ fs.Statsを返します。
 
 ### fs.mkdir(path[, mode], callback)
 
-* path <String> | <Buffer>
-* mode <Integer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `mode` {integer}
+* `callback` {Function}
 
 mkdir(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
@@ -938,18 +938,19 @@ modeのデフォルトの値は0o777です。
 
 ### fs.mkdirSync(path[, mode])
 
-* path <String> | <Buffer>
-* mode <Integer>
+* `path` {string|Buffer|URL}
+* `mode` {integer}
+
 
 mkdir(2)の同期バージョンです。undefinedを返します。
 
 
 ### fs.mkdtemp(prefix[, options], callback)
 
-* prefix <String>
-* options <String> | <Object>
- * encoding <String> default = 'utf8'
-* callback <Function>
+* `prefix` {string}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
+* `callback` {Function}
 
 
 
@@ -1004,10 +1005,9 @@ fs.mkdtemp(tmpDir + path.sep, (err, folder) => {
 
 ### fs.mkdtempSync(prefix[, options])
 
-* prefix <String>
-* options <String> | <Object>
- * encoding <String> default = 'utf8'
-
+* `prefix` {string}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
 
 
 fs.mkdtemp()の同期バージョンです。生成されたフォルダのpathを返します。
@@ -1017,18 +1017,20 @@ options引数はエンコードを指定するstringか、encodingプロパテ�
 
 ### fs.open(path, flags[, mode], callback)
 
-* path <String> | <Buffer>
-* flags <String> | <Number>
-* mode <Integer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `flags` {string|number}
+* `mode` {integer}
+* `callback` {Function}
 
 
 
 非同期でファイルを開きます。詳細は[open(2)](http://man7.org/linux/man-pages/man2/open.2.html)を見てください。
 flagsは
+
 * r (読み込む用にファイルを開く。ファイルが存在しない場合は例外が発生)
 * r+ (読み書き用にファイルを開く。ファイルが存在しない場合は例外が発生)
 * rs+ (同期で読み書き用にファイルを開く。ローカルのファイルシステムのキャッシュをバイパスするようにOSに指示する)
+
 を指定できます。
 
 これ(rs+)は、潜在的に失効したローカルキャッシュをスキップできるようにするために、NFSがマウントされた上でファイルを開く時に特に役立ちます。
@@ -1076,17 +1078,20 @@ fs.open('<directory>', 'a+', (err, fd) => {
 
 ### fs.openSync(path, flags[, mode])
 
+* `path` {string|Buffer|URL}
+* `flags` {string|number}
+* `mode` {integer}
+
  fs.open()の同期バージョンです。ファイルディスクリプタを表す整数を返します。
 
 ### fs.read(fd, buffer, offset, length, position, callback)
 
-* fd <Integer>
-* buffer <String> | <Buffer>
-* offset <Integer>
-* length <Integer>
-* position <Integer>
-* callback <Function>
-
+* `fd` {integer}
+* `buffer` {Buffer|Uint8Array}
+* `offset` {integer}
+* `length` {integer}
+* `position` {integer}
+* `callback` {Function}
 
 
 fdによって指定されたファイルのデータを読み込みます。
@@ -1105,10 +1110,10 @@ callbackにはerr, bytesRead, bufferの3つの引数が与えられます。
 
 ### fs.readdir(path[, options], callback)
 
-* path <String> | <Buffer>
-* options <String> | <Object>
-  * encoding <String> default = 'utf8'
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
+* `callback` {Function}
 
 
 
@@ -1120,10 +1125,9 @@ encodingにbufferがsetされた場合、filenamesはBufferオブジェクトと
 
 ### fs.readdirSync(path[, options])
 
-* path <String> | <Buffer>
-* options <String> | <Object>
- * encoding <String> default = 'utf8'
-
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
 
 
 readdir(3)の同期バージョンです。返り値は'.' と　'..' を含むファイル名の配列です。
@@ -1134,11 +1138,11 @@ encodingにbufferがsetされた場合、filenamesはBufferオブジェクトと
 
 ### fs.readFile(file[, options], callback)
 
-* file <String> | <Buffer> | <Integer> filename or file descriptor
-* options <Object> | <String>
- * encoding <String> | <Null> default = null
- * flag <String> default = 'r'
-* callback <Function>
+* `path` {string|Buffer|URL|integer} filename or file descriptor
+* `options` {Object|string}
+  * `encoding` {string|null} default = `null`
+  * `flag` {string} default = `'r'`
+* `callback` {Function}
 
 
 非同期でfileに含まれるコンテンツを読み込みます。
@@ -1170,11 +1174,10 @@ fs.readFile('/etc/passwd', 'utf8', callback);
 
 ### fs.readFileSync(file[, options])
 
-* file <String> | <Buffer> | <Integer> filename or file descriptor
-* options <Object> | <String>
-  * encoding <String> | <Null> default = null
-  * flag <String> default = 'r'
-
+* `path` {string|Buffer|URL|integer} filename or file descriptor
+* `options` {Object|string}
+  * `encoding` {string|null} default = `null`
+  * `flag` {string} default = `'r'`
 
 
 fs.readFileの同期バージョンです。
@@ -1185,10 +1188,10 @@ encodingが指定されている場合は、この関数はstringを返します
 
 ### fs.readlink(path[, options], callback)
 
-* path <String> | <Buffer>
-* options <String> | <Object>
-  * encoding <String> default = 'utf8'
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
+* `callback` {Function}
 
 
 
@@ -1202,12 +1205,9 @@ encodingがbufferにセットされている場合、返されるlink pathはBuf
 
 ### fs.readlinkSync(path[, options])
 
-
-* path <String> | <Buffer>
-* options <String> | <Object>
-  * encoding <String> default = 'utf8'
-* callback <Function>
-
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
 
 
 readlink(2)の同期バージョンです。
@@ -1220,25 +1220,21 @@ encodingがbufferにセットされている場合、返されるlink pathはBuf
 
 ### fs.readSync(fd, buffer, offset, length, position)
 
-* fd <Integer>
-* buffer <String> | <Buffer>
-* offset <Integer>
-* length <Integer>
-* position <Integer>
-
-
+* `fd` {integer}
+* `buffer` {string|Buffer|Uint8Array}
+* `offset` {integer}
+* `length` {integer}
+* `position` {integer}
 
 fs.read()の同期バージョンです。bytesReadの値が返されます。
 
 
 ### fs.realpath(path[, options], callback)
 
-* path <String> | <Buffer>
-* options <String> | <Object>
-  * encoding <String> default = 'utf8'
-* callback <Function>
-
-
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
+* `callback` {Function}
 
 realpath(3)の非同期バージョンです。
 err, resolvedPathの2つの引数がcallbackに与えられます。
@@ -1252,11 +1248,9 @@ optionsはオプショナルな引数ですが、callbackに渡されるpathの�
 
 ### fs.realpathSync(path[, options])
 
-* path <String> | <Buffer>
-* options <String> | <Object>
-  * encoding <String> default = 'utf8'
-
-
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `encoding` {string} default = `'utf8'`
 
 realpath(3)の同期バージョンです。解決されたpathが返されます。
 
@@ -1265,9 +1259,9 @@ optionsはオプショナルな引数ですが、callbackに渡されるpathの�
 
 ### fs.rename(oldPath, newPath, callback)
 
-* oldPath <String> | <Buffer>
-* newPath <String> | <Buffer>
-* callback <Function>
+* `oldPath` {string|Buffer|URL}
+* `newPath` {string|Buffer|URL}
+* `callback` {Function}
 
 
 rename(2)の非同期バージョンです。
@@ -1275,8 +1269,8 @@ callbackには例外以外の引数は与えられません。
 
 ### fs.renameSync(oldPath, newPath)
 
-* oldPath <String> | <Buffer>
-* newPath <String> | <Buffer>
+* `oldPath` {string|Buffer|URL}
+* `newPath` {string|Buffer|URL}
 
 
 rename(2)の同期バージョンです。
@@ -1285,8 +1279,8 @@ undefinedが返されます。
 
 ### fs.rmdir(path, callback)
 
-* path <String> | <Buffer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `callback` {Function}
 
 
 rmdir(2)の非同期バージョンです。
@@ -1295,7 +1289,7 @@ callbackには例外以外の引数は与えられません。
 
 ### fs.rmdirSync(path)
 
-* path <String> | <Buffer>
+* `path` {string|Buffer|URL}
 
 
 rmdir(2)の同期バージョンです。
@@ -1303,8 +1297,8 @@ undefinedが返されます。
 
 ### fs.stat(path, callback)
 
-* path <String> | <Buffer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `callback` {Function}
 
 
 stat(2)の非同期バージョンです。
@@ -1320,7 +1314,7 @@ fs.open()、fs.readFile()またはfs.writeFile()の前にfs.stat()を利用し�
 
 ### fs.statSync(path)
 
-* path <String> | <Buffer>
+* `path` {string|Buffer|URL}
 
 
 stat(2)の同期バージョンです。
@@ -1329,11 +1323,10 @@ fs.Statsオブジェクトが返されます。
 
 ### fs.symlink(target, path[, type], callback)
 
-* target <String> | <Buffer>
-* path <String> | <Buffer>
-* type <String>
-* callback <Function>
-
+* `target` {string|Buffer|URL}
+* `path` {string|Buffer|URL}
+* `type` {string}
+* `callback` {Function}
 
 symlink(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
@@ -1354,9 +1347,9 @@ fs.symlink('./foo', './new-port');
 
 ### fs.symlinkSync(target, path[, type])
 
-* target <String> | <Buffer>
-* path <String> | <Buffer>
-* type <String>
+* `target` {string|Buffer|URL}
+* `path` {string|Buffer|URL}
+* `type` {string}
 
 
 symlink(2)の同期バージョンです。
@@ -1364,9 +1357,9 @@ undefinedが返されます。
 
 ### fs.truncate(path, len, callback)
 
-* path <String> | <Buffer>
-* len <Integer> default = 0
-* callback <Function>
+* `path` {string|Buffer}
+* `len` {integer} default = `0`
+* `callback` {Function}
 
 
 truncate(2)の非同期バージョンです。
@@ -1378,9 +1371,8 @@ callbackには例外以外の引数は与えられません。
 
 ### fs.truncateSync(path, len)
 
-* path <String> | <Buffer>
-* len <Integer> default = 0
-
+* `path` {string|Buffer}
+* `len` {integer} default = `0`
 
 truncate(2)の同期バージョンです。
 undefinedが返されます。
@@ -1390,26 +1382,23 @@ undefinedが返されます。
 
 ### fs.unlink(path, callback)
 
-* path <String> | <Buffer>
-* callback <Function>
-
+* `path` {string|Buffer|URL}
+* `callback` {Function}
 
 unlink(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.unlinkSync(path)
 
-* path <String> | <Buffer>
-
+* `path` {string|Buffer|URL}
 
 unlink(2)の同期バージョンです。
 undefinedが返されます。
 
 ### fs.unwatchFile(filename[, listener])
 
-* filename <String> | <Buffer>
-* listener <Function>
-
+* `filename` {string|Buffer}
+* `listener` {Function}
 
 filenameに指定されたファイルの変更の監視をやめます。
 listenerが指定されている場合、そのlinstenerのみが削除されます。
@@ -1422,10 +1411,10 @@ fs.watchfs.watchFile()、fs.unwatchFile()よりも、可能であれば、fs.wat
 
 ### fs.utimes(path, atime, mtime, callback)
 
-* path <String> | <Buffer>
-* atime <Integer>
-* mtime <Integer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `atime` {integer}
+* `mtime` {integer}
+* `callback` {Function}
 
 
 与えられたpathによって参照されるファイルのファイルタイムスタンプを変更します。
@@ -1439,21 +1428,21 @@ fs.watchfs.watchFile()、fs.unwatchFile()よりも、可能であれば、fs.wat
 
 ### fs.utimesSync(path, atime, mtime)
 
-* path <String> | <Buffer>
-* atime <Integer>
-* mtime <Integer>
+* `path` {string|Buffer|URL}
+* `atime` {integer}
+* `mtime` {integer}
 
 
 fs.utimes()の同期バージョンです。undefinedが返されます。
 
 ### fs.watch(filename[, options][, listener])
 
-* filename <String> | <Buffer>
-* options <String> | <Object>
-  * persistent <Boolean> ファイルが監視されている間、プロセスを継続して実行しておくかどうかを表します。 default = true
-  * recursive <Boolean> 再帰的にすべてのサブディレクトリを監視するか、今のディレクトリのみを監視するかを示します。ディレクトリが指定されている場合、サポートされているプラットフォームでのみ動きます。詳細はCaveatsを見てください default = false
-  * encoding <String> リスナに渡されるファイル名に利用するエンコーディングを指定します。 default = 'utf8'
-* listener <Function>
+* `filename` {string|Buffer|URL}
+* `options` {string|Object}
+  * `persistent` {boolean} ファイルが監視されている間、プロセスを継続して実行しておくかどうかを表します。 default = true
+  * `recursive` {boolean} 再帰的にすべてのサブディレクトリを監視するか、今のディレクトリのみを監視するかを示します。ディレクトリが指定されている場合、サポートされているプラットフォームでのみ動きます。詳細はCaveatsを見てください default = false
+  * `encoding` {string} リスナに渡されるファイル名に利用するエンコーディングを指定します。 default = 'utf8'
+* `listener` {Function}
 
 
 filenameで指定されたファイルまたはディレクトリの変更を監視します。返されるオブジェクトはfs.FSWatcherです。
@@ -1522,12 +1511,11 @@ fs.watch('somedir', (eventType, filename) => {
 
 ### fs.watchFile(filename[, options], listener)
 
-* filename <String> | <Buffer>
-* options <Object>
-  * persistent <Boolean>
-  * interval <Integer>
-* listener <Function>
-
+* `filename` {string|Buffer|URL}
+* `options` {Object}
+  * `persistent` {boolean}
+  * `interval` {integer}
+* `listener` {Function}
 
 filenameで指定されたファイルの監視をします。
 listenerはファイルにアクセスするたびに呼び出されます。
@@ -1561,12 +1549,12 @@ Windowsでは、blksizeとblocksフィールドがundefinedとなります。
 
 ### fs.write(fd, buffer, offset, length[, position], callback)
 
-* fd <Integer>
-* buffer <String> | <Buffer>
-* offset <Integer>
-* length <Integer>
-* position <Integer>
-* callback <Function>
+* `fd` {integer}
+* `buffer` {Buffer|Uint8Array}
+* `offset` {integer}
+* `length` {integer}
+* `position` {integer}
+* `callback` {Function}
 
 
 fdで指定されたファイルにbufferを書き込みます。
@@ -1589,11 +1577,11 @@ Linuxでは、ファイルが追加モードで開かれると位置指定した
 
 ### fs.write(fd, data[, position[, encoding]], callback)
 
-* fd <Integer>
-* data <String> | <Buffer>
-* position <Integer>
-* encoding <String>
-* callback <Function>
+* `fd` {integer}
+* `string` {string}
+* `position` {integer}
+* `encoding` {string}
+* `callback` {Function}
 
 
 fdで指定されたファイルにdataを書き込みます。
@@ -1621,13 +1609,13 @@ Linuxでは、ファイルが追加モードで開かれると位置指定した
 
 ### fs.writeFile(file, data[, options], callback)
 
-* file <String> | <Buffer> | <Integer> filename or file descriptor
-* data <String> | <Buffer>
-* options <Object> | <String>
-  * encoding <String> | <Null> default = 'utf8'
-  * mode <Integer> default = 0o666
-  * flag <String> default = 'w'
-* callback <Function>
+* `file` {string|Buffer|integer} filename or file descriptor
+* `data` {string|Buffer|Uint8Array}
+* `options` {Object|string}
+  * `encoding` {string|null} default = `'utf8'`
+  * `mode` {integer} default = `0o666`
+  * `flag` {string} default = `'w'`
+* `callback` {Function}
 
 
 非同期でデータをファイルに書き込み、ファイルが既に存在する場合は置き換えます。
@@ -1653,12 +1641,12 @@ fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
 
 ### fs.writeFileSync(file, data[, options])
 
-* file <String> | <Buffer> | <Integer> filename or file descriptor
-* data <String> | <Buffer>
-* options <Object> | <String>
-  * encoding <String> | <Null> default = 'utf8'
-  * mode <Integer> default = 0o666
-  * flag <String> default = 'w'
+* `file` {string|Buffer|integer} filename or file descriptor
+* `data` {string|Buffer|Uint8Array}
+* `options` {Object|string}
+  * `encoding` {string|null} default = `'utf8'`
+  * `mode` {integer} default = `0o666`
+  * `flag` {string} default = `'w'`
 
 
 fs.writeFile()の同期バージョンです。undefinedが返されます。
@@ -1671,21 +1659,21 @@ callbackを待たずに同じファイルに対してfs.writeFileを複数回指
 
 ### fs.writeSync(fd, buffer, offset, length[, position])
 
-* fd <Integer>
-* buffer <String> | <Buffer>
-* offset <Integer>
-* length <Integer>
-* position <Integer>
+* `fd` {integer}
+* `buffer` {Buffer|Uint8Array}
+* `offset` {integer}
+* `length` {integer}
+* `position` {integer}
 
 
 // 説明が一切ないのでチャンス？
 
 ### fs.writeSync(fd, data[, position[, encoding]])
 
-* fd <Integer>
-* data <String> | <Buffer>
-* position <Integer>
-* encoding <String>
+* `fd` {integer}
+* `string` {string}
+* `position` {integer}
+* `encoding` {string}
 
 
 fs.write()の同期的なバージョンです。
