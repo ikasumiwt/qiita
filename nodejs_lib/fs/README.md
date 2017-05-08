@@ -1899,6 +1899,37 @@ fs.Stats オブジェクトのmodeプロパティと一緒にaccessの許可を�
   </tr>
 </table>
 
-#### 参考
-http://html5.ohtsu.org/nodejuku01/nodejuku01_ohtsu.pdf
-http://www.slideshare.net/shigeki_ohtsu/processnext-tick-nodejs
+
+
+
+
+--------
+
+Q.fs moduleとそれ以外のmoduleの違い
+
+https://github.com/nodejs/node/blob/master/lib/module.js#L579
+とかの（先にやった）moduleなどで使われている・・・？
+
+
+```
+$ grep -r "require('fs'" ./
+.//internal/bootstrap_node.js:          const fs = NativeModule.require('fs');
+.//internal/fs.js:const fs = require('fs');
+.//internal/process/stdio.js:        const fs = require('fs');
+.//internal/repl.js:const fs = require('fs');
+.//internal/v8_prof_polyfill.js:const fs = require('fs');
+.//module.js:const fs = require('fs');
+.//repl.js:const fs = require('fs');
+```
+
+みたいになってる
+
+特にinternal/bootstrap_node.jsではfsをここ↓で読み込んでいて、startup()内で使ってる
+
+https://github.com/nodejs/node/blob/master/lib/internal/bootstrap_node.js#L135
+で、ここでreadFileSyncして該当のfilenameのファイルを読み込んでいるので、そもそもfsが動作しないと動かないような・・・
+https://github.com/nodejs/node/blob/master/lib/internal/bootstrap_node.js#L138
+
+というあたりが他のmoduleとの違い・・・？（module.jsは別として）
+
+（わからなすぎて調べていたら本が出てきたのでこれからヒントを得た https://books.google.co.jp/books?id=Bie6AwAAQBAJ&pg=PA382&lpg=PA382&dq=node+fs+module+%E7%89%B9%E6%AE%8A&source=bl&ots=5lm4JPQ4UF&sig=msjS2ClLUO4vhGur3pPPZdFNz3k&hl=ja&sa=X&ved=0ahUKEwibjcj64ODTAhUHy7wKHXBGB70Q6AEIXTAI#v=onepage&q=fs&f=false ）
