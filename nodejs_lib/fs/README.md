@@ -410,15 +410,13 @@ fs.access()の同期的なバージョンです。
 
 ### fs.appendFile(file, data[, options], callback)
 
-
 - file <String> | <Buffer> | <Number> filename or file descriptor
 - data <String> | <Buffer>
 - options <Object> | <String>
- - encoding <String> | <Null> default = 'utf8'
- - mode <Integer> default = 0o666
- - flag <String> default = 'a'
+  - encoding <String> | <Null> default = 'utf8'
+  - mode <Integer> default = 0o666
+  - flag <String> default = 'a'
 - callback <Function>
-
 
 非同期的にファイルにデータを追加します。ファイルが存在しない場合はファイルを作ります。
 データはstringかbufferです。
