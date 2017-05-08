@@ -417,9 +417,7 @@ fs.access()の同期的なバージョンです。
   - encoding <String> | <Null> default = 'utf8'
   - mode <Integer> default = 0o666
   - flag <String> default = 'a'
-- callback <Function>
-
-
+- callback
 
 非同期的にファイルにデータを追加します。
 ファイルが存在しない場合はファイルを作ります。
