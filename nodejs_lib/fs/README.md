@@ -120,8 +120,8 @@ FSWatcherの変更イベントによって返された値を受け取ります�
 
 #### Event: 'change'
 
-* eventType : String
-* filename : String| Buffer
+* `eventType` {string} fsの変更されたイベントの種類
+* `filename` {string|Buffer} 変更されたファイル名
 
 ウォッチしているディレクトリかファイルが変更された時に送信されます。
 OSのサポートによってはfilename引数が提供されない場合があります。
@@ -156,7 +156,7 @@ Readable Stream形式のクラスです。
 
 #### Event: 'open'
 
-* fd : Integer / Readable Streamで利用される識別子です
+* `fd` {integer}  / Readable Streamで利用される識別子です
 
 ReadStreamが開かれた時に起きます。
 
@@ -255,7 +255,7 @@ WriteStreamはWritable Streamです。
 
 #### Event: open
 
-* fd : Integer / WriteStreamに利用するファイルディスクリプタの整数です。
+* `fd` {integer}  / WriteStreamに利用するファイルディスクリプタの整数です。
 
 WriteStreamのファイルをオープンした時に発行されます。
 
@@ -275,9 +275,9 @@ pathが文字列で渡された場合は文字列になりますが、Bufferで�
 
 ### fs.access(path[, mode], callback)
 
-* path <String> | <Buffer>
-* mode <Integer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `mode` {integer}
+* `callback` {Function}
 
 pathによって指定されたファイル/ディレクトリに対するユーザーのパーミッションをテストします。
 引数のmodeは実行されるアクセシビリティのチェックのオプションの整数です。
@@ -401,8 +401,8 @@ fs.open('myfile', 'r', (err, fd) => {
 
 ### fs.accessSync(path[, mode])
 
-* path <String> | <Buffer>
-* mode <Integer>
+* `path` {string|Buffer|URL}
+* `mode` {integer}
 
 fs.access()の同期的なバージョンです。
 アクセシビリティのチェックが失敗した場合はthrowされて、それ以外の場合はなにもしないです。
@@ -411,13 +411,15 @@ fs.access()の同期的なバージョンです。
 ### fs.appendFile(file, data[, options], callback)
 
 
-* file <String> | <Buffer> | <Number> filename or file descriptor
-* data <String> | <Buffer>
-* options <Object> | <String>
-  * encoding <String> | <Null> default = 'utf8'
-  * mode <Integer> default = 0o666
-  * flag <String> default = 'a'
-* callback
+
+* `file` {string|Buffer|number} filename or file descriptor
+* `data` {string|Buffer}
+* `options` {Object|string}
+  * `encoding` {string|null} default = `'utf8'`
+  * `mode` {integer} default = `0o666`
+  * `flag` {string} default = `'a'`
+* `callback` {Function}
+
 
 
 非同期的にファイルにデータを追加します。
@@ -451,9 +453,9 @@ fs.appendFile()の同期バージョンです。
 
 ### fs.chmod(path, mode, callback)
 
-* path <String> | <Buffer>
-* mode <Integer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `mode` {integer}
+* `callback` {Function}
 
 chmod(2)を非同期で行います。
 可能性のある例外以外の引数(?)はcallbackには渡されません。
@@ -464,10 +466,10 @@ fs.chmod()の同期バージョンです。
 
 ### fs.chown(path, uid, gid, callback)
 
-* path <String> | <Buffer>
-* uid <Integer>
-* gid <Integer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `uid` {integer}
+* `gid` {integer}
+* `callback` {Function}
 
 chown(2)の非同期版です。
 これも可能性のある例外以外の引数はcallbackには渡されません。
@@ -478,8 +480,9 @@ chown(2)の同期バージョンです。
 
 ### fs.close(fd, callback)
 
-* fd <Integer>
-* callback <Function>
+* `fd` {integer}
+* `callback` {Function}
+
 
 close(2)を非同期でやります。
 これも可能性のある例外以外の引数はcallbackには渡されません。
@@ -495,19 +498,17 @@ fs.close()の同期バージョンです。
 現在定義されている定数に関しては[FS constants](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html#fs_fs_constants_1)を参照ください。
 
 
-
-
 ### fs.createReadStream(path[, options])
 
-* path <String> | <Buffer>
-* options <String> | <Object>
- * flags <String>
- * encoding <String>
- * fd <Integer>
- * mode <Integer>
- * autoClose <Boolean>
- * start <Integer>
- * end <Integer>
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `flags` {string}
+  * `encoding` {string}
+  * `fd` {integer}
+  * `mode` {integer}
+  * `autoClose` {boolean}
+  * `start` {integer}
+  * `end` {integer}
 
 
 
@@ -555,15 +556,14 @@ optionsが文字列で渡された場合はエンコーディングを指定し�
 
 ### fs.createWriteStream(path[, options])
 
-* path <String> | <Buffer>
-* options <String> | <Object>
- * flags <String>
- * defaultEncoding <String>
- * fd <Integer>
- * mode <Integer>
- * autoClose <Boolean>
- * start <Integer>
-
+* `path` {string|Buffer|URL}
+* `options` {string|Object}
+  * `flags` {string}
+  * `defaultEncoding` {string}
+  * `fd` {integer}
+  * `mode` {integer}
+  * `autoClose` {boolean}
+  * `start` {integer}
 
 
 WriteStreamを返します。詳しくは：[Writable Stream](https://nodejs.org/dist/latest-v6.x/docs/api/stream.html#stream_class_stream_writable)
@@ -603,8 +603,8 @@ v1.0.0からDeprecated
 
 fs.stat()かfs.accessを利用しましょう。
 
-* path <String> | <Buffer>
-* callback <Function>
+* `path` {string|Buffer|URL}
+* `callback` {Function}
 
 与えられたpathが存在するかどうかをチェックします。
 その後、callbackにtrue/falseを渡します。
@@ -626,7 +626,7 @@ fs.exists('/etc/passwd', (exists) => {
 
 ### fs.existsSync(path)
 
-* path <String> | <Buffer>
+* `path` {string|Buffer|URL}
 
 fs.exists()の同期バージョンです。trueまたはfalseのどちらかを返します。
 
@@ -636,57 +636,64 @@ fs.existsのコールバックパラメータは（上述の通り）他のパ�
 
 ### fs.fchmod(fd, mode, callback)
 
-* fd <Integer>
-* mode <Integer>
-* callback <Function>
+* `fd` {integer}
+* `mode` {integer}
+* `callback` {Function}
 
 fchmodの非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.fchmodSync(fd, mode)
 
-* fd <Integer>
-* mode <Integer>
+* `fd` {integer}
+* `mode` {integer}
+
 
 fchmodの同期バージョンです。undefinedを返します。
 
 
 ### fs.fchown(fd, uid, gid, callback)
 
-* fd <Integer>
-* uid <Integer>
-* gid <Integer>
-* callback <Function>
+* `fd` {integer}
+* `uid` {integer}
+* `gid` {integer}
+* `callback` {Function}
+
 fchownの非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.fchownSync(fd, uid, gid)
 
-* fd <Integer>
-* uid <Integer>
-* gid <Integer>
+* `fd` {integer}
+* `uid` {integer}
+* `gid` {integer}
+
 
 fchownの同期バージョンです。undefinedが返されます。
 
 ### fs.fdatasync(fd, callback)
 
-* fd <Integer>
-* callback <Function>
+* `fd` {integer}
+* `callback` {Function}
+
+
 fdatasyncの非同期版です。
 callbackには例外以外の引数は与えられません。
 
 
 ### fs.fdatasyncSync(fd)
 
-* fd <Integer>
+* `fd` {integer}
+
 
 fdatasyncの同期バージョンです。undefinedが返されます。
 
 
 ### fs.fstat(fd, callback)
 
-* fd <Integer>
-* callback <Function>
+* `fd` {integer}
+* `callback` {Function}
+
 
  fstat(2)の非同期バージョンです。
  callbackはerr,statsの２つの引数を持ち、statsはfs.Statsオブジェクトです。
@@ -695,27 +702,32 @@ fdatasyncの同期バージョンです。undefinedが返されます。
 
 ### fs.fstatSync(fd)
 
+* `fd` {integer}
+
+
 fchownの同期バージョンです。fs.fStatsのインスタンスが返されます。
 
 ### fs.fsync(fd, callback)
 
-* fd <Integer>
-* callback <Function>
+* `fd` {integer}
+* `callback` {Function}
 
 fsync(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.fsyncSync(fd)
-* fd <Integer>
+
+* `fd` {integer}
+
 
 fsync(2)の同期バージョンです。
 undefinedが返されます。
 
 ### fs.ftruncate(fd, len, callback)
 
-* fd <Integer>
-* len <Integer> default = 0
-* callback <Function>
+* `fd` {integer}
+* `len` {integer} default = `0`
+* `callback` {Function}
 
  ftruncate(2)の非同期バージョンです。
  callbackには例外以外の引数は与えられません。
@@ -771,35 +783,38 @@ Node.js
 
 ### fs.ftruncateSync(fd, len)
 
-* fd <Integer>
-* len <Integer> default = 0
+* `fd` {integer}
+* `len` {integer} default = `0`
+
 
 ftrancateの同期バージョンです。undefinedを返します。
 
 
 ### fs.futimes(fd, atime, mtime, callback)
 
-* fd <Integer>
-* atime <Integer>
-* mtime <Integer>
-* callback <Function>
+* `fd` {integer}
+* `atime` {integer}
+* `mtime` {integer}
+* `callback` {Function}
+
 
 与えられたファイルディスクリプタによって参照されたファイルのタイムスタンプを変更します。
 
 ### fs.futimesSync(fd, atime, mtime)
 
-* fd <Integer>
-* atime <Integer>
-* mtime <Integer>
+* `fd` {integer}
+* `atime` {integer}
+* `mtime` {integer}
+
 
 fs.futimes()の同期バージョンです。undefinedを返します。
 
 
 ### fs.lchmod(path, mode, callback)
 
-* path <String> | <Buffer>
-* mode <Integer>
-* callback <Function>
+* `path` {string|Buffer}
+* `mode` {integer}
+* `callback` {Function}
 
 lchmod(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
@@ -808,27 +823,29 @@ Mac OS X でのみ利用できます。
 
 ### fs.lchmodSync(path, mode)
 
-* path <String> | <Buffer>
-* mode <Integer>
+* `path` {string|Buffer}
+* `mode` {integer}
 
 lchmod(2)の同期バージョンです。undefinedを返します。
 
 
 ### fs.lchown(path, uid, gid, callback)
 
-* path <String> | <Buffer>
-* uid <Integer>
-* gid <Integer>
-* callback <Function>
+* `path` {string|Buffer}
+* `uid` {integer}
+* `gid` {integer}
+* `callback` {Function}
+
 
 lchown(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.lchownSync(path, uid, gid)
 
-* path <String> | <Buffer>
-* uid <Integer>
-* gid <Integer>
+* `path` {string|Buffer}
+* `uid` {integer}
+* `gid` {integer}
+
 
 lchown(2)の同期バージョンです。
 undefinedを返します。
@@ -1090,7 +1107,7 @@ callbackにはerr, bytesRead, bufferの3つの引数が与えられます。
 
 * path <String> | <Buffer>
 * options <String> | <Object>
- * encoding <String> default = 'utf8'
+  * encoding <String> default = 'utf8'
 * callback <Function>
 
 
