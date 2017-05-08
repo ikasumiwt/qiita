@@ -503,6 +503,8 @@ fs.close()の同期バージョンです。
  - start <Integer>
  - end <Integer>
 
+
+
 ReadStreamオブジェクトを返します。詳しくは:[Readable Stream](https://nodejs.org/dist/latest-v6.x/docs/api/stream.html#stream_class_stream_readable)
 
 Stream APIで作られるReadableStreamでは、highWaterMarkのデフォルトの値が16kbですが、この関数から返されるストリームのhighWaterMarkは64kbがデフォルトになっていることに注意してください。
@@ -555,6 +557,8 @@ optionsが文字列で渡された場合はエンコーディングを指定し�
  - mode <Integer>
  - autoClose <Boolean>
  - start <Integer>
+
+
 
 WriteStreamを返します。詳しくは：[Writable Stream](https://nodejs.org/dist/latest-v6.x/docs/api/stream.html#stream_class_stream_writable)
 
@@ -924,6 +928,8 @@ mkdir(2)の同期バージョンです。undefinedを返します。
  - encoding <String> default = 'utf8'
 - callback <Function>
 
+
+
 ユニークなテンポラリディレクトリを作成します。
 
 ユニークなテンポラリディレクトリを作るために、6つのランダムな文字を生成し、prefixの後ろに追加します。
@@ -972,13 +978,16 @@ fs.mkdtemp(tmpDir + path.sep, (err, folder) => {
 ```
 
 
+
 ### fs.mkdtempSync(prefix[, options])
 
 - prefix <String>
 - options <String> | <Object>
  - encoding <String> default = 'utf8'
 
-f fs.mkdtemp()の同期バージョンです。生成されたフォルダのpathを返します。
+
+
+fs.mkdtemp()の同期バージョンです。生成されたフォルダのpathを返します。
 
 options引数はエンコードを指定するstringか、encodingプロパティをもったオブジェクトを指定することが出来ます。
 
@@ -989,6 +998,8 @@ options引数はエンコードを指定するstringか、encodingプロパテ�
 - flags <String> | <Number>
 - mode <Integer>
 - callback <Function>
+
+
 
 非同期でファイルを開きます。詳細は[open(2)](http://man7.org/linux/man-pages/man2/open.2.html)を見てください。
 flagsは
@@ -1044,7 +1055,6 @@ fs.open('<directory>', 'a+', (err, fd) => {
 
  fs.open()の同期バージョンです。ファイルディスクリプタを表す整数を返します。
 
-
 ### fs.read(fd, buffer, offset, length, position, callback)
 
 - fd <Integer>
@@ -1053,6 +1063,7 @@ fs.open('<directory>', 'a+', (err, fd) => {
 - length <Integer>
 - position <Integer>
 - callback <Function>
+
 
 
 fdによって指定されたファイルのデータを読み込みます。
@@ -1076,6 +1087,8 @@ callbackにはerr, bytesRead, bufferの3つの引数が与えられます。
  - encoding <String> default = 'utf8'
 - callback <Function>
 
+
+
 readdir(3)の非同期バージョンです。対象のディレクトリのコンテンツを読み込みます。
 callbackにはerr,filesの2つの引数が与えられ、filesは'.' と　'..' を含むファイル名の配列です。
 
@@ -1087,6 +1100,8 @@ encodingにbufferがsetされた場合、filenamesはBufferオブジェクトと
 - path <String> | <Buffer>
 - options <String> | <Object>
  - encoding <String> default = 'utf8'
+
+
 
 readdir(3)の同期バージョンです。返り値は'.' と　'..' を含むファイル名の配列です。
 
@@ -1137,6 +1152,8 @@ fs.readFile('/etc/passwd', 'utf8', callback);
  - encoding <String> | <Null> default = null
  - flag <String> default = 'r'
 
+
+
 fs.readFileの同期バージョンです。
 fileの中身が返されます。
 
@@ -1148,6 +1165,8 @@ encodingが指定されている場合は、この関数はstringを返します
 - options <String> | <Object>
  - encoding <String> default = 'utf8'
 - callback <Function>
+
+
 
 readlink(2)の非同期バージョンです。
 
@@ -1165,6 +1184,8 @@ encodingがbufferにセットされている場合、返されるlink pathはBuf
  - encoding <String> default = 'utf8'
 - callback <Function>
 
+
+
 readlink(2)の同期バージョンです。
 シンボリックリンクの文字の値が返されます。
 
@@ -1181,6 +1202,8 @@ encodingがbufferにセットされている場合、返されるlink pathはBuf
 - length <Integer>
 - position <Integer>
 
+
+
 fs.read()の同期バージョンです。bytesReadの値が返されます。
 
 
@@ -1190,6 +1213,8 @@ fs.read()の同期バージョンです。bytesReadの値が返されます。
 - options <String> | <Object>
  - encoding <String> default = 'utf8'
 - callback <Function>
+
+
 
 realpath(3)の非同期バージョンです。
 err, resolvedPathの2つの引数がcallbackに与えられます。
@@ -1207,6 +1232,8 @@ optionsはオプショナルな引数ですが、callbackに渡されるpathの�
 - options <String> | <Object>
  - encoding <String> default = 'utf8'
 
+
+
 realpath(3)の同期バージョンです。解決されたpathが返されます。
 
 optionsはオプショナルな引数ですが、callbackに渡されるpathのエンコーディングを指定する文字列かencodingプロパティをもったオブジェクトを指定することが出来ます。encodingにbufferが指定された場合、返されるpathはBufferオブジェクトです。
@@ -1218,6 +1245,7 @@ optionsはオプショナルな引数ですが、callbackに渡されるpathの�
 - newPath <String> | <Buffer>
 - callback <Function>
 
+
 rename(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
@@ -1225,6 +1253,7 @@ callbackには例外以外の引数は与えられません。
 
 - oldPath <String> | <Buffer>
 - newPath <String> | <Buffer>
+
 
 rename(2)の同期バージョンです。
 undefinedが返されます。
@@ -1235,6 +1264,7 @@ undefinedが返されます。
 - path <String> | <Buffer>
 - callback <Function>
 
+
 rmdir(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
@@ -1243,6 +1273,7 @@ callbackには例外以外の引数は与えられません。
 
 - path <String> | <Buffer>
 
+
 rmdir(2)の同期バージョンです。
 undefinedが返されます。
 
@@ -1250,6 +1281,7 @@ undefinedが返されます。
 
 - path <String> | <Buffer>
 - callback <Function>
+
 
 stat(2)の非同期バージョンです。
 callbackにはerr, statsの2つの引数が渡されstatsはfs.Statsオブジェクトです。
@@ -1266,6 +1298,7 @@ fs.open()、fs.readFile()またはfs.writeFile()の前にfs.stat()を利用し�
 
 - path <String> | <Buffer>
 
+
 stat(2)の同期バージョンです。
 fs.Statsオブジェクトが返されます。
 
@@ -1276,6 +1309,7 @@ fs.Statsオブジェクトが返されます。
 - path <String> | <Buffer>
 - type <String>
 - callback <Function>
+
 
 symlink(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
@@ -1300,6 +1334,7 @@ fs.symlink('./foo', './new-port');
 - path <String> | <Buffer>
 - type <String>
 
+
 symlink(2)の同期バージョンです。
 undefinedが返されます。
 
@@ -1308,6 +1343,7 @@ undefinedが返されます。
 - path <String> | <Buffer>
 - len <Integer> default = 0
 - callback <Function>
+
 
 truncate(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
@@ -1321,6 +1357,7 @@ callbackには例外以外の引数は与えられません。
 - path <String> | <Buffer>
 - len <Integer> default = 0
 
+
 truncate(2)の同期バージョンです。
 undefinedが返されます。
 ファイルディスクリプタも最初の引数として与えることが出来ます。
@@ -1332,12 +1369,14 @@ undefinedが返されます。
 - path <String> | <Buffer>
 - callback <Function>
 
+
 unlink(2)の非同期バージョンです。
 callbackには例外以外の引数は与えられません。
 
 ### fs.unlinkSync(path)
 
 - path <String> | <Buffer>
+
 
 unlink(2)の同期バージョンです。
 undefinedが返されます。
@@ -1346,6 +1385,7 @@ undefinedが返されます。
 
 - filename <String> | <Buffer>
 - listener <Function>
+
 
 filenameに指定されたファイルの変更の監視をやめます。
 listenerが指定されている場合、そのlinstenerのみが削除されます。
@@ -1363,6 +1403,7 @@ fs.watchfs.watchFile()、fs.unwatchFile()よりも、可能であれば、fs.wat
 - mtime <Integer>
 - callback <Function>
 
+
 与えられたpathによって参照されるファイルのファイルタイムスタンプを変更します。
 
 注意：atime,mtimeは以下の関連する関数のルールに従います。
@@ -1378,6 +1419,7 @@ fs.watchfs.watchFile()、fs.unwatchFile()よりも、可能であれば、fs.wat
 - atime <Integer>
 - mtime <Integer>
 
+
 fs.utimes()の同期バージョンです。undefinedが返されます。
 
 ### fs.watch(filename[, options][, listener])
@@ -1388,6 +1430,7 @@ fs.utimes()の同期バージョンです。undefinedが返されます。
  - recursive <Boolean> 再帰的にすべてのサブディレクトリを監視するか、今のディレクトリのみを監視するかを示します。ディレクトリが指定されている場合、サポートされているプラットフォームでのみ動きます。詳細はCaveatsを見てください default = false
  - encoding <String> リスナに渡されるファイル名に利用するエンコーディングを指定します。 default = 'utf8'
 - listener <Function>
+
 
 filenameで指定されたファイルまたはディレクトリの変更を監視します。返されるオブジェクトはfs.FSWatcherです。
 
@@ -1420,6 +1463,7 @@ fs.watch APIはすべてのプラットフォームでい使えるわけでは�
 - On SunOS systems (including Solaris and SmartOS), this uses event ports.
 - On Windows systems, this feature depends on ReadDirectoryChangesW.
 - On Aix systems, this feature depends on AHAFS, which must be enabled.
+
 
 基本的な機能が何らかの理由で利用できない場合、fs.watchは機能しません。たとえば、Vagrant、Dockerなどの仮想化ソフトウェアを使用している場合、ファイルやディレクトリを監視することは信頼できない場合もあり、ネットワークファイルシステム（NFS、SMBなど）やホストファイルシステムでは不可能な場合もあります。
 
@@ -1460,6 +1504,7 @@ fs.watch('somedir', (eventType, filename) => {
  - interval <Integer>
 - listener <Function>
 
+
 filenameで指定されたファイルの監視をします。
 listenerはファイルにアクセスするたびに呼び出されます。
 
@@ -1499,6 +1544,7 @@ Windowsでは、blksizeとblocksフィールドがundefinedとなります。
 - position <Integer>
 - callback <Function>
 
+
 fdで指定されたファイルにbufferを書き込みます。
 
 offsetは、書き込まれるbufferの部分を決定し、lengthは書き込むバイト数を指定する整数です。
@@ -1524,6 +1570,7 @@ Linuxでは、ファイルが追加モードで開かれると位置指定した
 - position <Integer>
 - encoding <String>
 - callback <Function>
+
 
 fdで指定されたファイルにdataを書き込みます。
 dataがBufferインスタンスではない場合、値は文字列に変換されます。
@@ -1558,6 +1605,7 @@ Linuxでは、ファイルが追加モードで開かれると位置指定した
  - flag <String> default = 'w'
 - callback <Function>
 
+
 非同期でデータをファイルに書き込み、ファイルが既に存在する場合は置き換えます。
 dataはstringかbufferです。
 
@@ -1588,6 +1636,7 @@ fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
  - mode <Integer> default = 0o666
  - flag <String> default = 'w'
 
+
 fs.writeFile()の同期バージョンです。undefinedが返されます。
 
 指定されたファイルディスクリプタは、すべての書き込みをサポートする必要があります。
@@ -1604,6 +1653,7 @@ callbackを待たずに同じファイルに対してfs.writeFileを複数回指
 - length <Integer>
 - position <Integer>
 
+
 // 説明が一切ないのでチャンス？
 
 ### fs.writeSync(fd, data[, position[, encoding]])
@@ -1612,6 +1662,7 @@ callbackを待たずに同じファイルに対してfs.writeFileを複数回指
 - data <String> | <Buffer>
 - position <Integer>
 - encoding <String>
+
 
 fs.write()の同期的なバージョンです。
 書き込まれたbytesの数値が返されます。
