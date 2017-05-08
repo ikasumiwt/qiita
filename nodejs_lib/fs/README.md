@@ -419,8 +419,11 @@ fs.access()の同期的なバージョンです。
   - flag <String> default = 'a'
 - callback
 
+
 非同期的にファイルにデータを追加します。
+
 ファイルが存在しない場合はファイルを作ります。
+
 データはstringかbufferです。
 
 例：
