@@ -1,10 +1,10 @@
 # notes
-https://github.com/nodejs/node/blob/v6.9.1-proposal/lib/buffer.js
+https://github.com/nodejs/node/blob/v6.9.1-proposal/lib/fs.js
 の読み物です。
 
 ## Node.js v6.9.1 Documentation
 
-[docs](https://nodejs.org/dist/latest-v6.x/docs/api/buffer.html)
+[docs](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html)
 
 ### File System
 
@@ -1155,8 +1155,8 @@ fs.readFile('/etc/passwd', 'utf8', callback);
 
 - file <String> | <Buffer> | <Integer> filename or file descriptor
 - options <Object> | <String>
- - encoding <String> | <Null> default = null
- - flag <String> default = 'r'
+  - encoding <String> | <Null> default = null
+  - flag <String> default = 'r'
 
 
 
@@ -1165,11 +1165,12 @@ fileの中身が返されます。
 
 encodingが指定されている場合は、この関数はstringを返しますが、そうでない場合はBufferで返ります。
 
+
 ### fs.readlink(path[, options], callback)
 
 - path <String> | <Buffer>
 - options <String> | <Object>
- - encoding <String> default = 'utf8'
+  - encoding <String> default = 'utf8'
 - callback <Function>
 
 
@@ -1187,7 +1188,7 @@ encodingがbufferにセットされている場合、返されるlink pathはBuf
 
 - path <String> | <Buffer>
 - options <String> | <Object>
- - encoding <String> default = 'utf8'
+  - encoding <String> default = 'utf8'
 - callback <Function>
 
 
@@ -1217,7 +1218,7 @@ fs.read()の同期バージョンです。bytesReadの値が返されます。
 
 - path <String> | <Buffer>
 - options <String> | <Object>
- - encoding <String> default = 'utf8'
+  - encoding <String> default = 'utf8'
 - callback <Function>
 
 
@@ -1236,7 +1237,7 @@ optionsはオプショナルな引数ですが、callbackに渡されるpathの�
 
 - path <String> | <Buffer>
 - options <String> | <Object>
- - encoding <String> default = 'utf8'
+  - encoding <String> default = 'utf8'
 
 
 
@@ -1432,9 +1433,9 @@ fs.utimes()の同期バージョンです。undefinedが返されます。
 
 - filename <String> | <Buffer>
 - options <String> | <Object>
- - persistent <Boolean> ファイルが監視されている間、プロセスを継続して実行しておくかどうかを表します。 default = true
- - recursive <Boolean> 再帰的にすべてのサブディレクトリを監視するか、今のディレクトリのみを監視するかを示します。ディレクトリが指定されている場合、サポートされているプラットフォームでのみ動きます。詳細はCaveatsを見てください default = false
- - encoding <String> リスナに渡されるファイル名に利用するエンコーディングを指定します。 default = 'utf8'
+  - persistent <Boolean> ファイルが監視されている間、プロセスを継続して実行しておくかどうかを表します。 default = true
+  - recursive <Boolean> 再帰的にすべてのサブディレクトリを監視するか、今のディレクトリのみを監視するかを示します。ディレクトリが指定されている場合、サポートされているプラットフォームでのみ動きます。詳細はCaveatsを見てください default = false
+  - encoding <String> リスナに渡されるファイル名に利用するエンコーディングを指定します。 default = 'utf8'
 - listener <Function>
 
 
@@ -1506,8 +1507,8 @@ fs.watch('somedir', (eventType, filename) => {
 
 - filename <String> | <Buffer>
 - options <Object>
- - persistent <Boolean>
- - interval <Integer>
+  - persistent <Boolean>
+  - interval <Integer>
 - listener <Function>
 
 
@@ -1606,9 +1607,9 @@ Linuxでは、ファイルが追加モードで開かれると位置指定した
 - file <String> | <Buffer> | <Integer> filename or file descriptor
 - data <String> | <Buffer>
 - options <Object> | <String>
- - encoding <String> | <Null> default = 'utf8'
- - mode <Integer> default = 0o666
- - flag <String> default = 'w'
+  - encoding <String> | <Null> default = 'utf8'
+  - mode <Integer> default = 0o666
+  - flag <String> default = 'w'
 - callback <Function>
 
 
@@ -1638,9 +1639,9 @@ fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
 - file <String> | <Buffer> | <Integer> filename or file descriptor
 - data <String> | <Buffer>
 - options <Object> | <String>
- - encoding <String> | <Null> default = 'utf8'
- - mode <Integer> default = 0o666
- - flag <String> default = 'w'
+  - encoding <String> | <Null> default = 'utf8'
+  - mode <Integer> default = 0o666
+  - flag <String> default = 'w'
 
 
 fs.writeFile()の同期バージョンです。undefinedが返されます。
@@ -1742,4 +1743,3 @@ S_IXOTH	File mode indicating executable by others.
 #### 参考
 http://html5.ohtsu.org/nodejuku01/nodejuku01_ohtsu.pdf
 http://www.slideshare.net/shigeki_ohtsu/processnext-tick-nodejs
-http://info-i.net/buffer
