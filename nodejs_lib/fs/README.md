@@ -1688,62 +1688,216 @@ fs.write()の同期的なバージョンです。
 #### ファイルアクセス用の定数
 fs.accessで利用するための定数です。
 
-Constant	Description
-F_OK	Flag indicating that the file is visible to the calling process.
-R_OK	Flag indicating that the file can be read by the calling process.
-W_OK	Flag indicating that the file can be written by the calling process.
-X_OK	Flag indicating that the file can be executed by the calling process.
+<table>
+  <tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>F_OK</code></td>
+    <td>Flag indicating that the file is visible to the calling process.</td>
+  </tr>
+  <tr>
+    <td><code>R_OK</code></td>
+    <td>Flag indicating that the file can be read by the calling process.</td>
+  </tr>
+  <tr>
+    <td><code>W_OK</code></td>
+    <td>Flag indicating that the file can be written by the calling
+    process.</td>
+  </tr>
+  <tr>
+    <td><code>X_OK</code></td>
+    <td>Flag indicating that the file can be executed by the calling
+    process.</td>
+  </tr>
+</table>
+
 
 #### ファイルオープン用の定数
 
 fs.open()で利用するための定数です。
 
-O_RDONLY	Flag indicating to open a file for read-only access.
-O_WRONLY	Flag indicating to open a file for write-only access.
-O_RDWR	Flag indicating to open a file for read-write access.
-O_CREAT	Flag indicating to create the file if it does not already exist.
-O_EXCL	Flag indicating that opening a file should fail if the O_CREAT flag is set and the file already exists.
-O_NOCTTY	Flag indicating that if path identifies a terminal device, opening the path shall not cause that terminal to become the controlling terminal for the process (if the process does not already have one).
-O_TRUNC	Flag indicating that if the file exists and is a regular file, and the file is opened successfully for write access, its length shall be truncated to zero.
-O_APPEND	Flag indicating that data will be appended to the end of the file.
-O_DIRECTORY	Flag indicating that the open should fail if the path is not a directory.
-O_NOATIME	Flag indicating reading accesses to the file system will no longer result in an update to the atime information associated with the file. This flag is available on Linux operating systems only.
-O_NOFOLLOW	Flag indicating that the open should fail if the path is a symbolic link.
-O_SYNC	Flag indicating that the file is opened for synchronous I/O.
-O_SYMLINK	Flag indicating to open the symbolic link itself rather than the resource it is pointing to.
-O_DIRECT	When set, an attempt will be made to minimize caching effects of file I/O.
-O_NONBLOCK	Flag indicating to open the file in nonblocking mode when possible.
+<table>
+  <tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>O_RDONLY</code></td>
+    <td>Flag indicating to open a file for read-only access.</td>
+  </tr>
+  <tr>
+    <td><code>O_WRONLY</code></td>
+    <td>Flag indicating to open a file for write-only access.</td>
+  </tr>
+  <tr>
+    <td><code>O_RDWR</code></td>
+    <td>Flag indicating to open a file for read-write access.</td>
+  </tr>
+  <tr>
+    <td><code>O_CREAT</code></td>
+    <td>Flag indicating to create the file if it does not already exist.</td>
+  </tr>
+  <tr>
+    <td><code>O_EXCL</code></td>
+    <td>Flag indicating that opening a file should fail if the
+    <code>O_CREAT</code> flag is set and the file already exists.</td>
+  </tr>
+  <tr>
+    <td><code>O_NOCTTY</code></td>
+    <td>Flag indicating that if path identifies a terminal device, opening the
+    path shall not cause that terminal to become the controlling terminal for
+    the process (if the process does not already have one).</td>
+  </tr>
+  <tr>
+    <td><code>O_TRUNC</code></td>
+    <td>Flag indicating that if the file exists and is a regular file, and the
+    file is opened successfully for write access, its length shall be truncated
+    to zero.</td>
+  </tr>
+  <tr>
+    <td><code>O_APPEND</code></td>
+    <td>Flag indicating that data will be appended to the end of the file.</td>
+  </tr>
+  <tr>
+    <td><code>O_DIRECTORY</code></td>
+    <td>Flag indicating that the open should fail if the path is not a
+    directory.</td>
+  </tr>
+  <tr>
+  <td><code>O_NOATIME</code></td>
+    <td>Flag indicating reading accesses to the file system will no longer
+    result in an update to the `atime` information associated with the file.
+    This flag is available on Linux operating systems only.</td>
+  </tr>
+  <tr>
+    <td><code>O_NOFOLLOW</code></td>
+    <td>Flag indicating that the open should fail if the path is a symbolic
+    link.</td>
+  </tr>
+  <tr>
+    <td><code>O_SYNC</code></td>
+    <td>Flag indicating that the file is opened for synchronous I/O.</td>
+  </tr>
+  <tr>
+    <td><code>O_SYMLINK</code></td>
+    <td>Flag indicating to open the symbolic link itself rather than the
+    resource it is pointing to.</td>
+  </tr>
+  <tr>
+    <td><code>O_DIRECT</code></td>
+    <td>When set, an attempt will be made to minimize caching effects of file
+    I/O.</td>
+  </tr>
+  <tr>
+    <td><code>O_NONBLOCK</code></td>
+    <td>Flag indicating to open the file in nonblocking mode when possible.</td>
+  </tr>
+</table>
 
 
 #### ファイルタイプ定数
 fs.Statsオブジェクトのmodeプロパティでファイルタイプを決定するために使用される定数です。
 
-S_IFMT	Bit mask used to extract the file type code.
-S_IFREG	File type constant for a regular file.
-S_IFDIR	File type constant for a directory.
-S_IFCHR	File type constant for a character-oriented device file.
-S_IFBLK	File type constant for a block-oriented device file.
-S_IFIFO	File type constant for a FIFO/pipe.
-S_IFLNK	File type constant for a symbolic link.
-S_IFSOCK	File type constant for a socket.
 
+<table>
+  <tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>S_IFMT</code></td>
+    <td>Bit mask used to extract the file type code.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFREG</code></td>
+    <td>File type constant for a regular file.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFDIR</code></td>
+    <td>File type constant for a directory.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFCHR</code></td>
+    <td>File type constant for a character-oriented device file.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFBLK</code></td>
+    <td>File type constant for a block-oriented device file.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFIFO</code></td>
+    <td>File type constant for a FIFO/pipe.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFLNK</code></td>
+    <td>File type constant for a symbolic link.</td>
+  </tr>
+  <tr>
+    <td><code>S_IFSOCK</code></td>
+    <td>File type constant for a socket.</td>
+  </tr>
+</table>
 
 #### ファイルモード定数
 
 fs.Stats オブジェクトのmodeプロパティと一緒にaccessの許可を決定するためのオブジェクトです。
 
-S_IRWXU	File mode indicating readable, writable and executable by owner.
-S_IRUSR	File mode indicating readable by owner.
-S_IWUSR	File mode indicating writable by owner.
-S_IXUSR	File mode indicating executable by owner.
-S_IRWXG	File mode indicating readable, writable and executable by group.
-S_IRGRP	File mode indicating readable by group.
-S_IWGRP	File mode indicating writable by group.
-S_IXGRP	File mode indicating executable by group.
-S_IRWXO	File mode indicating readable, writable and executable by others.
-S_IROTH	File mode indicating readable by others.
-S_IWOTH	File mode indicating writable by others.
-S_IXOTH	File mode indicating executable by others.
+<table>
+  <tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>S_IRWXU</code></td>
+    <td>File mode indicating readable, writable and executable by owner.</td>
+  </tr>
+  <tr>
+    <td><code>S_IRUSR</code></td>
+    <td>File mode indicating readable by owner.</td>
+  </tr>
+  <tr>
+    <td><code>S_IWUSR</code></td>
+    <td>File mode indicating writable by owner.</td>
+  </tr>
+  <tr>
+    <td><code>S_IXUSR</code></td>
+    <td>File mode indicating executable by owner.</td>
+  </tr>
+  <tr>
+    <td><code>S_IRWXG</code></td>
+    <td>File mode indicating readable, writable and executable by group.</td>
+  </tr>
+  <tr>
+    <td><code>S_IRGRP</code></td>
+    <td>File mode indicating readable by group.</td>
+  </tr>
+  <tr>
+    <td><code>S_IWGRP</code></td>
+    <td>File mode indicating writable by group.</td>
+  </tr>
+  <tr>
+    <td><code>S_IXGRP</code></td>
+    <td>File mode indicating executable by group.</td>
+  </tr>
+  <tr>
+    <td><code>S_IRWXO</code></td>
+    <td>File mode indicating readable, writable and executable by others.</td>
+  </tr>
+  <tr>
+    <td><code>S_IROTH</code></td>
+    <td>File mode indicating readable by others.</td>
+  </tr>
+  <tr>
+    <td><code>S_IWOTH</code></td>
+    <td>File mode indicating writable by others.</td>
+  </tr>
+  <tr>
+    <td><code>S_IXOTH</code></td>
+    <td>File mode indicating executable by others.</td>
+  </tr>
+</table>
 
 #### 参考
 http://html5.ohtsu.org/nodejuku01/nodejuku01_ohtsu.pdf
