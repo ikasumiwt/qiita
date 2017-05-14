@@ -1,0 +1,1 @@
+/Users/reaper13kato/Documents/study/my-repo/qiita/nodejs_lib/fs/src/rsync/symlink/symSample.txt
