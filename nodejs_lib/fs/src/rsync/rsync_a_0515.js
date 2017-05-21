@@ -3,21 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 
-let debug = false;
 let option = process.argv[2];
 let srcPath = process.argv[3];
 let destPath = process.argv[4];
-
-if(debug === true) {
-  console.log('process.argv');
-  console.log(process.argv[3]);
-  console.log(process.argv[4]);
-
-  for(var i = 0; i < process.argv.length; i++) {
-    console.log(process.argv[i]);
-  }
-
-};
 
 /* 
  * -a == -rlptgoD 
@@ -49,7 +37,7 @@ let main = () => {
   
   readdirPromise(srcPath, readdirCallback)
     .then((files)=> {
-        readdirCallback(null, files);
+        readdirCallback(files);
     })
     .catch((err) => {
       console.log('readdir callback error');
@@ -82,7 +70,7 @@ let statPromise = (path) => {
 let readdirPromise = (path) => {
 
   return new Promise((resolve, reject) => {
-    fs.readdir(srcPath, (err, files) => {
+    fs.readdir(path, (err, files) => {
       if(err) reject(err);
       resolve(files);
     });
@@ -155,43 +143,80 @@ let changeStats = (filename, stats) => {
 };
 
 // writefile promise版
-let writeFilePromise = (filename, data) => {
+let writeFilePromise = (filename, targetDir) => {
 
+  if(targetDir === undefined) targetDir = '';
+  
   return new Promise((resolve, reject) => {
     // 与えられたファイルのチェック(isSymbolicLinkがlstat onlyのため)
-    lstatPromise(srcPath + filename)
+    lstatPromise(srcPath + targetDir + filename)
       .then((stats) => {
-          // symbolic linkの場合
-          if(stats.isSymbolicLink()) {
-            // windowsは絶対パスの必要が...
+          
+          // . or .. の場合はスルー
+          if(filename === '.' || filename === '..') {
+
+            console.log('this filename is . or .. : ' + filename);
+          // symbolic linkの場合 ... timestampの書き換えは無理
+          } else if(stats.isSymbolicLink()) {
             
+            console.log('this file is symboloc link:' + filename);
             // symlink先のpathを取得し、そちらにsymlinkする(絶対パス)
-            fs.realpath(srcPath + filename, (err, resolvedPath) => {
-              fs.symlink(resolvedPath, destPath + filename, (err) => {
+            fs.realpath(srcPath + targetDir + filename, (err, resolvedPath) => {
+              fs.symlink(resolvedPath, destPath + targetDir + filename, (err) => {
                 if(err) reject(err);
                 
                 // symlink後に諸々変更
-                changeStats(filename, stats);
+                changeStats(targetDir + filename, stats);
 
                 resolve();
               })
             });
 
+          /*
+           * dirの場合
+           * 存在しなければ、destPathにmkdirする
+           * srcPath/dir 以下を再帰的にreaddir処理する
+           */
+          } else if(stats.isDirectory()) {
+            // filenameがdirectoryのため、再帰的に処理する
+            console.log('this is directory : ' + filename);
+            
+            // mkdirする
+
+            fs.mkdir(destPath + targetDir + filename, (err) => {
+              if(err) reject(err);
+
+              // ここで指すfilenameはdirectory
+              console.log(srcPath + targetDir + filename + '/');
+              readdirPromise(srcPath + targetDir + filename)
+                .then((files) => {
+                  // targetDirを明示する
+                  readdirCallback(files, targetDir + filename + '/');
+                  resolve();
+                })
+                .catch((err) => {
+                  console.log('readdir callback error');
+                  reject(err);
+                });
+            
+            });
+
+          // それ以外の時（通常のファイルの時）
           } else {
             
-            let readStream = fs.createReadStream(srcPath + filename);
-            let writeStream = fs.createWriteStream(destPath + filename);
+            let readStream = fs.createReadStream(srcPath + targetDir + filename);
+            let writeStream = fs.createWriteStream(destPath + targetDir + filename);
             
             readStream.pipe(writeStream);
             writeStream.on('close', () => {
               // close後にパーミッション系の変更をする
-              changeStats(filename, stats);
+              changeStats(targetDir + filename, stats);
+              resolve();
             });
           }
 
       })
       .catch((err) => {
-        // console.log(err);
         reject(err);
       });
     
@@ -200,13 +225,14 @@ let writeFilePromise = (filename, data) => {
 };
 
 // ファイルを書き出し
-let readdirCallback = (err, files) => {
+let readdirCallback = (files, targetDir) => {
   // readdir自体のerror
-  // console.log(files);
-
+  
   let promises = [];
-  for(let i =0; i < files.length; i++) {
-    promises.push(writeFilePromise(files[i]));
+
+  if(targetDir === undefined) targetDir = '';
+  for(let i = 0; i < files.length; i++) {
+    promises.push(writeFilePromise(files[i], targetDir));
   };
 
   Promise.all(promises)
