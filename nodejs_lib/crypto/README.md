@@ -60,7 +60,22 @@ Node.jsはOpenSSLのSPKACの実装を中では利用しています。
 
 
 本体の実装はここ？
-- https://github.com/nodejs/node/blob/fb56046cf0405bfca4b88746b5372d3769275e6a/deps/openssl/openssl/apps/spkac.c
+-  https://github.com/nodejs/node/blob/fb56046cf0405bfca4b88746b5372d3769275e6a/deps/openssl/openssl/apps/spkac.c
+
+
+- keygen(HTML5) https://developer.mozilla.org/ja/docs/Web/HTML/Element/keygen
+
+
+サンプル(chromeは[1] Web Crypto API を採用したため Chrome 49 で非推奨化、Chrome 57 で削除しましたらしいのでSafariで確認)
+
+```
+// keygen.html
+
+~/crypto/samples/keygen.html?name=aaa&security=MIICQTCCASkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDW%2Fupa%2BpKD2u5is4BBRob%2BnkxQ5VlCqvcGvXSIRfwEYua5E031MxJdkdZht%2Fm8fDTrksdsdiBcVk3m6CKbmuw5uvTDF7PuM%2Fu82beRHz2FHfJjYQ9SBEuGAP%2FWvvBGwkGh3%2BL2Ho%2BiuunD%2FyBHitzRKHQoEnc7oh8fcyBd3yoG15c2LrB8TDmoYfxhWLVr71msuKmaxbZ5xOd5lwiF6NIflZp19WAOuibqi6Ak%2FsFB95oC23flQ%2FTSPnvcTrUa8FDor%2BVZ8NsGZ%2BoIn%2FKVBb1G6JNq7OOGpoQReZwHNtDemyRbEURmvnsyGjzFjIUbMnH8AhgMH2hgpKh%2F8dSbLlpjAgMBAAEWAQAwDQYJKoZIhvcNAQEEBQADggEBAAtf4qrmCtzfjwkVyF3eziBESlI3A3mPdhe9Lp1zc88qXJi%2BU8Riz%2Bq4XV%2BYF93eyrY5ThMFCllI98gv2lJ5GciOgl4WDXpewlod6sLZKIXXOipT5nYZrrqcOI3fedPukETubrnwlRgtFRFcCYpPWbKyD7I8kRzPzdCDNX8ClNtFx22rDyVDOe4MlxiPi2pq2gyJtc2iIcZIk4LakNaXrz9LkMUmLqGsSFcdvaktXdYtGq%2FG6nFUsV%2FnI%2Fu%2BzMD7653O6uXwgRUX2qmkJUsMG16KdWtWoQ22nDTUImd98yzTqvfsJNXYKdCgIvJrAqaeOr7%2FwKb886eA3cQzu76Tg0Y%3D
+```
+
+- Web Crypto api
+https://developer.mozilla.org/ja/docs/Web/API/Web_Crypto_API
 
 
 #### new crypto.Certificate()
@@ -131,15 +146,28 @@ console.log(cert.verifySpkac(Buffer.from(spkac)));
 
 ### Class: Cipher
 
-Instances of the Cipher class are used to encrypt data. The class can be used in one of two ways:
 
-As a stream that is both readable and writable, where plain unencrypted data is written to produce encrypted data on the readable side, or
-Using the cipher.update() and cipher.final() methods to produce the encrypted data.
-The crypto.createCipher() or crypto.createCipheriv() methods are used to create Cipher instances. Cipher objects are not to be created directly using the new keyword.
+Cipherクラスのインスタンスは、データを暗号化する際に利用します。
+このクラスは次の２つの方法で利用できます。
+
+・読み/書き可能なストリームとして暗号化する
+リーダブル側にプレーンな暗号化されていないデータをおき、暗号化されたデータを書き出す
+
+// 怪しい
+As a stream that is both readable and writable
+,where plain unencrypted data is written to produce
+encrypted data on the readable side,
+
+もしくは
+cipher.update(),cipher.final()関数を利用して、暗号化されたデータを生成する。
+
+crypto.createCipher()もしくはcrypto.createCipheriv()関数はCipherのインスタンスを作成するのに使われます。
+Cihperオブジェクトはnewをもちいて作成することはできません
 
 Example: Using Cipher objects as streams:
 
 ```
+// stream_cipher.js
 const crypto = require('crypto');
 const cipher = crypto.createCipher('aes192', 'a password');
 
@@ -161,6 +189,7 @@ cipher.end();
 Example: Using Cipher and piped streams:
 
 ```
+// pipe_cipher.js
 const crypto = require('crypto');
 const fs = require('fs');
 const cipher = crypto.createCipher('aes192', 'a password');
@@ -175,6 +204,7 @@ Example: Using the cipher.update() and cipher.final() methods:
 
 
 ```
+// update_and_final.js
 const crypto = require('crypto');
 const cipher = crypto.createCipher('aes192', 'a password');
 
