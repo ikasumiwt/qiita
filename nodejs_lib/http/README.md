@@ -51,26 +51,32 @@ Node.jsのHTTPのAPIは、HTTPアプリケーションの全部の範囲をサ�
 
 ### Class: http.Agent
 
+エージェントはHTTPクライアントのコネクションの永続性と再利用を管理する責任をもっています。
 
-An Agent is responsible for managing connection persistence and reuse for HTTP clients.
- It maintains a queue of pending requests for a given host and port, reusing a single socket connection for each until the queue is empty, at which time the socket is either destroyed or put into a pool where it is kept to be used again for requests to the same host and port.
- Whether it is destroyed or pooled depends on the keepAlive option.
+これは与えられたホストとポートに対する保留しているリクエストのキューを維持し、キューが空になるまで一つのソケットのコネクションを再利用します。
+ソケットは破棄されるか、プールに入れられ同じホストとポートに対するリクエストに対して再利用するために保持されます。
+破棄されるかプールされるかは、keepAliveオプションに依存します。
 
-Pooled connections have TCP Keep-Alive enabled for them, but servers may still close idle connections, in which case they will be removed from the pool and a new connection will be made when a new HTTP request is made for that host and port.
- Servers may also refuse to allow multiple requests over the same connection, in which case the connection will have to be remade for every request and cannot be pooled.
-  The Agent will still make the requests to that server, but each one will occur over a new connection.
+プールされたコネクションは、TCP Keep-Aliveが有効になっている状態ですが、しかしサーバはアイドル状態の接続を閉じているかもしれません。
+そのようなケースの場合、プールから削除され、そのホストやポートからの新しいHTTPリクエストがあった場合に、新しいコネクションがはられます。
 
-When a connection is closed by the client or the server, it is removed from the pool.
-Any unused sockets in the pool will be unrefed so as not to keep the Node.js process running when there are no outstanding requests. (see socket.unref()).
+サーバは、同じコネクションからの複数のリクエストを許可しないことがあります。
+そのような場合、コネクションはすべてのリクエストに対して再度作成する必要があり、プールすることはできません。
 
+エージェントはそのサーバへのリクエストをしますが、新しいコネクションを都度発生します。
 
-It is good practice, to destroy() an Agent instance when it is no longer in use, because unused sockets consume OS resources.
+コネクションがクライアントかサーバによって閉じられたとき、プールから削除されます。
+プールにある使われていないソケットは、未解決のリクエストがないときに、Node.jsのプロセスを実行しないようにするためにunrefedな状態を保ちます。
+// ?? Any unused sockets in the pool will be unrefed so as not to keep the Node.js process running when there are no outstanding requests. (see socket.unref()).
 
-Sockets are removed from an agent when the socket emits either a 'close' event or an 'agentRemove' event.
-When intending to keep one HTTP request open for a long time without keeping it in the agent, something like the following may be done:
+グッドプラクティスとしては、使われていないソケットはOSのリソースを消費してしまうので、利用していないエージェントのインスタンスはdestroy()するほうがいいです。
 
+ソケットは、closeイベントかagentRemoveイベントが呼ばれるとエージェントによって削除されます。
+
+1つのHTTPリクエストを、エージェントに保持しないで長い間開いたまま保持すると、以下のような状態になります
 
 ```
+// agent_remove.js
 http.get(options, (res) => {
   // Do stuff
 }).on('socket', (socket) => {
@@ -78,10 +84,11 @@ http.get(options, (res) => {
 });
 ```
 
-An agent may also be used for an individual request.
-By providing {agent: false} as an option to the http.get() or http.request() functions, a one-time use Agent with default options will be used for the client connection.
+エージェントは同じように個々のリクエストにも使えます。
+`{agent: false}`をhttp.get()かhttp.request()関数のオプションとして渡した場合、クライアント説奥に１回限りで使えるエージェントが使えます。
 
-agent:false:
+
+agent:false: ←これは一体・・・
 
 ```
 http.get({
@@ -97,11 +104,13 @@ http.get({
 
 ### new Agent([options])
 
-The default http.globalAgent that is used by http.request() has all of these values set to their respective defaults.
 
-To configure any of them, a custom http.Agent instance must be created.
+http.request()で利用されるデフォルトのhttp.globalAgentは、これらの値がそれぞれデフォルトで設定されています。
+
+これらををいじる場合は、カスタムhttp.Agentのインスタンスを作成する必要があります。
 
 ```
+// customAgent.js
 const http = require('http');
 const keepAliveAgent = new http.Agent({ keepAlive: true });
 options.agent = keepAliveAgent;
@@ -457,39 +466,150 @@ callback引数もオプショナルで、このデータのチャンクがflush�
 
 ### Class: http.Server
 
+このクラスはnet.Serverから継承されていて、以下の追加されたイベントを持っています
 This class inherits from net.Server and has the following additional events:
 
 #### Event: 'checkContinue'
 
+`HTTP Expect: 100-continue`を受け取るたびに送信されます。
+このイベントをlistenしていない場合、サーバは自動的に`100 Continue`を返します。
+
+このイベントを処理するためには、クライアント側が送信を続ける必要がある場合はresponse.writeContinue()を呼び出し、クライアント側がリクエストボディを送信し続ける必要がない場合は`400 Bad Request`のような適切なHTTP レスポンスを返すべきです。
+
+注意：このイベントが送信されたり処理される場合は、requestイベントは送信されないことに注意してください。
+
 #### Event: 'checkExpectation'
+
+100-continueではないHTTP Expectヘッダーを受け取った場合に送信されます。
+このイベントがlistenされていない場合、サーバは自動的に417 Expectation Failedを返します。
+
+注意：このイベントが送信されたり処理される場合は、requestイベントは送信されないことに注意してください。
+
 
 #### Event: 'clientError'
 
+クライアント接続がerrorイベントを送信した場合にこのイベントになります。
+
+このイベントのリスナーはソケットを閉じたり、破棄したりする責任を持ちます
+
+例えば、突然接続を切断する代わりに、`'400 Bad Request'`レスポンスを使うことでソケットをよりよく閉じることが出来ます。
+
+デフォルトの動作は、不正なリクエストはすぐにソケットを破棄します。
+
+ソケットはエラーが発生したnet.Socketオブジェクトです。
+
+```
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  res.end();
+});
+server.on('clientError', (err, socket) => {
+  socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+});
+server.listen(8000);
+```
+
+`clientError`イベントが発生した時、リクエスト/レスポンスオブジェクトは存在しないので、レスポンスヘッダとペイロードを含むHTTPのレスポンスはすべて、直接ソケットオブジェクトに書き込む必要があります。
+
+HTTPレスポンスメッセージは適切にフォーマットされてたものであることを確実にするために注意してください。
+
+
 #### Event: 'close'
+
+サーバが閉じられる時に送信されます。
+
 
 #### Event: 'connect'
 
+クライアントがHTTP CONNECTメソッドを要求するたびに送信されます。
+このイベントがlistenされていない場合、CONNECTメソッドを要求するクライアントのリクエストのコネクションはクローズされます
+
+このイベントが送信された後、リクエストのソケットはdataイベントリスナーは持っていません。
+つまり、これの意味するところ、ソケット上のサーバに送信されたデータを処理するためにはデータをバインドする必要があります。
+
+
 #### Event: 'connection'
+
+新しいTCPのストリームが確立された時です。socketはnet.Socketのオブジェクトです。
+
+
+// ここだけいきなりWhen~なので( When a new TCP stream is established. )ほかのにあわせて
+// -> Emitted when a new TCP stream is established.に変更しても良い気がしなくもない
+
+普通、ユーザーはこのイベントにアクセスしたくはありません。
+特に、ソケットは、プロトコルパーサーがソケットにどのように接続するかに応じて`readable`イベントは発生しません。
+
+ソケットは同じようにrequest.connectionでもアクセスできます
 
 #### Event: 'request'
 
+リクエストされたときに毎回送信されます。
+注意：接続ごとに複数のリクエストが存在する可能性があることに注意してください（HTTP Keep-Aliveのような場合）
+
+
 #### Event: 'upgrade'
+
+クライアントがHTTP upgradeをリクエストした場合に毎回送信されます。
+このイベントがlistenされていない場合、upgradeを要求したクライアントは、コネクションが閉じられます。
+
+
+このイベントが送信された後、リクエストのソケットはdataイベントリスナーは持っていません。
+つまり、これの意味するところ、ソケット上のサーバに送信されたデータを処理するためにはデータをバインドする必要があります。
 
 #### server.close([callback])
 
+新しいコネクションを受け入れるのをやめます。
+net.Server.close()をみてね。
+
 #### server.listen()
+
+HTTPサーバは新しいコネクションのlistenをはじめます。
+これはnet.Serverのserver.listen()と同じです。
+
 
 #### server.listening
 
+サーバが接続を待機しているかの真偽値です。
+
+
 #### server.maxHeadersCount
+
+ヘッダーの最大受信数です。デフォルトは2000です。
+
+0を設定した場合制限はありません。
+
 
 #### server.setTimeout([msecs][, callback])
 
+Socketのタイムアウトの値を設定し、タイムアウトが発生した場合に、
+Socketを引数として渡し、Serverオブジェクトに対して`timeout`イベントを送信します。
+
+Serverオブジェクトの`timeout`イベントに対するリスナーがある場合、タイムアウトSocketを引数として呼び出されます。
+
+デフォルトではサーバのタイムアウト値は２分で、Socketはタイム・アウトすると自動的に破棄されます。
+しかし、サーバのtimeoutイベントにcallbackがある場合、タイムアウトは明示的に処理しないといけません。
+serverを返します。
+
+
 #### server.timeout
+
+タイムアウトしたと考えられるまでに時間の値（ミリ秒）
+
+0を値として入れた場合、タイムアウトの動作は無効化されます。
+
+注意： Socketのタイムアウトのロジックは接続時にセットアップされるので、この値を変更したときは新しいコネクションにのみ影響して、既に接続されているコネクションには影響しません
+
 
 #### server.keepAliveTimeout
 
+最後にレスポンスを受け取ってから、Socketが破棄されるまでの、サーバが追加のデータをまつために待機するためのミリ秒です。
 
+keepAliveTimeoutが発火する前にサーバが新しいデータを受信すると、server.timeoutのタイムアウトがリセットされます。
+
+0を値として入れた場合、keep-aliveのタイムアウトの動作は無効化されます。
+
+注意： Socketのタイムアウトのロジックは接続時にセットアップされるので、この値を変更したときは新しいコネクションにのみ影響して、既に接続されているコネクションには影響しません
 
 ### Class: http.ServerResponse
 
@@ -697,6 +817,6 @@ req.end();
 ####
 
 #### 参考
-http://html5.ohtsu.org/nodejuku01/nodejuku01_ohtsu.pdf
-http://www.slideshare.net/shigeki_ohtsu/processnext-tick-nodejs
-http://info-i.net/buffer
+
+- 新しいプログラミング言語の学び方  HTTPサーバーを作って学ぶ  Java, Scala, Clojure
+ - https://speakerdeck.com/todokr/xin-siihurokuraminkuyan-yu-falsexue-hifang-httpsahawozuo-tutexue-hu-java-scala-clojure
