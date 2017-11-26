@@ -52,15 +52,22 @@ Node.jsのHTTPのAPIは、HTTPアプリケーションの全部の範囲をサ�
 ### Class: http.Agent
 
 
-An Agent is responsible for managing connection persistence and reuse for HTTP clients. It maintains a queue of pending requests for a given host and port, reusing a single socket connection for each until the queue is empty, at which time the socket is either destroyed or put into a pool where it is kept to be used again for requests to the same host and port. Whether it is destroyed or pooled depends on the keepAlive option.
+An Agent is responsible for managing connection persistence and reuse for HTTP clients.
+ It maintains a queue of pending requests for a given host and port, reusing a single socket connection for each until the queue is empty, at which time the socket is either destroyed or put into a pool where it is kept to be used again for requests to the same host and port.
+ Whether it is destroyed or pooled depends on the keepAlive option.
 
-Pooled connections have TCP Keep-Alive enabled for them, but servers may still close idle connections, in which case they will be removed from the pool and a new connection will be made when a new HTTP request is made for that host and port. Servers may also refuse to allow multiple requests over the same connection, in which case the connection will have to be remade for every request and cannot be pooled. The Agent will still make the requests to that server, but each one will occur over a new connection.
+Pooled connections have TCP Keep-Alive enabled for them, but servers may still close idle connections, in which case they will be removed from the pool and a new connection will be made when a new HTTP request is made for that host and port.
+ Servers may also refuse to allow multiple requests over the same connection, in which case the connection will have to be remade for every request and cannot be pooled.
+  The Agent will still make the requests to that server, but each one will occur over a new connection.
 
-When a connection is closed by the client or the server, it is removed from the pool. Any unused sockets in the pool will be unrefed so as not to keep the Node.js process running when there are no outstanding requests. (see socket.unref()).
+When a connection is closed by the client or the server, it is removed from the pool.
+Any unused sockets in the pool will be unrefed so as not to keep the Node.js process running when there are no outstanding requests. (see socket.unref()).
+
 
 It is good practice, to destroy() an Agent instance when it is no longer in use, because unused sockets consume OS resources.
 
-Sockets are removed from an agent when the socket emits either a 'close' event or an 'agentRemove' event. When intending to keep one HTTP request open for a long time without keeping it in the agent, something like the following may be done:
+Sockets are removed from an agent when the socket emits either a 'close' event or an 'agentRemove' event.
+When intending to keep one HTTP request open for a long time without keeping it in the agent, something like the following may be done:
 
 
 ```
@@ -71,7 +78,8 @@ http.get(options, (res) => {
 });
 ```
 
-An agent may also be used for an individual request. By providing {agent: false} as an option to the http.get() or http.request() functions, a one-time use Agent with default options will be used for the client connection.
+An agent may also be used for an individual request.
+By providing {agent: false} as an option to the http.get() or http.request() functions, a one-time use Agent with default options will be used for the client connection.
 
 agent:false:
 
@@ -564,32 +572,127 @@ It implements the Readable Stream interface, as well as the following additional
 
 #### message.headers
 
-####
+#### message.httpVersion
 
-####
+#### message.method
 
-####
+#### message.rawHeaders
 
-####
+#### message.rawTrailers
+
+#### message.setTimeout(msecs, callback)
+
+#### message.socket
+
+#### message.statusCode
+
+#### message.statusMessage
+
+#### message.trailers
+
+#### message.url
+
+#### http.METHODS
+
+#### http.STATUS_CODES
+
+#### http.createServer([requestListener])
+
+#### http.get(options[, callback])
+
+Since most requests are GET requests without bodies, Node.js provides this convenience method. The only difference between this method and http.request() is that it sets the method to GET and calls req.end() automatically. Note that the callback must take care to consume the response data for reasons stated in http.ClientRequest section.
+
+The callback is invoked with a single argument that is an instance of http.IncomingMessage
+
+JSON Fetching Example:
+
+```
+http.get('http://nodejs.org/dist/index.json', (res) => {
+  const { statusCode } = res;
+  const contentType = res.headers['content-type'];
+
+  let error;
+  if (statusCode !== 200) {
+    error = new Error('Request Failed.\n' +
+                      `Status Code: ${statusCode}`);
+  } else if (!/^application\/json/.test(contentType)) {
+    error = new Error('Invalid content-type.\n' +
+                      `Expected application/json but received ${contentType}`);
+  }
+  if (error) {
+    console.error(error.message);
+    // consume response data to free up memory
+    res.resume();
+    return;
+  }
+
+  res.setEncoding('utf8');
+  let rawData = '';
+  res.on('data', (chunk) => { rawData += chunk; });
+  res.on('end', () => {
+    try {
+      const parsedData = JSON.parse(rawData);
+      console.log(parsedData);
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+}).on('error', (e) => {
+  console.error(`Got error: ${e.message}`);
+});
+```
+
+#### http.globalAgent
 
 
+#### http.request(options[, callback])
 
+Node.js maintains several connections per server to make HTTP requests. This function allows one to transparently issue requests.
 
+options can be an object, a string, or a URL object. If options is a string, it is automatically parsed with url.parse(). If it is a URL object, it will be automatically converted to an ordinary options object.
 
+The optional callback parameter will be added as a one time listener for the 'response' event.
 
-####
+http.request() returns an instance of the http.ClientRequest class. The ClientRequest instance is a writable stream. If one needs to upload a file with a POST request, then write to the ClientRequest object.
 
-####
+Example:
 
-####
+```
+const postData = querystring.stringify({
+  'msg': 'Hello World!'
+});
 
-####
+const options = {
+  hostname: 'www.google.com',
+  port: 80,
+  path: '/upload',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Length': Buffer.byteLength(postData)
+  }
+};
 
-####
+const req = http.request(options, (res) => {
+  console.log(`STATUS: ${res.statusCode}`);
+  console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+  res.setEncoding('utf8');
+  res.on('data', (chunk) => {
+    console.log(`BODY: ${chunk}`);
+  });
+  res.on('end', () => {
+    console.log('No more data in response.');
+  });
+});
 
-####
+req.on('error', (e) => {
+  console.error(`problem with request: ${e.message}`);
+});
 
-####
+// write data to request body
+req.write(postData);
+req.end();
+```
 
 ####
 
