@@ -579,7 +579,6 @@ HTTPサーバは新しいコネクションのlistenをはじめます。
 
 0を設定した場合制限はありません。
 
-
 #### server.setTimeout([msecs][, callback])
 
 Socketのタイムアウトの値を設定し、タイムアウトが発生した場合に、
@@ -612,6 +611,13 @@ keepAliveTimeoutが発火する前にサーバが新しいデータを受信す�
 注意： Socketのタイムアウトのロジックは接続時にセットアップされるので、この値を変更したときは新しいコネクションにのみ影響して、既に接続されているコネクションには影響しません
 
 ### Class: http.ServerResponse
+
+このオブジェクトは、ユーザーからではなくHTTPサーバの内部で生成されます。 -> [ここ](https://github.com/nodejs/node/blob/master/lib/_http_server.js#L581)
+2つめのパラメータとして、requestイベントに渡されます。
+
+レスポンスは、Writable Streamのインターフェースを実装しますが、それは継承されていません。
+これは以下のイベントをもつEventEmitterです
+
 
 #### Event: 'close'
 
@@ -647,13 +653,55 @@ Attempting to set a header field name or value that contains invalid characters 
 
 #### response.getHeader(name)
 
+Reads out a header that's already been queued but not sent to the client. Note that the name is case insensitive.
+
+
+例：
+```
+const contentType = response.getHeader('content-type');
+
+```
 
 #### response.getHeaderNames()
 
+Returns an array containing the unique names of the current outgoing headers. All header names are lowercase.
+
+
+例：
+```
+response.setHeader('Foo', 'bar');
+response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
+
+const headerNames = response.getHeaderNames();
+// headerNames === ['foo', 'set-cookie']
+```
+
 #### response.getHeaders()
+Returns a shallow copy of the current outgoing headers. Since a shallow copy is used, array values may be mutated without additional calls to various header-related http module methods. The keys of the returned object are the header names and the values are the respective header values. All header names are lowercase.
+
+Note: The object returned by the response.getHeaders() method does not prototypically inherit from the JavaScript Object. This means that typical Object methods such as obj.toString(), obj.hasOwnProperty(), and others are not defined and will not work.
+
+例：
+```
+response.setHeader('Foo', 'bar');
+response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
+
+const headers = response.getHeaders();
+// headers === { foo: 'bar', 'set-cookie': ['foo=bar', 'bar=baz'] }
+```
+
 
 #### response.hasHeader(name)
 
+Returns true if the header identified by name is currently set in the outgoing headers. Note that the header name matching is case-insensitive.
+
+
+
+例：
+```
+const hasContentType = response.hasHeader('content-type');
+
+```
 #### response.headersSent
 
 #### response.removeHeader(name)
@@ -662,7 +710,41 @@ Attempting to set a header field name or value that contains invalid characters 
 
 #### response.setHeader(name, value)
 
+Sets a single header value for implicit headers. If this header already exists in the to-be-sent headers, its value will be replaced. Use an array of strings here to send multiple headers with the same name.
+
+例：
+```
+response.setHeader('Content-Type', 'text/html');
+
+```
+or
+```
+response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+
+```
+
+
+Attempting to set a header field name or value that contains invalid characters will result in a TypeError being thrown.
+
+When headers have been set with response.setHeader(), they will be merged with any headers passed to response.writeHead(), with the headers passed to response.writeHead() given precedence.
+
+```
+// returns content-type = text/plain
+const server = http.createServer((req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('X-Foo', 'bar');
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('ok');
+});
+```
+
+
 #### response.setTimeout(msecs[, callback])
+Sets the Socket's timeout value to msecs. If a callback is provided, then it is added as a listener on the 'timeout' event on the response object.
+
+If no 'timeout' listener is added to the request, the response, or the server, then sockets are destroyed when they time out. If a handler is assigned to the request, the response, or the server's 'timeout' events, timed out sockets must be handled explicitly.
+
+Returns response.
 
 #### response.socket
 
@@ -720,13 +802,20 @@ It implements the Readable Stream interface, as well as the following additional
 
 #### http.get(options[, callback])
 
-Since most requests are GET requests without bodies, Node.js provides this convenience method. The only difference between this method and http.request() is that it sets the method to GET and calls req.end() automatically. Note that the callback must take care to consume the response data for reasons stated in http.ClientRequest section.
+ほとんどのリクエストはBodyなしのGETリクエストのため、Node.jsはこの便利なメソッドを提供します
 
-The callback is invoked with a single argument that is an instance of http.IncomingMessage
+このメソッドとhttp.request()の違いは、メソッドをGETに設定し、req.end()を自動で呼び出している点だけです。
 
-JSON Fetching Example:
+参考：https://github.com/nodejs/node/blob/master/lib/http.js#L41
+
+注意：callbackはhttp.ClientRequestのセクションに記載されているような理由で、レスポンスデータを消費するように注意しなければならないことに注意してください。
+
+コールバックはhttp.IncomingMessageのインスタンスである、１つの引数で呼び出されます。
+
+JSONをFetchする例：
 
 ```
+// http_get.js
 http.get('http://nodejs.org/dist/index.json', (res) => {
   const { statusCode } = res;
   const contentType = res.headers['content-type'];
@@ -764,18 +853,24 @@ http.get('http://nodejs.org/dist/index.json', (res) => {
 
 #### http.globalAgent
 
+すべてのHTTPクライアントのリクエストのデフォルトで使用されるAgentのグローバルインスタンス。
 
 #### http.request(options[, callback])
 
-Node.js maintains several connections per server to make HTTP requests. This function allows one to transparently issue requests.
+Node.jsはHTTPリクエストをするためにサーバごとにいくつかのコネクションを維持します。
+この機能を利用すると、透過的にリクエストを発行することが出来ます（？）
 
-options can be an object, a string, or a URL object. If options is a string, it is automatically parsed with url.parse(). If it is a URL object, it will be automatically converted to an ordinary options object.
+optionsはオブジェクトか文字列、もしくはURLオブジェクトが利用できます。
+optionsが文字列の場合、url.parse()で自動的にパースされます。
+URLオブジェクトの場合、自動的に通常のオプションオブジェクトに変換されます。
 
-The optional callback parameter will be added as a one time listener for the 'response' event.
+オプションで指定できるcallbackパラメータは、`response`イベントに１回限りのリスナーとして追加されます。
 
-http.request() returns an instance of the http.ClientRequest class. The ClientRequest instance is a writable stream. If one needs to upload a file with a POST request, then write to the ClientRequest object.
+http.request()はhttp.ClientRequestクラスのインスタンスを返します。
+このClientRequestインスタンスはWritable Streamです。
+もしPOSTリクエストなどでファイルをアップロードする必要がある場合、ClientRequestオブジェクトに書き込みます。
 
-Example:
+例：
 
 ```
 const postData = querystring.stringify({
@@ -813,6 +908,40 @@ req.on('error', (e) => {
 req.write(postData);
 req.end();
 ```
+
+注意：例ではreq.end()が呼ばれている点に注意してください。
+http.request()はリクエストが終了したことを示すために、常にreq.end()を呼び出さなくてはいけません。もしリクエストbodyにデータが書き込まれていなくてもです。
+
+もしリクエストの最中にエラーが発生した場合（DNSリゾルブやTCPレベルのエラー、HTTPパースエラーなど）、返されたリクエストオブジェクトに`error`イベントが発行されます。
+
+すべての`error`イベントと同じように、登録されていないリスナーにはエラーが投げられます
+
+注意すべきいくつかのヘッダーがあります。
+
+` 'Connection: keep-alive'`を送信すると、Node.jsに次のリクエストまでの間サーバのコネクションを保持するように通知がいきます。
+
+`'Content-Length' `ヘッダを送信すると、デフォルトのchunk Encodingが無効になります。
+
+
+`Expect`ヘッダーを送信すると、すぐにrequestのヘッダが返されます。
+通常、`'Expect: 100-continue',`を送信する場合、continueイベントのタイムアウトとリスナーの両方がセットされているべきです。
+
+もっと知りたい場合は RFC2616 Section 8.2.3 をみてください。
+
+認証ヘッダを送信すると、authオプションを利用してベーシックな認証を計算されます。
+
+URLをオプションとして使っている例:
+
+```
+const { URL } = require('url');
+
+const options = new URL('http://abc:xyz@example.com');
+
+const req = http.request(options, (res) => {
+  // ...
+});
+```
+
 
 ####
 
