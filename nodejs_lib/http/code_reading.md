@@ -47,17 +47,17 @@ module.exportsされているもの
 module.exports = {
   _connectionListener: server._connectionListener,
   METHODS: common.methods.slice().sort(),
-  STATUS_CODES: server.STATUS_CODES,
-  Agent: agent.Agent,
-  ClientRequest,
-  globalAgent: agent.globalAgent,
-  IncomingMessage: incoming.IncomingMessage,
-  OutgoingMessage: outgoing.OutgoingMessage,
-  Server,
-  ServerResponse: server.ServerResponse,
-  createServer,
-  get,
-  request
+  STATUS_CODES: server.STATUS_CODES, // ステータスコード一覧。 https://github.com/nodejs/node/blob/master/lib/_http_server.js#L43
+  Agent: agent.Agent, // Agentクラス  https://github.com/nodejs/node/blob/master/lib/_http_agent.js#L43
+  ClientRequest, // ClientRequestクラス https://github.com/nodejs/node/blob/master/lib/_http_client.js#L80
+  globalAgent: agent.globalAgent, // http clientでリクエストする際に管理してくれるデフォルトのAgentクラス。  中身は普通のAgent-> https://github.com/nodejs/node/blob/master/lib/_http_agent.js#L359
+  IncomingMessage: incoming.IncomingMessage, // IncomingMessageクラス https://github.com/nodejs/node/blob/master/lib/_http_incoming.js#L38
+  OutgoingMessage: outgoing.OutgoingMessage, // OutgoingMessageクラス https://github.com/nodejs/node/blob/master/lib/_http_outgoing.js#L69
+  Server, // Serverクラス。 https://github.com/nodejs/node/blob/master/lib/_http_server.js#L263
+  ServerResponse: server.ServerResponse, // ServerResponseクラス　https://github.com/nodejs/node/blob/master/lib/_http_server.js#L112
+  createServer, // 上記のcreateServer関数
+  get, // 同上の関数
+  request // 同上の関数
 };
 ```
 
@@ -346,6 +346,7 @@ function ClientRequest(options, cb) {
 
 
 
+
 #### [get(options, cb)](https://github.com/nodejs/node/blob/master/lib/http.js#L41)
 
 
@@ -360,3 +361,43 @@ function get(options, cb) {
 
 
 基本的にrequestと同じ。requestに対して引数をそのまま渡し、req.end()を呼んだ後にreqを返す。
+
+
+
+
+
+---------------------
+
+
+### requireしているファイル
+
+####  [_http_agent.js](https://github.com/nodejs/node/blob/master/lib/_http_agent.js)
+
+Agentクラスを管理しているファイル。Agentはmodule.exportsされてる(https://github.com/nodejs/node/blob/master/lib/http.js#L51 )
+
+docsだと[Class:http.Agent](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_class_http_agent)あたり
+
+
+```
+const net = require('net');
+const util = require('util');
+const EventEmitter = require('events');
+const { async_id_symbol } = process.binding('async_wrap');
+const { nextTick } = require('internal/process/next_tick');
+```
+
+
+- { ClientRequest }
+-> [_http_client.js](https://github.com/nodejs/node/blob/master/lib/_http_client.js#L80)
+
+- common
+-> [_http_common.js](https://github.com/nodejs/node/blob/master/lib/_http_common.js)
+
+- incoming
+-> [_http_incoming.js](https://github.com/nodejs/node/blob/master/lib/_http_incoming.js)
+
+- outgoing
+-> [_http_outgoing.js](https://github.com/nodejs/node/blob/master/lib/_http_outgoing.js)
+
+- {server}
+-> [_http_server.js](https://github.com/nodejs/node/blob/master/lib/_http_server.js#L263)
