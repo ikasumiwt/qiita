@@ -47,6 +47,7 @@ server.listen(port, () => {
 })
 
 
+// **通常のOKパターン**
 // エコーサーバ起動
 // $ node http_server_echo.js
 // Server lintening: 1337
@@ -73,3 +74,25 @@ server.listen(port, () => {
 // Transfer-Encoding: chunked
 //
 // Body Echoa=1&b=2&c=3
+
+
+
+// **クライアントエラー**
+
+// リクエスト(謎METHODを利用)
+//  curl -X HOGE -D - -d'a=1&b=2&c=3' http://localhost:1337
+
+
+// --結果--
+// $ node http_server_echo.js
+// Server lintening: 1337
+// === Raw Socket Data Start ===
+// Client Error:Parse Error
+// HOGE / HTTP/1.1
+// Host: localhost:1337
+// User-Agent: curl/7.54.0
+// Accept: */*
+// Content-Length: 11
+// Content-Type: application/x-www-form-urlencoded
+//
+// a=1&b=2&c=3
