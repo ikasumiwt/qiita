@@ -687,15 +687,31 @@ keepAliveTimeoutが発火する前にサーバが新しいデータを受信す�
 
 #### Event: 'close'
 
+response.end()が呼ばれるか、flushできるようになる前に、接続が終了したことを示すために呼ばれるイベント
+
+
 #### Event: 'finish'
+
+Responseが送信されたあとに送信されるイベント。
+
+具体的には、レスポンスヘッダとボディの最後のセグメントが（ネットワーク経由で？）OSに送信されたときにこのイベントは送信されます。
+
+これは、クライアントがなにかを受け取ったことを示すものではありません。
+
+このイベントの後には、これ以上レスポンスオブジェクトのイベントは発火しません。
+
 
 #### response.addTrailers(headers)
 
-This method adds HTTP trailing headers (a header but at the end of the message) to the response.
+このメソッドはレスポンスにHTTPのtrailerヘッダを追加します。
+（trailerヘッダはHTTPの末尾に追加されます）// ??  (a header but at the end of the message)
 
-Trailers will only be emitted if chunked encoding is used for the response; if it is not (e.g. if the request was HTTP/1.0), they will be silently discarded.
+トレイラーはチャンクエンコーディングがレスポンスに利用されている場合のみ付与されます。
+利用されていない場合（例えばHTTP/1.0）、これらは暗黙的に破棄されます。
 
-Note that HTTP requires the Trailer header to be sent in order to emit trailers, with a list of the header fields in its value. E.g.,
+
+注意：HTTPでは、トレイラーを送信するためには、トレイラーヘッダを送信する必要があり、ヘッダーのフィールドのリストにその値を入れる必要があります。
+例えば以下
 
 ```
 response.writeHead(200, { 'Content-Type': 'text/plain',
@@ -704,18 +720,26 @@ response.write(fileData);
 response.addTrailers({ 'Content-MD5': '7895bf4b8828b55ceaf47747b4bca667' });
 response.end();
 ```
-Attempting to set a header field name or value that contains invalid characters will result in a TypeError being thrown.
 
-
+無効な文字を含むフィールド名や値をヘッダーにセットしようとすると、TypeErrorがスローされることになります。
 
 #### response.connection
 
+[response.socket](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_response_socket)を参照
 
 
 #### response.end([data][, encoding][, callback])
 
+This method signals to the server that all of the response headers and body have been sent; that server should consider this message complete. The method, response.end(), MUST be called on each response.
+
+If data is specified, it is equivalent to calling response.write(data, encoding) followed by response.end(callback).
+
+If callback is specified, it will be called when the response stream is finished.
 
 #### response.finished
+
+Boolean value that indicates whether the response has completed. Starts as false. After response.end() executes, the value will be true.
+
 
 #### response.getHeader(name)
 
@@ -770,9 +794,25 @@ const hasContentType = response.hasHeader('content-type');
 ```
 #### response.headersSent
 
+Boolean (read-only). True if headers were sent, false otherwise.
+
+
 #### response.removeHeader(name)
+Removes a header that's queued for implicit sending.
+
+例:
+```
+response.removeHeader('Content-Encoding');
+```
+
 
 #### response.sendDate
+
+```
+When true, the Date header will be automatically generated and sent in the response if it is not already present in the headers. Defaults to true.
+
+This should only be disabled for testing; HTTP requires the Date header in responses.
+```
 
 #### response.setHeader(name, value)
 
@@ -789,7 +829,6 @@ response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 
 ```
 
-
 Attempting to set a header field name or value that contains invalid characters will result in a TypeError being thrown.
 
 When headers have been set with response.setHeader(), they will be merged with any headers passed to response.writeHead(), with the headers passed to response.writeHead() given precedence.
@@ -804,7 +843,6 @@ const server = http.createServer((req, res) => {
 });
 ```
 
-
 #### response.setTimeout(msecs[, callback])
 Sets the Socket's timeout value to msecs. If a callback is provided, then it is added as a listener on the 'timeout' event on the response object.
 
@@ -814,57 +852,353 @@ Returns response.
 
 #### response.socket
 
+Reference to the underlying socket. Usually users will not want to access this property. In particular, the socket will not emit 'readable' events because of how the protocol parser attaches to the socket. After response.end(), the property is nulled. The socket may also be accessed via response.connection.
+
+例：
+```
+const http = require('http');
+const server = http.createServer((req, res) => {
+  const ip = res.socket.remoteAddress;
+  const port = res.socket.remotePort;
+  res.end(`Your IP address is ${ip} and your source port is ${port}.`);
+}).listen(3000);
+```
+
+
 #### response.statusCode
 
+When using implicit headers (not calling response.writeHead() explicitly), this property controls the status code that will be sent to the client when the headers get flushed.
+
+
+
+例：
+```
+response.statusCode = 404;
+```
+
 #### response.statusMessage
+When using implicit headers (not calling response.writeHead() explicitly), this property controls the status message that will be sent to the client when the headers get flushed. If this is left as undefined then the standard message for the status code will be used.
+
+例:
+```
+response.statusMessage = 'Not found';
+```
+
 
 #### response.write(chunk[, encoding][, callback])
 
+If this method is called and response.writeHead() has not been called, it will switch to implicit header mode and flush the implicit headers.
+
+This sends a chunk of the response body. This method may be called multiple times to provide successive parts of the body.
+
+Note that in the http module, the response body is omitted when the request is a HEAD request. Similarly, the 204 and 304 responses must not include a message body.
+
+chunk can be a string or a buffer. If chunk is a string, the second parameter specifies how to encode it into a byte stream. By default the encoding is 'utf8'. callback will be called when this chunk of data is flushed.
+
+Note: This is the raw HTTP body and has nothing to do with higher-level multi-part body encodings that may be used.
+
+The first time response.write() is called, it will send the buffered header information and the first chunk of the body to the client. The second time response.write() is called, Node.js assumes data will be streamed, and sends the new data separately. That is, the response is buffered up to the first chunk of the body.
+
+Returns true if the entire data was flushed successfully to the kernel buffer. Returns false if all or part of the data was queued in user memory. 'drain' will be emitted when the buffer is free again.
+
 #### response.writeContinue()
 
+Sends a HTTP/1.1 100 Continue message to the client, indicating that the request body should be sent. See the 'checkContinue' event on Server.
+
 #### response.writeHead(statusCode[, statusMessage][, headers])
+
+Sends a response header to the request. The status code is a 3-digit HTTP status code, like 404. The last argument, headers, are the response headers. Optionally one can give a human-readable statusMessage as the second argument.
+
+例:
+```
+const body = 'hello world';
+response.writeHead(200, {
+  'Content-Length': Buffer.byteLength(body),
+  'Content-Type': 'text/plain' });
+```
+
+This method must only be called once on a message and it must be called before response.end() is called.
+
+If response.write() or response.end() are called before calling this, the implicit/mutable headers will be calculated and call this function.
+
+When headers have been set with response.setHeader(), they will be merged with any headers passed to response.writeHead(), with the headers passed to response.writeHead() given precedence.
+
+```
+// returns content-type = text/plain
+const server = http.createServer((req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('X-Foo', 'bar');
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('ok');
+});
+```
+
+Note that Content-Length is given in bytes not characters. The above example works because the string 'hello world' contains only single byte characters. If the body contains higher coded characters then Buffer.byteLength() should be used to determine the number of bytes in a given encoding. And Node.js does not check whether Content-Length and the length of the body which has been transmitted are equal or not.
+
+Attempting to set a header field name or value that contains invalid characters will result in a TypeError being thrown.
 
 
 
 ### Class: http.IncomingMessage
-An IncomingMessage object is created by http.Server or http.ClientRequest and passed as the first argument to the 'request' and 'response' event respectively. It may be used to access response status, headers and data.
 
-It implements the Readable Stream interface, as well as the following additional events, methods, and properties.
+IncomingMessageオブジェクトはhttp.Serverかhttp.ClientRequestから作成されます。
+また、最初の引数にはrequestもしくはresponseイベントが渡されます。
+これは、レスポンスデータやヘッダ、データにアクセスするのに利用されます。
+
+Readable Streamのインターフェースと、以下の追加されたイベントやメソッド、プロパティが含まれています。
 
 
 #### Event: 'aborted'
 
+requestが中止され、ネットワークのSocketが閉じられた時に発火します。
+
+
 #### Event: 'close'
+
+コネクションが閉じられたことを示します。
+これはendイベントのようですが、このイベントは1レスポンスに対して1回しか発生しません。
+
 
 #### message.destroy([error])
 
+IncomingMessageを受け取ったSocketでdestroy()を呼びます。
+
+もしエラーが渡された場合、エラーイベントが生成され、そしてエラーはイベントのリスナーに引数として渡されます
+
+
 #### message.headers
+
+requestかresponseのヘッダーオブジェクトです。
+
+ヘッダーの名前と値key-valueのペアで、ヘッダーの名前はlower-caseになっています。
+
+例:
+```
+// Prints something like:
+//
+// { 'user-agent': 'curl/7.22.0',
+//   host: '127.0.0.1:8000',
+//   accept: '*/*' }
+console.log(request.headers);
+```
+
+生のヘッダが重複していた場合、以下のようにヘッダ名に応じて処理されます。
+
+- age, authorization, content-length, content-type, etag, expires, from, host, if-modified-since, if-unmodified-since, last-modified, location, max-forwards, proxy-authorization, referer, retry-after, user-agentは破棄されます。
+- set-cookieはいつでも配列で、重複した場合はarrayに追加されます。
+- これら以外のヘッダーは、重複した場合値はすべて,(カンマ)で追加されます
+
 
 #### message.httpVersion
 
+サーバリクエストの場合、クライアントから送信されたHTTPのバージョン。
+クライアントのレスポンスの場合、接続先のサーバのHTTPのバージョン。
+おそらく、1.1 もしくは 1.0です。
+
+また、message.httpVersionMajorは最初の整数で、message.httpVersionMinorは2爪の整数です。
+
 #### message.method
+
+http.Serverからのリクエストのみ有効。
+リクエストメソッドはStringで、リードオンリーです。
+
+例: 'GET', 'DELETE'.
 
 #### message.rawHeaders
 
+request/responseの生のヘッダーで、受け取った通り正確に表示されます。
+
+
+注意：keyとvalueが同じ配列（list）の中にいます
+
+タプルのリストではないです // ?It is not a list of tuples.
+
+よって、偶数番目にあるものはkeyで、奇数番目にあるものがvalueとなっています。
+
+ヘッダー名はlowercaseではなく、重複しているものもマージされていません。
+
+```
+// Prints something like:
+//
+// [ 'user-agent',
+//   'this is invalid because there can be only one',
+//   'User-Agent',
+//   'curl/7.22.0',
+//   'Host',
+//   '127.0.0.1:8000',
+//   'ACCEPT',
+//   '*/*' ]
+console.log(request.rawHeaders);
+```
+
 #### message.rawTrailers
+
+生のrequest/responseのtrailerのkeyとvalueです。それらは受信したとおりのものです。
+endイベントでのみ設定できます。
+//TODO:あとでためす
 
 #### message.setTimeout(msecs, callback)
 
+message.connection.setTimeoutを呼び出します
+messageを返します。
+
 #### message.socket
+
+コネクションに関連付けされたnet.Socketオブジェクトです。
+
+HTTPSをサポートしている場合は、request.socket.getPeerCertificate()を利用してクライアント認証の詳細を取得します。
 
 #### message.statusCode
 
+http.ClientRequestからのリクエストのみ有効です。
+
+404みたいな3桁のHTTPのステータスコードです。
+
 #### message.statusMessage
+
+http.ClientRequestからのリクエストのみ有効です。
+OKやInternal Server Errorのような、HTTPレスポンスのステータスメッセージです
 
 #### message.trailers
 
+request/responseのtrailerオブジェクト。endイベントでのみ設定されます。
+
 #### message.url
+
+http.Serverからのリクエストのみ有効です。
+
+requestのURLの文字列。実際のHTTPリクエストに存在するURLのみが含まれます
+
+例えばリクエストが以下のような
+```
+GET /status?name=ryan HTTP/1.1\r\n
+Accept: text/plain\r\n
+\r\n
+```
+
+ときには、request.urlはこんな感じに
+
+```
+'/status?name=ryan'
+```
+
+URLをパースするには、require('url').parse(request.url)を利用することが出来ます。
+例えば：
+
+```
+$ node
+> require('url').parse('/status?name=ryan')
+Url {
+  protocol: null,
+  slashes: null,
+  auth: null,
+  host: null,
+  port: null,
+  hostname: null,
+  hash: null,
+  search: '?name=ryan',
+  query: 'name=ryan',
+  pathname: '/status',
+  path: '/status?name=ryan',
+  href: '/status?name=ryan' }
+```
+
+クエリストリングからパラメータを抽出するには、require('querystring').parse関数を用いるか、またrequire('url').parseの第二引数にtrueを渡すことでできます。
+
+例:
+
+```
+$ node
+> require('url').parse('/status?name=ryan', true)
+Url {
+  protocol: null,
+  slashes: null,
+  auth: null,
+  host: null,
+  port: null,
+  hostname: null,
+  hash: null,
+  search: '?name=ryan',
+  query: { name: 'ryan' },
+  pathname: '/status',
+  path: '/status?name=ryan',
+  href: '/status?name=ryan' }
+```
+
+
 
 #### http.METHODS
 
+パーサーがサポートしている、HTTPメソッドのリスト
+
 #### http.STATUS_CODES
 
+標準的なHTTPレスポンスのステータスコードと、その短い説明の一覧
+
+例えばhttp.STATUS_CODE[404]はNot Found
+
+
+```
+
+> http.STATUS_CODES
+{ '100': 'Continue',
+  '101': 'Switching Protocols',
+  '102': 'Processing',
+  '200': 'OK',
+  '201': 'Created',
+  '202': 'Accepted',
+  '203': 'Non-Authoritative Information',
+  '204': 'No Content',
+  '205': 'Reset Content',
+  '206': 'Partial Content',
+  '207': 'Multi-Status',
+  '208': 'Already Reported',
+  '226': 'IM Used',
+  '300': 'Multiple Choices',
+  '301': 'Moved Permanently',
+  '302': 'Found',
+  '303': 'See Other',
+  '304': 'Not Modified',
+  '305': 'Use Proxy',
+  '307': 'Temporary Redirect',
+  '308': 'Permanent Redirect',
+  '400': 'Bad Request',
+  '401': 'Unauthorized',
+  '402': 'Payment Required',
+  '403': 'Forbidden',
+  '404': 'Not Found',
+  '405': 'Method Not Allowed',
+  '406': 'Not Acceptable',
+  '407': 'Proxy Authentication Required',
+  '408': 'Request Timeout',
+  '409': 'Conflict',
+  '410': 'Gone',
+  '411': 'Length Required',
+  '412': 'Precondition Failed',
+  '413': 'Payload Too Large',
+  '414': 'URI Too Long',
+  '415': 'Unsupported Media Type',
+  '416': 'Range Not Satisfiable',
+  '417': 'Expectation Failed',
+  '418': 'I\'m a teapot',
+  '421': 'Misdirected Request',
+  '422': 'Unprocessable Entity',
+  '423': 'Locked',
+  '424': 'Failed Dependency',
+  '425': 'Unordered Collection',
+  '426': 'Upgrade Required',
+  '428': 'Precondition Required',
+  '429': 'Too Many Requests',
+  '431': 'Request Header Fields Too Large',
+  '451': 'Unavailable For Legal Reasons',
+  '500': 'Internal Server Error',
+  '501': 'Not Implemented',
+
+```
+
 #### http.createServer([requestListener])
+
+request Listenerはrequestイベントが自動追加される関数です。
 
 #### http.get(options[, callback])
 
@@ -919,7 +1253,9 @@ http.get('http://nodejs.org/dist/index.json', (res) => {
 
 #### http.globalAgent
 
-すべてのHTTPクライアントのリクエストのデフォルトで使用されるAgentのグローバルインスタンス。
+HTTPクライアントモジュールで行われるリクエストのデフォルトで使用されるAgent。
+中身はAgent-> [globalAgent: new Agent()](https://github.com/nodejs/node/blob/master/lib/_http_agent.js#L359)
+
 
 #### http.request(options[, callback])
 
