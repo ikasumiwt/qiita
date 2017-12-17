@@ -1,7 +1,7 @@
 # notes
 https://nodejs.org/api/crypto.html の読み物です。
 
-## Node.js v8.9.1 Documentation
+## Node.js v8.9.3 Documentation
 
 [docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html)
 
@@ -120,26 +120,90 @@ http.request(options, onResponseCallback);
 
 #### agent.createConnection(options[, callback])
 
+HTTPのリクエストに使われるsocket/streamのコネクションを作成します。
+
+デフォルトではこの関数はnet.createConnectionと同じ動作をします。しかし、より柔軟な対応が求められるケースでは、カスタムエージェントでこのメソッドをオーバーライドすることができます
+// ?? However, custom agents may override this method in case greater flexibility is desired.
+
+// A socket/stream can be supplied in one of two ways: by returning the socket/stream from this function, or by passing the socket/stream to callback.
+
+socket/streamは2つの方法で供給できます。
+1つはこの巻数からsocket/streamを返す方法で、もう一つはsocket/streamをコールバックに
+
+コールバックは(err, stream)の性質を持っています
+
+
+
 #### agent.keepSocketAlive(socket)
+
+
+Socketがリクエストから離れたときに呼ばれます。そしてエージェントによって永続化される可能性があります。
+
+デフォルトは以下の通りです。
+
+```
+socket.setKeepAlive(true, this.keepAliveMsecs);
+socket.unref();
+return true;
+```
 
 #### agent.reuseSocket(socket, request)
 
+リクエストにソケットがアタッチされたときに呼ばれ、keep-aliveオプションによって永続化されます。
+
+デフォルトの動作は以下です。
+
+```
+socket.ref();
+```
+
 #### agent.destroy()
+
+エージェントによって今使われているsocketを全てdestroyします。
+
+普段使う必要はありません。
+ただし、keepAliveを有効にしているエージェントを使っている場合、エージェントが利用されなくなった場合には明示的にシャットダウンすることがベストです。
+そうしない場合、サーバがそれらのSocketを終了する前にsocketがハングアップする可能性があります。
+
+
 
 #### agent.freeSockets
 
+keepAliveが有効な場合、エージェントが使っているSocketの配列を含むオブジェクトになります。
+変更しないで下さい。
+
+
+
 #### agent.getName(options)
+
+接続を再利用することが可能かどうか判断するために、requestオプションにセットされたユニークなnameを取得します。
+HTTPエージェントの場合はhost:port:localAddress または host:port:localAddress:familyを返し、
+HTTPSエージェントの場合は
+the CA, cert, ciphers, and other HTTPS/TLS-specific options が含まれたものを返します
+
+
 
 #### agent.maxFreeSockets
 
+デフォルトは256がセットされている。
+keepAliveが有効になっているエージェントの場合、開いた状態で待機しているソケットの最大数を持っています。
+
+
 #### agent.maxSockets
+
+デフォルトは無限。エージェントがorigin毎に同時に接続できるソケット数の上限をしていできます。
+originはagent.getName()で返ってくる値のことを指します
+
 
 #### agent.requests
 
+まだソケットに割り当てられていないリクエストのキューを含んでいるオブジェクトです。
+変更しないで下さい。
+
 #### agent.sockets
 
-
-
+エージェントによって現在利用されているソケットを含んでいるオブジェクトです
+変更しないで下さい。
 
 
 ### Class: http.ClientRequest
