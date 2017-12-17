@@ -140,6 +140,8 @@ http.request(options, onResponseCallback);
 
 
 
+
+
 ### Class: http.ClientRequest
 
 このオブジェクトは内部的に作られるもので、http.request()から返されます
