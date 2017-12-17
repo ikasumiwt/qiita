@@ -730,34 +730,42 @@ response.end();
 
 #### response.end([data][, encoding][, callback])
 
-This method signals to the server that all of the response headers and body have been sent; that server should consider this message complete. The method, response.end(), MUST be called on each response.
+このメソッドは、レスポンスのヘッダとボディが全てサーバに送られたとサーバへ通知するものです。
+サーバはこのメッセージを完了したものと考えるべきです。
 
-If data is specified, it is equivalent to calling response.write(data, encoding) followed by response.end(callback).
+response.end()メソッドは、どのレスポンスでも必ず呼ばれます。
 
-If callback is specified, it will be called when the response stream is finished.
+データが指定されている場合、response.writeが呼ばれ、その後にresponse.end(callback)されるのと同じです。
+
+
+callbackが指定されている場合は、responseのstreamが終了した時にcallbackは呼び出されます。
+
 
 #### response.finished
 
-Boolean value that indicates whether the response has completed. Starts as false. After response.end() executes, the value will be true.
+レスポンスが完了したかどうかのBooleanの値です。
+falseで始まり、response.end()が呼ばれた後にtrueになります
+// TODO あとで試す
 
 
 #### response.getHeader(name)
 
-Reads out a header that's already been queued but not sent to the client. Note that the name is case insensitive.
+既にqueueにあるが、クライアントに送信されていないヘッダーをリードします。
 
+注意：nameは大文字小文字の区別をしません
 
 例：
 ```
 const contentType = response.getHeader('content-type');
-
 ```
 
 #### response.getHeaderNames()
 
-Returns an array containing the unique names of the current outgoing headers. All header names are lowercase.
+現在送信されているヘッダーの、ユニークな名前が含まれる配列を返します。
 
+すべてのヘッダーの名前はlowercaseになっています。
 
-例：
+例： // getHeader.js
 ```
 response.setHeader('Foo', 'bar');
 response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
@@ -767,11 +775,18 @@ const headerNames = response.getHeaderNames();
 ```
 
 #### response.getHeaders()
-Returns a shallow copy of the current outgoing headers. Since a shallow copy is used, array values may be mutated without additional calls to various header-related http module methods. The keys of the returned object are the header names and the values are the respective header values. All header names are lowercase.
 
-Note: The object returned by the response.getHeaders() method does not prototypically inherit from the JavaScript Object. This means that typical Object methods such as obj.toString(), obj.hasOwnProperty(), and others are not defined and will not work.
+現在送信されているヘッダーのシャローコピーを返します。
 
-例：
+シャローコピーが利用されるため、配列の値はHTTPモジュールのメソッドへの追加の呼び出しが行われることなく、変化する可能性があります。
+
+返されたオブジェクトのキーは、ヘッダー名で、その値はそのヘッダーの値です。
+すべてのヘッダー名はlowercaseです
+
+注意：response.getHeaders()メソッドで返されるオブジェクトは、prototypically(?)なJavaScript Objectからは継承されていません。
+つまり、toString()/hasOwnProperty()やその他のメソッドは定義されておらず、利用できません。
+
+例：// getHeader.js(上と同じ)
 ```
 response.setHeader('Foo', 'bar');
 response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
@@ -783,22 +798,22 @@ const headers = response.getHeaders();
 
 #### response.hasHeader(name)
 
-Returns true if the header identified by name is currently set in the outgoing headers. Note that the header name matching is case-insensitive.
+現在送信されているヘッダに、nameが存在すればtrueが帰ります。
 
+注意：この場合header nameは大文字小文字の区別をしません
 
-
-例：
+例： // getHeader.jsと同じ
 ```
 const hasContentType = response.hasHeader('content-type');
 
 ```
 #### response.headersSent
 
-Boolean (read-only). True if headers were sent, false otherwise.
-
+リードオンリーなbooleanです。送られていたらtrue,それ以外ならfalseが返ります。
 
 #### response.removeHeader(name)
-Removes a header that's queued for implicit sending.
+
+queueに入っているヘッダーを削除します。 // ??? for implicit sending.
 
 例:
 ```
@@ -808,11 +823,11 @@ response.removeHeader('Content-Encoding');
 
 #### response.sendDate
 
-```
-When true, the Date header will be automatically generated and sent in the response if it is not already present in the headers. Defaults to true.
+trueの場合、（Dateヘッダが存在しない場合）Dateヘッダが自動的に生成されて送信されます。
 
-This should only be disabled for testing; HTTP requires the Date header in responses.
-```
+デフォルトはtrueです。
+
+これはテストする時にのみ無効にすべきで、HTTPではresponseにDateヘッダが必要です。
 
 #### response.setHeader(name, value)
 
