@@ -5,10 +5,14 @@ const server = http.createServer((req, res) => {
   res.setHeader('Foo', 'bar');
   res.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
   const headerNames = res.getHeaderNames();
-  console.log(headerNames)
-  console.log("--------")
+  console.log("--------:getHeaderNames")
+  console.log(headerNames) // headerNames === ['foo', 'set-cookie']
+  console.log("--------:getHeaders")
   console.log(res.getHeaders())
-  // headerNames === ['foo', 'set-cookie']
+  console.log("--------:hasHeader")
+  console.log(res.hasHeader('Set-Cookie')) // true
+  console.log(res.hasHeader('set-cookie')) // true
+
   res.end()
 })
 
