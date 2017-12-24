@@ -31,8 +31,8 @@ agent.keepSocketAlive = (socket) => {
   }
 
   console.log('socket is false')
-  console.log(expectedSocket)
-  console.log(socket)
+  // console.log(expectedSocket)
+  // console.log(socket)
   // assert.strictEqual(socket, expectedSocket)
   return false
 }
@@ -77,6 +77,8 @@ server.listen('18888', () => {
       res.once('end', () => {
         // setImmediateしないとreuseされない
         // ClientRequest.prototype.onSocketでnextTick時にonSocketNTしているから(?)
+        console.log(agent.freeSockets)
+        console.log('---------')
         setImmediate(callback)
         //callback()
       })
