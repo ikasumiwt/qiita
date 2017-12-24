@@ -49,6 +49,7 @@ Node.jsのHTTPのAPIは、HTTPアプリケーションの全部の範囲をサ�
 ```
 
 
+
 ### Class: http.Agent
 
 エージェントはHTTPクライアントのコネクションの永続性と再利用を管理する責任をもっています。
@@ -1002,6 +1003,19 @@ console.log(request.headers);
 - age, authorization, content-length, content-type, etag, expires, from, host, if-modified-since, if-unmodified-since, last-modified, location, max-forwards, proxy-authorization, referer, retry-after, user-agentは破棄されます。
 - set-cookieはいつでも配列で、重複した場合はarrayに追加されます。
 - これら以外のヘッダーは、重複した場合値はすべて,(カンマ)で追加されます
+
+※ ↑ cookie足りてない・・・？
+
+--
+※ 表にすると以下
+
+
+| Header | flag | 重複時の挙動 |
+|:-----------|:------------:|:------------:|
+| transfer-encoding , date ... field / 独自ヘッダ | 0 | カンマ区切り |
+| set-cookie | 1 | Arrayにpush |
+| cookie | 2 | セミコロンで区切ってつなげる |
+| content-type, user-agent ... expires | 3 | 一つ目の値を優先的に利用（2個め以降を破棄） |
 
 
 #### message.httpVersion

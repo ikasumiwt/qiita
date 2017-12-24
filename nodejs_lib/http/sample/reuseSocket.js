@@ -76,6 +76,7 @@ server.listen('18888', () => {
       res.resume()
       res.once('end', () => {
         // setImmediateしないとreuseされない
+        // ClientRequest.prototype.onSocketでnextTick時にonSocketNTしているから(?)
         setImmediate(callback)
         //callback()
       })
