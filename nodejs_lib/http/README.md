@@ -480,14 +480,19 @@ request.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 
 リクエストにSocketが割り当てられ、接続されるとsocket.setNoDelayが呼ばれます。
 
+ここ：https://github.com/nodejs/node/blob/master/lib/_http_client.js#L702
 
 #### request.setSocketKeepAlive([enable][, initialDelay])
 
 リクエストにSocketが割り当てられ、接続するとsocket.setKeepAlive()が呼ばれます。
 
+ここ：https://github.com/nodejs/node/blob/master/lib/_http_client.js#L706
+
 #### request.setTimeout(timeout[, callback])
 
 リクエストにSocketが割り当てられ、接続するとsocket.setTimeout()が呼ばれます。
+
+ここ：https://github.com/nodejs/node/blob/master/lib/_http_client.js#L666
 
 #### request.socket
 
@@ -536,7 +541,6 @@ callback引数もオプショナルで、このデータのチャンクがflush�
 ### Class: http.Server
 
 このクラスはnet.Serverから継承されていて、以下の追加されたイベントを持っています
-This class inherits from net.Server and has the following additional events:
 
 #### Event: 'checkContinue'
 
