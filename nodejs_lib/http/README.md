@@ -430,9 +430,9 @@ callbackが指定されている場合、リクエストのストリームが終
 効率上の理由から、Node.jsでは通常request.end()が呼び出されるか、最初のチャンクが書き込まれるまで、リクエストヘッダはバッファされます。
 
 次に、リクエストヘッダーとデータをひとつのTCPパケットに詰め込もうとします。
-// ??? It then tries to pack the request headers and data into a single TCP packet.
 
-これは、通常（それはTCPラウンドトリップとして保存されて）必要ですが、最初のデータがあとになるまで送信されない場合があります？
+
+これは、通常（それはTCPラウンドトリップとして保存されて）必要ですが、最初のデータがあとになるまで送信されないときがあるからです
 // That's usually desired (it saves a TCP round-trip), but not when the first data is not sent until possibly much later.
 
 request.flushHeaders()は最適化にバイパスし、リクエストをキックスタートします。
