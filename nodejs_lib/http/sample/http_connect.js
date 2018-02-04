@@ -13,10 +13,10 @@ const proxy = http.createServer((req, res) => {
 proxy.on('connect', (req, cltSocket, head) => {
   // connect to an origin server
   const srvUrl = url.parse(`http://${req.url}`);
-  console.log('req.url::::' + req.url)
+  console.log('2: request from client ... req.url::' + req.url)
   // net.connectによるTCP接続
   const srvSocket = net.connect(srvUrl.port, srvUrl.hostname, () => {
-
+    console.log('3: net.connect to srvUrl')
     cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                     'Proxy-agent: Node.js-Proxy\r\n' +
                     '\r\n');
@@ -24,7 +24,7 @@ proxy.on('connect', (req, cltSocket, head) => {
     srvSocket.write(head);
     // serverとclientのsocketを相互にpipeする
     // srvSocketはcltSocketをpipeする
-    // cltSocketはsrvSocketがconnectシてきた結果をsocket.on('data'で受け取る
+    // cltSocketはsrvSocketがconnectしてきた結果をsocket.on('data'で受け取る
     srvSocket.pipe(cltSocket);
     cltSocket.pipe(srvSocket);
 
@@ -45,19 +45,21 @@ proxy.listen(8888, '127.0.0.1', () => {
     path: 'html5.ohtsu.org:80'
   };
 
+  console.log('1:: http request')
   const req = http.request(options);
   req.end();
 
   req.on('socket', () => {
 
-    console.log('-------------- socket --------------')
+    // console.log('-------------- socket --------------')
   })
   // リクエストがConnectだったときに発生
   req.on('connect', (res, socket, head) => {
-    console.log('request with connect method');
+    console.log('4:: established with connect method');
     // LL438のreq.emit(eventName, res, socket, bodyHead);で渡る
     // eventName(:CONNECT), socket(:this), bodyHead(:ret=parser.execute(d))
     // socketをいじってHTTP GETリクエストする
+    console.log('5: client client socket write HTTP GET to Host')
     socket.write('GET / HTTP/1.1\r\n' +
                  'Host: html5.ohtsu.org:80\r\n' +
                  'Connection: close\r\n' +
@@ -70,6 +72,7 @@ proxy.listen(8888, '127.0.0.1', () => {
 
     // socketがendイベントになったときに自前でproxyサーバにcloseイベントをおくる必要がある
     socket.on('end', () => {
+      console.log('6:  last: data is end and proxy.close()')
       proxy.close();
     });
   });
