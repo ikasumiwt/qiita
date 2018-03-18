@@ -419,13 +419,36 @@ request.socketをみてね
 bodyのどこかの部分が送信されていない場合、それらをストリームに流します。
 もしリクエストがチャンクの場合、'0\r\n\r\n'.の終了を送信します。
 
-dataが指定されている場合、request.write()を呼び出してからrequest.end()擦るのと同じことです。
+dataが指定されている場合、request.write()を呼び出してからrequest.end()をするのと同じことです。
 
 callbackが指定されている場合、リクエストのストリームが終了したときに呼び出されます。
 
 
+// ./overview/client/requestEnd.js に前回分を追加
+
 #### request.flushHeaders()
-リクエストのヘッダーをflushします
+
+リクエストヘッダーを流します（サーバに）
+
+---
+// flushHeaders: https://github.com/nodejs/node/blob/v8.x/lib/_http_outgoing.js#L856
+this._send('')を行うことによって動作している
+
+_send(data, encoding, callback): https://github.com/nodejs/node/blob/v8.x/lib/_http_outgoing.js#L213
+ _headerSent:falseかつencoding:undefinedなので
+　 data = this._header + data
+ した状態で
+ return this._writeRaw(data, encoding, callback)される
+ (data='', encoding=undefined, callback=undefinedの状態)
+
+_writeRaw(data, encoding, callback): https://github.com/nodejs/node/blob/v8.x/lib/_http_outgoing.js#L242
+
+ connectionは初期値nullなので : https://github.com/nodejs/node/blob/v8.x/lib/_http_outgoing.js#L103
+ ここの行まで飛ぶ: https://github.com/nodejs/node/blob/v8.x/lib/_http_outgoing.js#L276　
+
+ noopPendingOutput: function noopPendingOutput(amount) {} // ???
+
+---
 
 効率上の理由から、Node.jsでは通常request.end()が呼び出されるか、最初のチャンクが書き込まれるまで、リクエストヘッダはバッファされます。
 
@@ -435,12 +458,18 @@ callbackが指定されている場合、リクエストのストリームが終
 これは、通常（それはTCPラウンドトリップとして保存されて）必要ですが、最初のデータがあとになるまで送信されないときがあるからです
 // That's usually desired (it saves a TCP round-trip), but not when the first data is not sent until possibly much later.
 
-request.flushHeaders()は最適化にバイパスし、リクエストをキックスタートします。
+request.flushHeaders()は最適化にバイパスし、リクエストをキックします。
+
+
+// ./overview/client/headerMethod.jsに
 
 #### request.getHeader(name)
 
 リクエストのヘッダを読みます。
 注意として、名前の大文字小文字が区別されないことに気をつけてください。
+
+
+// ./overview/client/getHeader.jsに
 
 
 #### request.removeHeader(name)
@@ -452,6 +481,8 @@ request.flushHeaders()は最適化にバイパスし、リクエストをキッ�
 request.removeHeader('Content-Type');
 
 ```
+
+// ./overview/client/removeHeader.jsに
 
 
 #### request.setHeader(name, value)
@@ -474,25 +505,35 @@ or
 request.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 ```
 
+// ./overview/client/setHeader.jsに
+
 
 
 #### request.setNoDelay([noDelay])
 
 リクエストにSocketが割り当てられ、接続されるとsocket.setNoDelayが呼ばれます。
 
-ここ：https://github.com/nodejs/node/blob/master/lib/_http_client.js#L702
+_deferToConnectを呼びsetNoDelayする
+-> https://github.com/nodejs/node/blob/v8.x/lib/_http_client.js#L739
+
+_deferToConnect:
+  -> https://github.com/nodejs/node/blob/v8.x/lib/_http_client.js#L677
+
 
 #### request.setSocketKeepAlive([enable][, initialDelay])
 
 リクエストにSocketが割り当てられ、接続するとsocket.setKeepAlive()が呼ばれます。
 
-ここ：https://github.com/nodejs/node/blob/master/lib/_http_client.js#L706
+ここ：https://github.com/nodejs/node/blob/v8.x/lib/_http_client.js#L742
+
+setNoDelayと同じく_deferToConnectを使って呼び出す
 
 #### request.setTimeout(timeout[, callback])
 
 リクエストにSocketが割り当てられ、接続するとsocket.setTimeout()が呼ばれます。
 
-ここ：https://github.com/nodejs/node/blob/master/lib/_http_client.js#L666
+ここ： https://github.com/nodejs/node/blob/v8.x/lib/_http_client.js#L708
+
 
 #### request.socket
 
@@ -532,9 +573,15 @@ bodyのチャンクを送ります。
 encoding引数はオプショナルで、chunkが文字列の場合にのみ有効です。
 デフォルトはutf8です。
 
-callback引数もオプショナルで、このデータのチャンクがflushされるときに呼び出されます
+callback引数もオプショナルで、このデータのチャンクがながされるときに呼び出されます
 
 この関数は返り値にrequestを返します。
+-> https://github.com/nodejs/node/blob/v8.x/lib/_http_outgoing.js#L762
+
+/*
+end()のときにだいたいやっている
+ -> ./overview/client/requestEnd.js
+*/
 
 
 
