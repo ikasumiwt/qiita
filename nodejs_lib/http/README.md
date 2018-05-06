@@ -738,6 +738,11 @@ keepAliveTimeoutが発火する前にサーバが新しいデータを受信す�
 レスポンスは、Writable Streamのインターフェースを実装しますが、それは継承されていません。
 これは以下のイベントをもつEventEmitterです
 
+// memo
+- function Server内でthis.on('connection', connectionListener)
+- connectionListener内でconnectionListenerInternalが呼ばれ
+- その中のparser.onIncoming = parserOnIncoming.bind(undefined, server, socket, state)の箇所でnew ServerResponse(req)されている
+
 
 #### Event: 'close'
 
@@ -748,8 +753,7 @@ response.end()が呼ばれるか、flushできるようになる前に、接続�
 
 Responseが送信されたあとに送信されるイベント。
 
-具体的には、レスポンスヘッダとボディの最後のセグメントが（ネットワーク経由で？）OSに送信されたときにこのイベントは送信されます。
-
+具体的には、レスポンスヘッダとボディの最後のセグメントが（ネットワーク経由で）OSに送信されたときにこのイベントは送信されます。
 これは、クライアントがなにかを受け取ったことを示すものではありません。
 
 このイベントの後には、これ以上レスポンスオブジェクトのイベントは発火しません。
@@ -775,7 +779,7 @@ response.addTrailers({ 'Content-MD5': '7895bf4b8828b55ceaf47747b4bca667' });
 response.end();
 ```
 
-無効な文字を含むフィールド名や値をヘッダーにセットしようとすると、TypeErrorがスローされることになります。
+無効な文字を含むフィールド名や値を* ヘッダーにセットしようとすると、TypeErrorがスローされることになります。
 
 #### response.connection
 
