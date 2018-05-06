@@ -885,7 +885,9 @@ trueの場合、（Dateヘッダが存在しない場合）Dateヘッダが自�
 
 #### response.setHeader(name, value)
 
-Sets a single header value for implicit headers. If this header already exists in the to-be-sent headers, its value will be replaced. Use an array of strings here to send multiple headers with the same name.
+暗黙的なヘッダーに1つのヘッダーをセットします。
+もしこのヘッダーが既に送信予定のヘッダー内に存在していた場合、その値は置き換えられます。
+文字列の配列を使うことで、同じ名前で複数のヘッダーが送信されます。
 
 例：
 ```
@@ -898,9 +900,10 @@ response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 
 ```
 
-Attempting to set a header field name or value that contains invalid characters will result in a TypeError being thrown.
+無効な文字の含まれるフィールド名や値をヘッダーにセットすると、TypeErrorのエラーが返ります
 
-When headers have been set with response.setHeader(), they will be merged with any headers passed to response.writeHead(), with the headers passed to response.writeHead() given precedence.
+response.setHeader()をもちいてヘッダーをセットすると、response.writeHead()に渡されたヘッダーとマージされて、setHeader()で渡されたヘッダーよりも、response.writeHead()で渡されたヘッダーを優先します。
+
 
 ```
 // returns content-type = text/plain
@@ -913,15 +916,23 @@ const server = http.createServer((req, res) => {
 ```
 
 #### response.setTimeout(msecs[, callback])
-Sets the Socket's timeout value to msecs. If a callback is provided, then it is added as a listener on the 'timeout' event on the response object.
 
-If no 'timeout' listener is added to the request, the response, or the server, then sockets are destroyed when they time out. If a handler is assigned to the request, the response, or the server's 'timeout' events, timed out sockets must be handled explicitly.
+Socketに、msecsでタイムアウトする値をセットします。
+callbackが与えられた場合、timeoutイベントのリスナーに追加されます。
 
-Returns response.
+もし、request,response,serverのtimeoutイベントにリスナーがなにも追加されていない場合、ソケットはタイムアウト時に破棄されます。
+もし、request,response,serverのtimeoutイベントのハンドラーがアサインされている場合、タイム・アウトしたソケットは明示的に取り扱う必要があります
+
+responseを返り値として返します。
 
 #### response.socket
 
-Reference to the underlying socket. Usually users will not want to access this property. In particular, the socket will not emit 'readable' events because of how the protocol parser attaches to the socket. After response.end(), the property is nulled. The socket may also be accessed via response.connection.
+socketの項目を参照してください。
+通常、ユーザーはこのプロパティにアクセスしてほしくありません。
+特に、プロトコルパーサーがソケットにアタッチすることによってこのソケットはreadableイベントを送信しません。
+// ?? In particular, the socket will not emit 'readable' events because of how the protocol parser attaches to the socket.
+response.end()後、このプロパティはnullになります。
+このソケットはresponse.connectionからアクセスすることが出来ます。
 
 例：
 ```
@@ -936,9 +947,7 @@ const server = http.createServer((req, res) => {
 
 #### response.statusCode
 
-When using implicit headers (not calling response.writeHead() explicitly), this property controls the status code that will be sent to the client when the headers get flushed.
-
-
+暗黙のヘッダーが使われた時（response.writeHead()を使って明示的に呼ばれる場合ではなく)、このプロパティは、クライアントに送信されるときのステータスコードを制御できます。
 
 例：
 ```
@@ -946,7 +955,10 @@ response.statusCode = 404;
 ```
 
 #### response.statusMessage
-When using implicit headers (not calling response.writeHead() explicitly), this property controls the status message that will be sent to the client when the headers get flushed. If this is left as undefined then the standard message for the status code will be used.
+
+暗黙のヘッダーが使われた時（response.writeHead()を使って明示的に呼ばれる場合ではなく)、このプロパティはクライアントに送信されるときのステータスメッセージを制御できます。
+これがundefinedな場合、ステータスコードの標準的なメッセージが使われます。
+
 
 例:
 ```
@@ -956,27 +968,43 @@ response.statusMessage = 'Not found';
 
 #### response.write(chunk[, encoding][, callback])
 
-If this method is called and response.writeHead() has not been called, it will switch to implicit header mode and flush the implicit headers.
+このメソッドが呼ばれwriteHead()が呼ばれなかった時、これは暗黙的なヘッダーモードにスイッチし、暗黙のヘッダーも流されます。
 
-This sends a chunk of the response body. This method may be called multiple times to provide successive parts of the body.
+これはレスポンスボディのチャンクを送信します。このメソッドは、ボディを部分ごとに連続して送信するために、複数回呼ばれることがあります
 
-Note that in the http module, the response body is omitted when the request is a HEAD request. Similarly, the 204 and 304 responses must not include a message body.
+httpモジュールにおける注釈として、リクエストがHEADリクエストの場合はレスポンスボディが省略されます。
+同じように、204(No Content)や304(Not modified)レスポンスの場合はメッセージの本体は含まれません。
 
-chunk can be a string or a buffer. If chunk is a string, the second parameter specifies how to encode it into a byte stream. By default the encoding is 'utf8'. callback will be called when this chunk of data is flushed.
+チャンクはStringかBufferをつかえます。チャンクがStringだった場合、第二引数はバイトストリームをどのようにエンコードするかを指定します。デフォルトはutf8です。
+callbackの引数はデータのチャンクがすべて送信されたときに呼ばれます。
 
-Note: This is the raw HTTP body and has nothing to do with higher-level multi-part body encodings that may be used.
+注釈：これは生のHTTPボディであり、ハイレベルのマルチパートのボディのエンコーディングに使われるものではありません。
 
-The first time response.write() is called, it will send the buffered header information and the first chunk of the body to the client. The second time response.write() is called, Node.js assumes data will be streamed, and sends the new data separately. That is, the response is buffered up to the first chunk of the body.
 
-Returns true if the entire data was flushed successfully to the kernel buffer. Returns false if all or part of the data was queued in user memory. 'drain' will be emitted when the buffer is free again.
+response.write()が初めて呼ばれる時、バッファにされたヘッダーとボディの最初のチャンクがクライアントに送信されます。
+
+２回めにresponse.write()が呼ばれる時、Node.jsはデータがストリームになっていると仮定して、新しいデータを分割して送信します
+つまり、レスポンスはボディの最初のチャンクのところまでバッファにされます
+
+データ全体がカーネルバッファに送信することに成功した場合、trueを返します
+
+データのすべてもしくは一部がユーザーのメモリ上にある場合、falseが返ります
+バッファが開放された時、drainイベントが発生します。
+
 
 #### response.writeContinue()
+HTTP/1.1 100 Continue message をクライアントに送信し、リクエストボディが送られることを明示的に示します。
 
-Sends a HTTP/1.1 100 Continue message to the client, indicating that the request body should be sent. See the 'checkContinue' event on Server.
+サーバのcheckContinueイベントを見てください。
+
 
 #### response.writeHead(statusCode[, statusMessage][, headers])
 
-Sends a response header to the request. The status code is a 3-digit HTTP status code, like 404. The last argument, headers, are the response headers. Optionally one can give a human-readable statusMessage as the second argument.
+リクエストに対し、レスポンスヘッダを送信します。
+statusCodeは404のように、3桁のHTTPステータスコードです。
+headersという最後の引数はレスポンスヘッダーです。
+任意で、statusMessageという人が可読なメッセージを２つ目の引数につけることが出来ます。
+
 
 例:
 ```
@@ -986,11 +1014,12 @@ response.writeHead(200, {
   'Content-Type': 'text/plain' });
 ```
 
-This method must only be called once on a message and it must be called before response.end() is called.
+このメソッドはメッセージに対して1回だけ呼ぶことができ、response.end()が呼ばれる前に呼ぶ必要があります。
 
-If response.write() or response.end() are called before calling this, the implicit/mutable headers will be calculated and call this function.
+もしresponse.write()かresponse.end()が呼ばれる前にこのメソッドが呼ばれたら、暗黙的/変更できる ヘッダーが計算され、この関数がよばれます
 
-When headers have been set with response.setHeader(), they will be merged with any headers passed to response.writeHead(), with the headers passed to response.writeHead() given precedence.
+response.setHeader()をもちいてヘッダーをセットすると、response.writeHead()に渡されたヘッダーとマージされて、setHeader()で渡されたヘッダーよりも、response.writeHead()で渡されたヘッダーを優先します。
+
 
 ```
 // returns content-type = text/plain
@@ -1002,10 +1031,14 @@ const server = http.createServer((req, res) => {
 });
 ```
 
-Note that Content-Length is given in bytes not characters. The above example works because the string 'hello world' contains only single byte characters. If the body contains higher coded characters then Buffer.byteLength() should be used to determine the number of bytes in a given encoding. And Node.js does not check whether Content-Length and the length of the body which has been transmitted are equal or not.
+注記：
+Content-Lengthが文字列ではなくバイト数で与えられることに注意です。
+上記の例はhello worldというシングルバイトの文字列のみで構成されるため動きます。
+もしボディにより高次のコード化された文字（マルチバイト文字など）が含まれていたときはBuffer.byteLength()をもちいて与えられたエンコーディングのバイト数を特定すべきです、。
+そして、Node.jsはContent-Lengthと送信されたボディの長さがイコールかどうかはチェックしません。
 
-Attempting to set a header field name or value that contains invalid characters will result in a TypeError being thrown.
 
+無効な文字を含むフィールド名や値をヘッダーにセットしようとすると、TypeErrorがスローされることになります。
 
 
 ### Class: http.IncomingMessage
