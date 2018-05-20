@@ -762,7 +762,7 @@ Responseが送信されたあとに送信されるイベント。
 #### response.addTrailers(headers)
 
 このメソッドはレスポンスにHTTPのtrailerヘッダを追加します。
-（trailerヘッダはHTTPの末尾に追加されます）// ??  (a header but at the end of the message)
+（trailerヘッダはHTTPの末尾に追加されます）
 
 トレイラーはチャンクエンコーディングがレスポンスに利用されている場合のみ付与されます。
 利用されていない場合（例えばHTTP/1.0）、これらは暗黙的に破棄されます。
