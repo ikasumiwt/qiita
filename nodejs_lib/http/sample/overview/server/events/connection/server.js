@@ -7,6 +7,7 @@ const server = http.createServer((req, res) => {
 
   console.log('[server] response event')
   res.end('hello')
+  server.close()
 })
 
 /* 
@@ -16,7 +17,7 @@ const server = http.createServer((req, res) => {
  */
 server.on('connection', (socket) => {
   console.log('[server] ** connection ** event')
-  server.close()
+  console.log(socket)
 })
 // listen
 server.listen(3000)
