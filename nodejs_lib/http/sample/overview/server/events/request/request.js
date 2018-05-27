@@ -18,7 +18,7 @@ const onResponse = (res) => {
       console.log('[client] end event')
 
       count++
-      if(count < 3) {
+      if(count < 2) {
         console.log(`request count: ${count}`)
         http.request(opt, onResponse).end()
       } else {
