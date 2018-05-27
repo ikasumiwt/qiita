@@ -6,15 +6,17 @@ const server = http.createServer((req, res) => {
 
 })
 
-/* 
+/*
  * http.Server events
  * req: IncomingMessage
  * res: ServerResponse
  */
+
 server.on('checkExpectation', (req, res) => {
   console.log('[server] checkExpectation')
   console.log(req.headers)
-  res.writeHead(400)
+  // リスナーを設定しなくても返されるのでメッセージを変更
+  res.writeHead(417, 'manual Expectation Failed')
   res.end()
   server.close()
 })

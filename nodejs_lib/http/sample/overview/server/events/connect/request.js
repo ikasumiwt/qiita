@@ -17,7 +17,6 @@ req.on('connect', (res, socket, head) => {
   let data = ''
   socket.on('data', (chunk)=> {
     console.log('[client] data event')
-    console.log(chunk.toString())
     data += chunk
   })
 
@@ -29,5 +28,3 @@ req.on('connect', (res, socket, head) => {
 })
 
 req.end()
-
-

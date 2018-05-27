@@ -10,14 +10,14 @@ const server = http.createServer((req, res) => {
   server.close()
 })
 
-/* 
+/*
  * http.Server events
  * err: error object
  * socket: socket
  */
 server.on('connection', (socket) => {
   console.log('[server] ** connection ** event')
-  console.log(socket)
+  // console.log(socket)
 })
 // listen
 server.listen(3000)

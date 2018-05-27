@@ -20,6 +20,8 @@ con.on('connect', () => {
     console.log('[socket]: end')
   })
   console.log('[client] write function ')
-  con.write(dummy)
+  // con.write(dummy)
+  con.setTimeout(1000, () => {
+    con.write(dummy)
+  })
 })
-

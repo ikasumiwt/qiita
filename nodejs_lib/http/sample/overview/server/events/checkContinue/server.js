@@ -1,22 +1,12 @@
 'use strict'
 const http = require('http')
+const maxContentSize = 3500
 
-// req: incoming
-// res: serverresponse
-const server = http.createServer((req, res) => {
+const isPostMethod = (req) => {
+  return req.method === 'post'
+}
 
-  console.log('[server] response event')
-  // res.end('hello')
-})
-
-/* 
- * http.Server events
- * req: IncomingMessage
- * res: ServerResponse
- */
-server.on('checkContinue', (req, res) => {
-  console.log('[server] checkContinue events')
-  console.log(req.headers)
+const getPostData = (req, res) => {
   let data = ''
   req.on('data', (chunk) => {
     // res.setEncoding('utf8')
@@ -26,13 +16,67 @@ server.on('checkContinue', (req, res) => {
   req.on('end', () => {
     console.log('[server] end')
     console.log(data)
-    res.writeHead(200, { 'Content-Type': 'text/plain' })
-    res.end('finished')
-    // req.destroy()
-    server.close()
+    res.writeHead(200, 'OK', { 'Content-Type': 'text/plain' })
+    res.end('finished\n')
   })
-  // client側が送信を続ける必要がある場合はwriteContinueを
-  res.writeContinue()
+}
+
+// req: incoming
+// res: serverresponse
+const checkContentLength = (req) => {
+  // reqest headerのcontent-lengthによってレスポンスを変える
+  const length = parseInt(req.headers['content-length'])
+
+  console.log(`length: ${length}`)
+
+  // lengthがmaxContentSize以内だった場合以外はエラー
+  if(!length) {
+    return false
+  } else if (length <= maxContentSize) {
+    return true
+  } else {
+    return false
+  }
+
+}
+
+const server = http.createServer((req, res) => {
+
+  if(!isPostMethod(req)) {
+    res.writeHead(400, 'bad request')
+  }
+
+  let isContinue = checkContentLength(req)
+  if (isContinue) {
+    getPostData(req, res)
+  } else {
+    res.writeHead(400, 'bad request')
+  }
+
+  console.log('[server] response event')
+})
+
+/*
+ * http.Server events
+ * req: IncomingMessage
+ * res: ServerResponse
+ */
+server.on('checkContinue', (req, res) => {
+
+  if(!isPostMethod(req)) {
+    res.writeHead(400, 'bad request')
+  }
+
+  let isContinue = checkContentLength(req)
+  console.log(isContinue)
+  console.log("------------------")
+  if (isContinue) {
+    res.writeContinue()
+    getPostData(req, res)
+  } else {
+    res.writeHead(400, 'bad request')
+  }
+  console.log('[server] checkContinue events')
 })
 
 // listen

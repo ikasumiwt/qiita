@@ -6,7 +6,7 @@ const data = 'aaa'
 const opt = {
   host: 'localhost',
   port: '3000',
-  path: '/hello',
+  path: '/',
   method: 'POST',
   headers: {
     'Expect': 'wrong-header',
